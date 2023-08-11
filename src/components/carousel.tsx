@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import Carousel from "nuka-carousel";
 
 export default function CarouselSlider({
@@ -11,11 +12,12 @@ export default function CarouselSlider({
     <Carousel
       autoplay
       pauseOnHover
-      dragging
-      className="hover: cursor-grab"
+      adaptiveHeight
+      className="rounded-lg"
       defaultControlsConfig={{
-        nextButtonClassName: "hidden",
-        prevButtonClassName: "hidden",
+        nextButtonText: <ArrowRightIcon />,
+        prevButtonText: <ArrowLeftIcon />,
+        pagingDotsClassName: "hidden",
       }}
     >
       {children}
