@@ -3,7 +3,7 @@ export interface AnimeResponse {
   slug: string;
   anilistId: number;
   coverImage: string;
-  bannerImage: string;
+  bannerImage: string | null;
   status: string;
   season: string;
   title: Title;
@@ -35,7 +35,7 @@ interface Episode {
   title: string;
   titleVariations: TitleVariations;
   description: string;
-  image: string;
+  image: string | null;
   createdAt: Date;
   airedAt: Date;
   sources: Source[];

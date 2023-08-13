@@ -23,7 +23,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
     <main className="container space-y-2">
       <AspectRatio ratio={16 / 3} className="relative min-h-[125px]">
         <Image
-          src={data.bannerImage}
+          src={data.bannerImage || "/images/placeholder-image.png"}
           alt={data.title.userPreferred}
           fill
           className="object-cover"
@@ -74,7 +74,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
                     key={idx}
                     episode={{
                       title: episode.title,
-                      image: episode.image,
+                      image: episode.image || "/images/placeholder-image.png",
                       number: episode.number,
                       slug: data.slug,
                     }}
