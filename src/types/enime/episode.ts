@@ -4,7 +4,7 @@ export interface EpisodeResponse {
   title: string;
   titleVariations: MainTitleVariations;
   description: null;
-  image: string;
+  image: string | null;
   airedAt: Date;
   createdAt: Date;
   anime: Anime;

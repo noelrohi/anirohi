@@ -55,7 +55,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             playIcon={<Icons.play />}
             fallback={
               <Image
-                src={episode.image}
+                src={episode.image || "/images/placeholder.png"}
                 alt={episode.title}
                 fill
                 className="object-contain"
