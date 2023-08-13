@@ -71,3 +71,12 @@ interface Title {
 }
 
 export * from "./episodes";
+
+export interface SourceResponse {
+  id: string;
+  url: string;
+  referer: string;
+  priority: number;
+  browser: boolean;
+  website: string;
+}
