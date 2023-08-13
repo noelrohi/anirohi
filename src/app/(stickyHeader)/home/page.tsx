@@ -4,12 +4,15 @@ import Image from "next/image";
 import React from "react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import parser from "html-react-parser";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import CarouselSlider from "@/components/carousel";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { AnimeCard } from "@/components/anime-card";
+import { Icons } from "@/components/icons";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function HomePage() {
   const [recentSettled, popularSettled] = await Promise.allSettled([
@@ -45,7 +48,13 @@ export default async function HomePage() {
                       <Badge variant={"secondary"}>{name}</Badge>
                     ))}
                   </div>
-                  <Button className="max-w-fit">Watch Now</Button>
+                  <Link
+                    className={cn(buttonVariants(), "max-w-fit")}
+                    href={`/anime/${anime.slug}`}
+                  >
+                    <Icons.play className="mr-2" />
+                    Watch Now
+                  </Link>
                 </div>
               </div>
               <Image
