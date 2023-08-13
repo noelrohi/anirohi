@@ -45,7 +45,9 @@ export default async function HomePage() {
                   </div>
                   <div className="flex gap-1">
                     {anime.genre.map((name) => (
-                      <Badge variant={"secondary"}>{name}</Badge>
+                      <Badge variant={"secondary"} key={name}>
+                        {name}
+                      </Badge>
                     ))}
                   </div>
                   <Link

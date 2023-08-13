@@ -29,7 +29,7 @@ export function EpisodeCard({
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
         <Link href={`/anime/${episode.slug}/${episode.number}`}>
-          <img
+          <Image
             src={episode.image}
             alt={episode.title}
             width={width}
