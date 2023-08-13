@@ -29,7 +29,7 @@ export async function getPopular() {
 }
 
 export async function getRecent() {
-  const endpoint = `${url}/recent`;
+  const endpoint = `${url}/recent?language=JP&perPage=100`;
   const res = await fetch(endpoint, options);
   if (!res.ok) throw new Error(res.statusText);
   const data: RecentResponse = await res.json();
