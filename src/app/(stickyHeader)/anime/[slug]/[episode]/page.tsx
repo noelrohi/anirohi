@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import VideoPlayer from "./video-player";
 import { Suspense } from "react";
 import Image from "next/image";
+import BackButton from "./back-button";
 
 interface EpisodePageProps {
   params: {
@@ -48,6 +49,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const source = await handleSource(episode.sources[0].id);
   return (
     <div className="container">
+      <BackButton />
       <AspectRatio ratio={16 / 7}>
         <Suspense>
           <VideoPlayer

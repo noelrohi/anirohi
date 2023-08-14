@@ -6,6 +6,8 @@ import {
   SunIcon,
   MoonIcon,
   PlayIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
 } from "@radix-ui/react-icons";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
 
@@ -98,4 +100,6 @@ export const Icons = {
   sun: SunIcon,
   moon: MoonIcon,
   play: PlayIcon,
+  left: ArrowLeftIcon,
+  right: ArrowRightIcon,
 };
