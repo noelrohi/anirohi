@@ -7,9 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ui": "pnpm dlx shadcn-ui"
+    "ui": "pnpm dlx shadcn-ui",
+    "postinstall": "drizzle-kit generate:mysql",
+    "db:push": "drizzle-kit push:mysql",
+    "db:introspect": "drizzle-kit introspect:mysql",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@auth/core": "^0.11.1",
+    "@auth/drizzle-adapter": "^0.3.1",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@planetscale/database": "^1.10.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.4",
@@ -26,10 +34,13 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.28.2",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
     "html-react-parser": "^4.2.1",
-    "next": "13.4.13",
+    "next": "13.4.12",
+    "next-auth": "0.0.0-manual.b53ca00b",
     "next-themes": "^0.2.1",
     "nuka-carousel": "^6.0.3",
     "postcss": "8.4.27",
@@ -43,5 +54,8 @@
     "tailwindcss-animate": "^1.0.6",
     "typescript": "5.1.6",
     "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.19.12"
   }
 }

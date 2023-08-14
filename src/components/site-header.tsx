@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { siteConfig } from "@/config/site";
+import { auth } from "@/lib/nextauth";
+import { SignIn, SignOut } from "./auth";
 
 interface User {
   imageUrl: string;
@@ -27,17 +29,10 @@ interface SiteHeaderProps {
   //   user: User | null;
 }
 
-export function SiteHeader(props: SiteHeaderProps) {
-  const initials = "NR";
-  const email = "n@rohi.dev";
-  const user: User = {
-    imageUrl:
-      "https://lh3.googleusercontent.com/ogw/AGvuzYbooRXyCmSRFdSlzqN3xHg_uP3x3y9sBOF0497O",
-    username: "gneiru",
-    firstName: "noel",
-    lastName: "rohi",
-  };
-
+export async function SiteHeader(props: SiteHeaderProps) {
+  const session = await auth();
+  const user = session?.user;
+  // console.log(JSON.stringify(session, null, 2));
   return (
     <header className="sticky top-0 z-40 w-full bg-background">
       <div className="container flex h-16 items-center">
@@ -55,10 +50,10 @@ export function SiteHeader(props: SiteHeaderProps) {
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={user.imageUrl}
-                        alt={user.username ?? ""}
+                        src={user.image ?? ""}
+                        alt={user.name ?? ""}
                       />
-                      <AvatarFallback>{initials}</AvatarFallback>
+                      <AvatarFallback>G</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -66,10 +61,10 @@ export function SiteHeader(props: SiteHeaderProps) {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user.firstName} {user.lastName}
+                        {user.name}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {email}
+                        {user.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -108,28 +103,27 @@ export function SiteHeader(props: SiteHeaderProps) {
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/signout">
+                    <div>
                       <Icons.logout
                         className="mr-2 h-4 w-4"
                         aria-hidden="true"
                       />
-                      Log out
+                      <SignOut>Log out</SignOut>
                       <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                    </Link>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/signin">
-                <div
-                  className={buttonVariants({
-                    size: "sm",
-                  })}
-                >
-                  Sign In
-                  <span className="sr-only">Sign In</span>
-                </div>
-              </Link>
+              <SignIn
+                className={buttonVariants({
+                  size: "sm",
+                })}
+                provider="anilist"
+              >
+                Sign In
+                <span className="sr-only">Sign In</span>
+              </SignIn>
             )}
           </nav>
         </div>
