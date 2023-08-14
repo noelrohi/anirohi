@@ -7,6 +7,13 @@ import VideoPlayer from "./video-player";
 import { Suspense } from "react";
 import Image from "next/image";
 import BackButton from "./back-button";
+import { auth } from "@/lib/nextauth";
+import { db } from "@/db";
+import { and, eq } from "drizzle-orm";
+import { accounts, users } from "@/db/schema/auth";
+import { queryAnilist } from "@/lib/anilist";
+import { Button } from "@/components/ui/button";
+import UpdateProgressButton from "./update-progress";
 
 interface EpisodePageProps {
   params: {
@@ -47,6 +54,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const anime = await handleAnime(params.slug);
   const episode = await handleEpisode(anime.episodes, params.episode);
   const source = await handleSource(episode.sources[0].id);
+
   return (
     <div className="container">
       <BackButton />
@@ -66,6 +74,10 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           />
         </Suspense>
       </AspectRatio>
+      <UpdateProgressButton
+        animeId={anime.anilistId}
+        progress={episode.number}
+      />
     </div>
   );
 }

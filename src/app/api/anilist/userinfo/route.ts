@@ -1,7 +1,14 @@
+import { queryAnilist } from "@/lib/anilist";
 import { NextResponse } from "next/server";
 
-function getAnilistQuery() {
-  return `query {
+export const runtime = "edge";
+
+export async function GET(req: Request) {
+  try {
+    const authorization = req.headers.get("Authorization");
+    if (!authorization)
+      return NextResponse.json("Token is required!", { status: 401 });
+    const query = `query {
             Viewer {
             id
             name
@@ -12,27 +19,7 @@ function getAnilistQuery() {
             bannerImage
             }
         }`;
-}
-
-export const runtime = "edge";
-
-export async function GET(req: Request) {
-  try {
-    const authorization = req.headers.get("Authorization");
-    if (!authorization)
-      return NextResponse.json("Token is required!", { status: 401 });
-    const res = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: {
-        Authorization: authorization,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: getAnilistQuery(),
-      }),
-    });
-    const data = await res.json();
+    const data = await queryAnilist(query, authorization);
     const { id, name, avatar } = data.data.Viewer;
 
     return NextResponse.json(

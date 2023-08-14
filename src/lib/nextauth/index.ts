@@ -20,13 +20,6 @@ declare module "next-auth" {
   }
 }
 
-interface AnilistProfile {
-  id: string;
-  name: string;
-  email: string;
-  image: string;
-}
-
 export const {
   handlers: { GET, POST },
   auth,
@@ -66,5 +59,8 @@ export const {
         id: user.id,
       },
     }),
+    authorized({ request, auth }) {
+      return !!auth?.user;
+    },
   },
 });
