@@ -16,7 +16,6 @@
   "dependencies": {
     "@auth/core": "^0.11.1",
     "@auth/drizzle-adapter": "^0.3.1",
-    "@paralleldrive/cuid2": "^2.2.2",
     "@planetscale/database": "^1.10.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.3",
@@ -27,10 +26,6 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.6.0",
-    "@types/node": "20.4.9",
-    "@types/react": "18.2.19",
-    "@types/react-dom": "18.2.7",
-    "autoprefixer": "10.4.14",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
@@ -43,19 +38,23 @@
     "next-auth": "0.0.0-manual.b53ca00b",
     "next-themes": "^0.2.1",
     "nuka-carousel": "^6.0.3",
-    "postcss": "8.4.27",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-player": "^2.12.0",
     "react-wrap-balancer": "^1.0.0",
     "sonner": "^0.6.2",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
-    "typescript": "5.1.6",
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.19.12"
+    "drizzle-kit": "^0.19.12",
+    "@types/node": "20.4.9",
+    "@types/react": "18.2.19",
+    "@types/react-dom": "18.2.7",
+    "autoprefixer": "10.4.14",
+    "postcss": "8.4.27",
+    "tailwindcss": "3.3.3",
+    "typescript": "5.1.6"
   }
 }
