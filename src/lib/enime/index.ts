@@ -22,7 +22,7 @@ export async function getEpisode(id: string) {
 
 export async function getPopular() {
   const endpoint = `${url}/popular`;
-  const res = await fetch(endpoint, options);
+  const res = await fetch(endpoint, { cache: "no-cache" });
   if (!res.ok) throw new Error(res.statusText);
   const data: PopularResponse = await res.json();
   return data;
@@ -30,7 +30,7 @@ export async function getPopular() {
 
 export async function getRecent() {
   const endpoint = `${url}/recent?language=JP&perPage=100`;
-  const res = await fetch(endpoint, options);
+  const res = await fetch(endpoint, { cache: "no-cache" });
   if (!res.ok) throw new Error(res.statusText);
   const data: RecentResponse = await res.json();
   return data;
