@@ -1,24 +1,19 @@
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { getAnime, getEpisode, getSource } from "@/lib/enime";
-import { AnimeResponse } from "@/types/enime";
-import { notFound } from "next/navigation";
-import VideoPlayer from "./video-player";
-import { Suspense } from "react";
-import Image from "next/image";
-import { BackButton, NextButton } from "./back-button";
-import { auth } from "@/lib/nextauth";
-import { db } from "@/db";
-import { and, eq } from "drizzle-orm";
-import { accounts, users } from "@/db/schema/auth";
-import { queryAnilist } from "@/lib/anilist";
-import { Button } from "@/components/ui/button";
-import UpdateProgressButton from "./update-progress";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { getAnime, getEpisode, getSource } from "@/lib/enime";
+import { auth } from "@/lib/nextauth";
+import { cn } from "@/lib/utils";
+import { AnimeResponse } from "@/types/enime";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { BackButton, NextButton } from "./buttons";
+import UpdateProgressButton from "./update-progress";
+import VideoPlayer from "./video-player";
 
 interface EpisodePageProps {
   params: {
