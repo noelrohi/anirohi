@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface Props {
   progress: number;
   animeId: number;
+  children: React.ReactNode;
 }
 
 export default function UpdateProgressButton(props: Props) {
@@ -27,7 +28,7 @@ export default function UpdateProgressButton(props: Props) {
         });
       }}
     >
-      Update Progress
+      {props.children}
     </Button>
   );
 }

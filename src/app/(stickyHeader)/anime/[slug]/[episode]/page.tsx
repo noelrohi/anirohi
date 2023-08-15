@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import VideoPlayer from "./video-player";
 import { Suspense } from "react";
 import Image from "next/image";
-import BackButton from "./back-button";
+import { BackButton, NextButton } from "./back-button";
 import { auth } from "@/lib/nextauth";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
@@ -14,6 +14,11 @@ import { accounts, users } from "@/db/schema/auth";
 import { queryAnilist } from "@/lib/anilist";
 import { Button } from "@/components/ui/button";
 import UpdateProgressButton from "./update-progress";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface EpisodePageProps {
   params: {
@@ -55,32 +60,125 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const episode = await handleEpisode(anime.episodes, params.episode);
   const source = await handleSource(episode.sources[0].id);
   const session = await auth();
+  const nextEpisode =
+    episode.anime.episodes[
+      episode.anime.episodes.findIndex(
+        (e) => String(e.number) === params.episode
+      ) + 1
+    ].number;
 
   return (
-    <div className="container">
-      <BackButton />
-      <AspectRatio ratio={16 / 7}>
-        <Suspense>
-          <VideoPlayer
-            url={source.url}
-            playIcon={<Icons.play />}
-            fallback={
-              <Image
-                src={episode.image || "/images/placeholder.png"}
-                alt={episode.title}
-                fill
-                className="object-contain"
-              />
-            }
-          />
-        </Suspense>
-      </AspectRatio>
-      {session?.user && (
-        <UpdateProgressButton
-          animeId={anime.anilistId}
-          progress={episode.number}
+    <main className="container">
+      <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
+        <BackButton />
+        <div className="grid grid-cols-5">
+          <section className="col-span-5 lg:col-span-4">
+            <AspectRatio ratio={16 / 9}>
+              <Suspense>
+                <VideoPlayer
+                  url={source.url}
+                  playIcon={<Icons.play />}
+                  fallback={
+                    <Image
+                      src={episode.image || "/images/placeholder.png"}
+                      alt={episode.title}
+                      fill
+                      priority
+                      className="object-contain"
+                    />
+                  }
+                />
+              </Suspense>
+            </AspectRatio>
+          </section>
+          <aside className="lg:col-span-1">
+            <EpisodeScrollArea
+              className="hidden lg:block"
+              episodes={anime.episodes}
+              slug={params.slug}
+              currentEpisode={episode.number}
+            />
+          </aside>
+        </div>
+        <div className="flex flex-row gap-1 p-4 justify-end w-fit">
+          {session?.user && (
+            <UpdateProgressButton
+              animeId={anime.anilistId}
+              progress={episode.number}
+            >
+              <Icons.anilist className="mr-2" />
+              Update
+            </UpdateProgressButton>
+          )}
+          <NextButton episodeNumber={nextEpisode} slug={params.slug} />
+        </div>
+        <div className="flex flex-row">
+          <div className="flex flex-col gap-4 justify-center p-4 w-fit">
+            <h1 className="text-2xl font-bold">{episode.title}</h1>
+            <p className="text-lg">{episode.description}</p>
+          </div>
+        </div>
+        <EpisodeScrollArea
+          className="block lg:hidden"
+          episodes={anime.episodes}
+          slug={params.slug}
+          currentEpisode={episode.number}
         />
+      </div>
+    </main>
+  );
+}
+
+interface EpisodeScrollAreaProps extends React.HTMLProps<HTMLDivElement> {
+  slug: string;
+  currentEpisode: number;
+  episodes: AnimeResponse["episodes"];
+}
+
+function EpisodeScrollArea({
+  episodes,
+  slug,
+  currentEpisode,
+  className,
+}: EpisodeScrollAreaProps) {
+  return (
+    <ScrollArea
+      className={cn(
+        "lg:h-[32rem] xl:h-[37rem] w-full rounded-md border ml-2",
+        className
       )}
-    </div>
+    >
+      <div className="p-4">
+        <h4 className="mb-4 text-sm font-medium leading-none">Episodes</h4>
+        {episodes.map((ep) => (
+          <>
+            <Link
+              href={`/anime/${slug}/${ep.number}`}
+              className="flex flex-row justify-between items-center"
+            >
+              <div className="flex flex-row items-center">
+                <Badge
+                  className={cn(
+                    "px-1 py-0 rounded-full mr-2",
+                    ep.number === currentEpisode &&
+                      "bg-blue-700 dark:bg-blue-400"
+                  )}
+                  variant={"destructive"}
+                >
+                  {ep.number}
+                </Badge>
+                <span
+                  className={"inline-flex gap-2 items-center justify-between"}
+                >
+                  Play Episode
+                </span>
+              </div>
+              {ep.number === currentEpisode && <Icons.check />}
+            </Link>
+            <Separator className="my-2" />
+          </>
+        ))}
+      </div>
+    </ScrollArea>
   );
 }
