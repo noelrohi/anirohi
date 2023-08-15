@@ -41,7 +41,9 @@ export default async function SlugPage({ params }: SlugPageProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover portrait"
             />
-            <p className="font-bold text-2xl">{data.title.userPreferred}</p>
+            <p className="font-bold text-md md:text-2xl">
+              {data.title.userPreferred}
+            </p>
           </div>
         </div>
         <div className="absolute -bottom-4 left-40">
@@ -59,7 +61,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
           </Badge>
         ))}
       </div>
-      <div> {parser(data.description)}</div>
+      <div className="text-xs md:text-sm"> {parser(data.description)}</div>
       <Separator />
       {data.episodes.length > 0 ? (
         <>

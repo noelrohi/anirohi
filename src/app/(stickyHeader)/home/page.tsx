@@ -29,29 +29,33 @@ export default async function HomePage() {
         <CarouselSlider>
           {popularAnime?.data?.map((anime) => (
             <AspectRatio
-              ratio={16 / 6}
+              ratio={16 / 7}
               className="relative"
               key={anime.anilistId}
             >
-              <div className="absolute top-10 left-10 w-1/2 z-10">
-                <div className="flex flex-col gap-4">
+              <div className="absolute top-0 md:top-10 left-10 w-1/2 z-10">
+                <div className="flex flex-col gap-4 max-w-lg">
                   <div className="flex gap-2">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="line-clamp-1 md:line-clamp-2 text-md sm:text-lg md:text-2xl font-bold">
                       {anime.title.userPreferred}
                     </h1>
                   </div>
-                  <div className="line-clamp-4">
+                  <div className="line-clamp-2 sm:line-clamp-4 text-xs md:text-sm">
                     {parser(anime.description)}
                   </div>
                   <div className="flex gap-1">
                     {anime.genre.map((name) => (
-                      <Badge variant={"secondary"} key={name}>
+                      <Badge
+                        variant={"secondary"}
+                        key={name}
+                        className="hidden lg:block"
+                      >
                         {name}
                       </Badge>
                     ))}
                   </div>
                   <Link
-                    className={cn(buttonVariants(), "max-w-fit")}
+                    className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
                     href={`/anime/${anime.slug}`}
                   >
                     <Icons.play className="mr-2" />
