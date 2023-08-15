@@ -54,6 +54,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const anime = await handleAnime(params.slug);
   const episode = await handleEpisode(anime.episodes, params.episode);
   const source = await handleSource(episode.sources[0].id);
+  const session = await auth();
 
   return (
     <div className="container">
@@ -74,10 +75,12 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           />
         </Suspense>
       </AspectRatio>
-      <UpdateProgressButton
-        animeId={anime.anilistId}
-        progress={episode.number}
-      />
+      {session?.user && (
+        <UpdateProgressButton
+          animeId={anime.anilistId}
+          progress={episode.number}
+        />
+      )}
     </div>
   );
 }
