@@ -1,5 +1,6 @@
 "use client";
 import { updateAnimeProgress } from "@/_actions";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ export default function UpdateProgressButton(props: Props) {
   return (
     // TODO: disable if it's updated already in MediaListCollection
     <Button
+      disabled={isPending}
       onClick={() => {
         startTransition(async () => {
           const res = await updateAnimeProgress(props.animeId, props.progress);
@@ -28,6 +30,7 @@ export default function UpdateProgressButton(props: Props) {
         });
       }}
     >
+      {isPending ? <Icons.loader className="mr-2" /> : null}
       {props.children}
     </Button>
   );
