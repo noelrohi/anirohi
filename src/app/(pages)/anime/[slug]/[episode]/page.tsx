@@ -67,7 +67,7 @@ async function getPreviousEpisode(
 
 export async function generateMetadata({ params }: EpisodePageProps) {
   const data = await handleAnime(params.slug);
-  const ogUrl = new URL(`${absoluteUrl("/")}/api/og`);
+  const ogUrl = new URL(absoluteUrl("/api/og"));
   ogUrl.searchParams.set("title", data.title.userPreferred);
   ogUrl.searchParams.set("description", data.description);
   ogUrl.searchParams.set(
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: EpisodePageProps) {
     title: data.title.userPreferred + " | Episode " + params.episode,
     description: data.description,
     openGraph: {
-      title: params.slug,
+      title: data.title.userPreferred + " | Episode " + params.episode,
       description: data.description,
       type: "website",
       url: absoluteUrl(`/anime/${params.slug}`),
