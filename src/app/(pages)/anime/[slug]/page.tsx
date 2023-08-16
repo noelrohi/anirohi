@@ -2,13 +2,15 @@ import { EpisodeCard } from "@/components/episode-card";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getAnime } from "@/lib/enime";
 import parser from "html-react-parser";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+
 interface SlugPageProps {
   params: {
     slug: string;
@@ -47,10 +49,10 @@ export default async function SlugPage({ params }: SlugPageProps) {
           </div>
         </div>
         <div className="absolute -bottom-4 left-40">
-          <Button>
+          <Link href={`/anime/${data.slug}/1`} className={buttonVariants()}>
             <Icons.play className="mr-2" />
-            Watch Now
-          </Button>
+            Watch Episode 1
+          </Link>
         </div>
       </AspectRatio>
       <div className="h-32 sm:h-[62.5px]" />

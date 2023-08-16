@@ -25,7 +25,7 @@ export default async function HomePage() {
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
   return (
     <div className="container">
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
         <CarouselSlider>
           {popularAnime?.data?.map((anime) => (
             <AspectRatio
@@ -33,7 +33,7 @@ export default async function HomePage() {
               className="relative"
               key={anime.anilistId}
             >
-              <div className="absolute top-0 md:top-10 left-10 w-1/2 z-10">
+              <div className="absolute top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
                     <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
@@ -43,12 +43,14 @@ export default async function HomePage() {
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
                     {parser(anime.description)}
                   </div>
-                  <div className="flex flex-shrink-0 gap-1 flex-wrap">
-                    {anime.genre.map((name) => (
-                      <Badge variant={"secondary"} key={name}>
-                        {name}
-                      </Badge>
-                    ))}
+                  <div className="hidden md:block">
+                    <div className="flex flex-shrink-0 gap-1 flex-wrap ">
+                      {anime.genre.map((name) => (
+                        <Badge variant={"secondary"} key={name}>
+                          {name}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                   <Link
                     className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
