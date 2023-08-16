@@ -9,3 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 export function absoluteUrl(path: string) {
   return `${env.NEXT_PUBLIC_APP_URL}${path}`;
 }
+
+export function removeHtmlTags(html: string): string {
+  const regexPattern = /<\/?[^>]+>/g;
+  return html.replace(regexPattern, "");
+}

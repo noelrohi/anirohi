@@ -1,4 +1,5 @@
 import { env } from "@/env.mjs";
+import { removeHtmlTags } from "@/lib/utils";
 import { ImageResponse } from "@vercel/og";
 import type { ServerRuntime } from "next";
 import * as z from "zod";
@@ -20,7 +21,10 @@ export async function GET(request: Request) {
       Object.fromEntries(url.searchParams)
     );
 
-    const { title, banner, cover, description, episode } = parsedValues;
+    const { title, banner, cover, episode } = parsedValues;
+    const description = parsedValues.description
+      ? removeHtmlTags(parsedValues.description)
+      : env.NEXT_PUBLIC_APP_URL;
 
     return new ImageResponse(
       (
@@ -105,11 +109,8 @@ export async function GET(request: Request) {
                 paddingBottom: 10,
               }}
             >
-              {description
-                ? description?.length > 300
-                  ? `${description?.slice(0, 300)} ...`
-                  : description
-                : env.NEXT_PUBLIC_APP_URL}
+              {description?.slice(0, 300)}
+              {" ..."}
             </p>
             <div
               style={{
