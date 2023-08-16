@@ -1,18 +1,24 @@
-import Carousel from "@/components/carousel";
-import { getPopular, getRecent } from "@/lib/enime";
-import Image from "next/image";
-import React from "react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import parser from "html-react-parser";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import CarouselSlider from "@/components/carousel";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { AnimeCard } from "@/components/anime-card";
+import CarouselSlider from "@/components/carousel";
 import { Icons } from "@/components/icons";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { env } from "@/env.mjs";
+import { getPopular, getRecent } from "@/lib/enime";
 import { cn } from "@/lib/utils";
+import parser from "html-react-parser";
+import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: "Home",
+  description: "Explore popular and airing anime series",
+};
 
 export default async function HomePage() {
   const [recentSettled, popularSettled] = await Promise.allSettled([

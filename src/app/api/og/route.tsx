@@ -60,6 +60,7 @@ export async function GET(request: Request) {
                 paddingBottom: 0,
                 paddingRight: 10,
               }}
+              alt={title}
             />
           </div>
           <div

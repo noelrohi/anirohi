@@ -2,11 +2,13 @@ import { EpisodeCard } from "@/components/episode-card";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getAnime } from "@/lib/enime";
+import { absoluteUrl } from "@/lib/utils";
 import parser from "html-react-parser";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,10 +19,56 @@ interface SlugPageProps {
   };
 }
 
-export default async function SlugPage({ params }: SlugPageProps) {
-  const [settleSlug] = await Promise.allSettled([getAnime(params.slug)]);
+async function handleSlug(slug: string) {
+  const [settleSlug] = await Promise.allSettled([getAnime(slug)]);
   const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
   if (!data) notFound();
+  return data;
+}
+
+export async function generateMetadata({ params }: SlugPageProps) {
+  const data = await handleSlug(params.slug);
+  const ogUrl = new URL(`${absoluteUrl("/")}/api/og`);
+  ogUrl.searchParams.set("title", data.title.userPreferred);
+  ogUrl.searchParams.set("description", data.description);
+  ogUrl.searchParams.set(
+    "cover",
+    data.coverImage || "/images/placeholder-image.png"
+  );
+  ogUrl.searchParams.set(
+    "banner",
+    data.bannerImage || "/images/placeholder-image.png"
+  );
+
+  const metadata: Metadata = {
+    title: params.slug,
+    description: data.description,
+    openGraph: {
+      title: params.slug,
+      description: data.description,
+      type: "website",
+      url: absoluteUrl(`/anime/${params.slug}`),
+      images: [
+        {
+          url: ogUrl.toString(),
+          width: 1200,
+          height: 630,
+          alt: data.title.userPreferred,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title.userPreferred,
+      description: data.description,
+      images: [ogUrl.toString()],
+    },
+  };
+  return metadata;
+}
+
+export default async function SlugPage({ params }: SlugPageProps) {
+  const data = await handleSlug(params.slug);
   return (
     <main className="container space-y-2">
       <AspectRatio ratio={16 / 3} className="relative min-h-[125px]">

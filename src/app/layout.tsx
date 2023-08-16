@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   keywords: [
     "Next.js",
     "React",
+    "Shadcn",
+    "Radix UI",
     "Tailwind CSS",
     "Server Components",
     "Server Actions",
