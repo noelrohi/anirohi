@@ -6,8 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getAnime, getEpisode, getSource } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
-import { cn } from "@/lib/utils";
+import { absoluteUrl, cn } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -62,6 +63,48 @@ async function getPreviousEpisode(
   episodes: AnimeResponse["episodes"]
 ) {
   return episodes[currentEpisodeIndex - 1]?.number || null;
+}
+
+export async function generateMetadata({ params }: EpisodePageProps) {
+  const data = await handleAnime(params.slug);
+  const ogUrl = new URL(`${absoluteUrl("/")}/api/og`);
+  ogUrl.searchParams.set("title", data.title.userPreferred);
+  ogUrl.searchParams.set("description", data.description);
+  ogUrl.searchParams.set(
+    "cover",
+    data.coverImage || "/images/placeholder-image.png"
+  );
+  ogUrl.searchParams.set(
+    "banner",
+    data.bannerImage || "/images/placeholder-image.png"
+  );
+  ogUrl.searchParams.set("episode", String(params.episode));
+
+  const metadata: Metadata = {
+    title: data.title.userPreferred + " | Episode " + params.episode,
+    description: data.description,
+    openGraph: {
+      title: params.slug,
+      description: data.description,
+      type: "website",
+      url: absoluteUrl(`/anime/${params.slug}`),
+      images: [
+        {
+          url: ogUrl.toString(),
+          width: 1200,
+          height: 630,
+          alt: data.title.userPreferred,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title.userPreferred,
+      description: data.description,
+      images: [ogUrl.toString()],
+    },
+  };
+  return metadata;
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {

@@ -10,7 +10,7 @@ import {
 } from "@/types/enime";
 
 const url = "https://api.enime.moe";
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 0 } };
 
 export async function getEpisode(id: string) {
   const endpoint = `${url}/episode/${id}`;
@@ -38,7 +38,7 @@ export async function getRecent() {
 
 export async function searchAnime(query: string) {
   const endpoint = `${url}/search/${query}`;
-  const res = await fetch(endpoint, options);
+  const res = await fetch(endpoint, { next: { revalidate: 60 * 5 } });
   if (!res.ok) throw new Error(res.statusText);
   const data: SearchResponse = await res.json();
   return data;

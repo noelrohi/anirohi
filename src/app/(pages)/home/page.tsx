@@ -1,18 +1,23 @@
-import Carousel from "@/components/carousel";
-import { getPopular, getRecent } from "@/lib/enime";
-import Image from "next/image";
-import React from "react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import parser from "html-react-parser";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import CarouselSlider from "@/components/carousel";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { AnimeCard } from "@/components/anime-card";
+import CarouselSlider from "@/components/carousel";
 import { Icons } from "@/components/icons";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { env } from "@/env.mjs";
+import { getPopular, getRecent } from "@/lib/enime";
 import { cn } from "@/lib/utils";
+import parser from "html-react-parser";
+import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Explore popular and airing anime series",
+};
 
 export default async function HomePage() {
   const [recentSettled, popularSettled] = await Promise.allSettled([
@@ -25,7 +30,7 @@ export default async function HomePage() {
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
   return (
     <div className="container">
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
         <CarouselSlider>
           {popularAnime?.data?.map((anime) => (
             <AspectRatio
@@ -33,7 +38,7 @@ export default async function HomePage() {
               className="relative"
               key={anime.anilistId}
             >
-              <div className="absolute top-0 md:top-10 left-10 w-1/2 z-10">
+              <div className="absolute top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
                     <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
@@ -43,12 +48,14 @@ export default async function HomePage() {
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
                     {parser(anime.description)}
                   </div>
-                  <div className="flex flex-shrink-0 gap-1 flex-wrap">
-                    {anime.genre.map((name) => (
-                      <Badge variant={"secondary"} key={name}>
-                        {name}
-                      </Badge>
-                    ))}
+                  <div className="hidden md:block">
+                    <div className="flex flex-shrink-0 gap-1 flex-wrap ">
+                      {anime.genre.map((name) => (
+                        <Badge variant={"secondary"} key={name}>
+                          {name}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                   <Link
                     className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}

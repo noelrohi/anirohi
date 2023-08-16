@@ -17,6 +17,7 @@ import {
 import { siteConfig } from "@/config/site";
 import { auth } from "@/lib/nextauth";
 import { SignIn, SignOut } from "./auth";
+import { cn } from "@/lib/utils";
 
 interface User {
   imageUrl: string;
@@ -26,15 +27,16 @@ interface User {
 }
 
 interface SiteHeaderProps {
-  //   user: User | null;
+  sticky?: boolean;
 }
 
-export async function SiteHeader(props: SiteHeaderProps) {
+export async function SiteHeader({ sticky = false }: SiteHeaderProps) {
   const session = await auth();
   const user = session?.user;
-  // console.log(JSON.stringify(session, null, 2));
   return (
-    <header className="sticky top-0 z-40 w-full bg-background">
+    <header
+      className={cn("w-full bg-background", sticky && "sticky top-0 z-40 ")}
+    >
       <div className="container flex h-16 items-center">
         <MainNav items={siteConfig.mainNav} />
 

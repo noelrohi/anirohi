@@ -8,7 +8,7 @@ interface StickyLayoutProps {
 export default async function StickyLayout({ children }: StickyLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeader sticky />
       <main className="flex-1">{children}</main>
       <SiteFooter />
     </div>
