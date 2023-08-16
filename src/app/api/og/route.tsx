@@ -96,8 +96,7 @@ export async function GET(request: Request) {
               }}
             >
               {title}
-
-              {episode ? ` Episode ${episode}` : ""}
+              {episode ? ` | Episode ${episode}` : ""}
             </h1>
             <p
               style={{

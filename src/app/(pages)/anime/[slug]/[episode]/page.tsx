@@ -65,27 +65,43 @@ async function getPreviousEpisode(
   return episodes[currentEpisodeIndex - 1]?.number || null;
 }
 
-export async function generateMetadata({ params }: EpisodePageProps) {
-  const data = await handleAnime(params.slug);
+export async function generateMetadata({
+  params,
+}: EpisodePageProps): Promise<Metadata> {
+  const {
+    episodes,
+    title: { userPreferred: animeTitle },
+    description: animeDescription,
+    coverImage,
+    bannerImage,
+  } = await handleAnime(params.slug);
+  const episode = await handleEpisode(episodes, params.episode);
+
   const ogUrl = new URL(absoluteUrl("/api/og"));
-  ogUrl.searchParams.set("title", data.title.userPreferred);
-  ogUrl.searchParams.set("description", data.description);
+  ogUrl.searchParams.set(
+    "title",
+    episode.title || `${animeTitle} Episode ${episode.number}`
+  );
+  ogUrl.searchParams.set(
+    "description",
+    episode.description || animeDescription
+  );
   ogUrl.searchParams.set(
     "cover",
-    data.coverImage || "/images/placeholder-image.png"
+    coverImage || "/images/placeholder-image.png"
   );
   ogUrl.searchParams.set(
     "banner",
-    data.bannerImage || "/images/placeholder-image.png"
+    bannerImage || "/images/placeholder-image.png"
   );
   ogUrl.searchParams.set("episode", String(params.episode));
 
-  const metadata: Metadata = {
-    title: data.title.userPreferred + " | Episode " + params.episode,
-    description: data.description,
+  return {
+    title: episode.title,
+    description: episode.description,
     openGraph: {
-      title: data.title.userPreferred + " | Episode " + params.episode,
-      description: data.description,
+      title: episode.title || `${animeTitle} Episode ${episode.number}`,
+      description: episode.description || animeDescription,
       type: "website",
       url: absoluteUrl(`/anime/${params.slug}`),
       images: [
@@ -93,18 +109,17 @@ export async function generateMetadata({ params }: EpisodePageProps) {
           url: ogUrl.toString(),
           width: 1200,
           height: 630,
-          alt: data.title.userPreferred,
+          alt: episode.title || `${animeTitle} Episode ${episode.number}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: data.title.userPreferred,
-      description: data.description,
+      title: episode.title || `${animeTitle} Episode ${episode.number}`,
+      description: episode.description || animeDescription,
       images: [ogUrl.toString()],
     },
   };
-  return metadata;
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
