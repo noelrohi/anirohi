@@ -1,6 +1,7 @@
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getAnime, getEpisode, getSource } from "@/lib/enime";
@@ -11,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { BackButton, NextButton } from "./buttons";
+import { BackButton } from "./buttons";
 import UpdateProgressButton from "./update-progress";
 import VideoPlayer from "./video-player";
 
@@ -55,12 +56,19 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const episode = await handleEpisode(anime.episodes, params.episode);
   const source = await handleSource(episode.sources[0].id);
   const session = await auth();
-  const nextEpisode =
-    episode.anime.episodes[
-      episode.anime.episodes.findIndex(
-        (e) => String(e.number) === params.episode
-      ) + 1
-    ].number;
+
+  let nextEpisode;
+  let previousEpisode;
+  try {
+    const currentEpisodeIndex = episode.anime.episodes.findIndex(
+      (e) => String(e.number) === params.episode
+    );
+    nextEpisode = episode.anime.episodes[currentEpisodeIndex + 1].number;
+    previousEpisode = episode.anime.episodes[currentEpisodeIndex - 1].number;
+  } catch (error) {
+    nextEpisode = null;
+    previousEpisode = null;
+  }
 
   return (
     <main className="container">
@@ -96,6 +104,15 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           </aside>
         </div>
         <div className="flex flex-row gap-1 p-4 justify-end w-fit">
+          {previousEpisode && (
+            <Link
+              className={buttonVariants({ variant: "secondary" })}
+              href={`/anime/${params.slug}/${previousEpisode}`}
+            >
+              <Icons.left className="mr-2" />
+              Previous
+            </Link>
+          )}
           {session?.user && (
             <UpdateProgressButton
               animeId={anime.anilistId}
@@ -105,7 +122,15 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
               Update
             </UpdateProgressButton>
           )}
-          <NextButton episodeNumber={nextEpisode} slug={params.slug} />
+
+          {nextEpisode && (
+            <Link
+              className={buttonVariants({ variant: "secondary" })}
+              href={`/anime/${params.slug}/${nextEpisode}`}
+            >
+              Next <Icons.right className="ml-2" />
+            </Link>
+          )}
         </div>
         <div className="flex flex-row">
           <div className="flex flex-col gap-4 justify-center p-4 w-fit">
@@ -163,9 +188,12 @@ function EpisodeScrollArea({
                   {ep.number}
                 </Badge>
                 <span
-                  className={"inline-flex gap-2 items-center justify-between"}
+                  className={cn(
+                    "inline-flex gap-2 items-center justify-between",
+                    ep.number === currentEpisode && "font-bold"
+                  )}
                 >
-                  Play Episode
+                  {ep.title || `Episode ${ep.number}`}
                 </span>
               </div>
               {ep.number === currentEpisode && <Icons.check />}

@@ -2,12 +2,7 @@
 
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 export function BackButton() {
@@ -25,28 +20,6 @@ export function BackButton() {
         }}
       />
       Back
-    </Button>
-  );
-}
-
-export function NextButton({
-  episodeNumber,
-  slug,
-}: {
-  episodeNumber: number;
-  slug: string;
-}) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  return (
-    <Button
-      variant={"secondary"}
-      onClick={() => {
-        // const newPath = pathname.split[0] + pathname.split("/")[-1];
-        startTransition(() => router.push(`/anime/${slug}/${episodeNumber}`));
-      }}
-    >
-      Next <Icons.right className="ml-2" />
     </Button>
   );
 }
