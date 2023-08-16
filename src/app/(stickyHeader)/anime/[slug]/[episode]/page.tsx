@@ -50,24 +50,34 @@ async function handleSource(id: string) {
   return source;
 }
 
+async function getNextEpisode(
+  currentEpisodeIndex: number,
+  episodes: AnimeResponse["episodes"]
+) {
+  return episodes[currentEpisodeIndex + 1]?.number || null;
+}
+
+async function getPreviousEpisode(
+  currentEpisodeIndex: number,
+  episodes: AnimeResponse["episodes"]
+) {
+  return episodes[currentEpisodeIndex - 1]?.number || null;
+}
+
 export default async function EpisodePage({ params }: EpisodePageProps) {
   const anime = await handleAnime(params.slug);
   const episode = await handleEpisode(anime.episodes, params.episode);
   const source = await handleSource(episode.sources[0].id);
   const session = await auth();
 
-  let nextEpisode;
-  let previousEpisode;
-  try {
-    const currentEpisodeIndex = episode.anime.episodes.findIndex(
-      (e) => String(e.number) === params.episode
-    );
-    nextEpisode = episode.anime.episodes[currentEpisodeIndex + 1].number;
-    previousEpisode = episode.anime.episodes[currentEpisodeIndex - 1].number;
-  } catch (error) {
-    nextEpisode = null;
-    previousEpisode = null;
-  }
+  const currentEpisodeIndex = episode.anime.episodes.findIndex(
+    (e) => String(e.number) === params.episode
+  );
+  const nextEpisode = await getNextEpisode(currentEpisodeIndex, anime.episodes);
+  const previousEpisode = await getPreviousEpisode(
+    currentEpisodeIndex,
+    anime.episodes
+  );
 
   return (
     <main className="container">
