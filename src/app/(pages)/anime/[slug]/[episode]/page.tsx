@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: EpisodePageProps) {
   ogUrl.searchParams.set("episode", String(params.episode));
 
   const metadata: Metadata = {
-    title: params.slug + " | Episode " + params.episode,
+    title: data.title.userPreferred + " | Episode " + params.episode,
     description: data.description,
     openGraph: {
       title: params.slug,

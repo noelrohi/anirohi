@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: SlugPageProps) {
   );
 
   const metadata: Metadata = {
-    title: params.slug,
+    title: data.title.userPreferred,
     description: data.description,
     openGraph: {
       title: params.slug,

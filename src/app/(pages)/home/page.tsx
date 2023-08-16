@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: "Home",
   description: "Explore popular and airing anime series",
 };
