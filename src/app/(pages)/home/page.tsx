@@ -38,7 +38,7 @@ export default async function HomePage() {
               className="relative"
               key={anime.anilistId}
             >
-              <div className="absolute top-10 left-10 w-1/2 z-10">
+              <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
                     <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
@@ -82,7 +82,7 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
             <p className="text-sm text-muted-foreground">
-              Recently release anime episodes
+              Recently released anime episodes
             </p>
           </div>
         </div>
