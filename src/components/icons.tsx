@@ -11,6 +11,7 @@ import {
   CheckIcon,
 } from "@radix-ui/react-icons";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
+import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 export const Icons = {
   gitHub: GitHubLogoIcon,
@@ -116,6 +117,44 @@ export const Icons = {
         <path
           fill="currentColor"
           d="M6.361 2.943L0 21.056h4.942l1.077-3.133H11.4l1.052 3.133H22.9c.71 0 1.1-.392 1.1-1.101V17.53c0-.71-.39-1.101-1.1-1.101h-6.483V4.045c0-.71-.392-1.102-1.101-1.102h-2.422c-.71 0-1.101.392-1.101 1.102v1.064l-.758-2.166zm2.324 5.948l1.688 5.018H7.144z"
+        ></path>
+      </svg>
+    );
+  },
+  loader: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M12 6V3m4.25 4.75L18.4 5.6M18 12h3m-4.75 4.25l2.15 2.15M12 18v3m-4.25-4.75L5.6 18.4M6 12H3m4.75-4.25L5.6 5.6"
+        ></path>
+      </svg>
+    );
+  },
+  goBack: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 16 16"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path
+          fill="currentColor"
+          fillRule="evenodd"
+          d="m2.87 7.75l1.97 1.97a.75.75 0 1 1-1.06 1.06L.53 7.53L0 7l.53-.53l3.25-3.25a.75.75 0 0 1 1.06 1.06L2.87 6.25h9.88a3.25 3.25 0 0 1 0 6.5h-2a.75.75 0 0 1 0-1.5h2a1.75 1.75 0 1 0 0-3.5H2.87Z"
+          clipRule="evenodd"
         ></path>
       </svg>
     );

@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { BackButton } from "./buttons";
 import UpdateProgressButton from "./update-progress";
 import VideoPlayer from "./video-player";
 
@@ -73,7 +72,12 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   return (
     <main className="container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
-        <BackButton />
+        <Link
+          href={`/anime/${params.slug}`}
+          className={cn("w-fit", buttonVariants({ variant: "outline" }))}
+        >
+          <Icons.goBack className="mr-2" /> Go back
+        </Link>
         <div className="grid grid-cols-5">
           <section className="col-span-5 lg:col-span-4">
             <AspectRatio ratio={16 / 9}>
