@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import { ImageResponse } from "@vercel/og";
 import type { ServerRuntime } from "next";
 import * as z from "zod";
@@ -104,7 +105,11 @@ export async function GET(request: Request) {
                 paddingBottom: 10,
               }}
             >
-              {description || "anym8.vercel.app"}
+              {description
+                ? description?.length > 300
+                  ? `${description?.slice(0, 300)} ...`
+                  : description
+                : env.NEXT_PUBLIC_APP_URL}
             </p>
             <div
               style={{
