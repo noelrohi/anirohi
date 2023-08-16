@@ -7,7 +7,6 @@ import * as z from "zod";
 const ogImageSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
-  episode: z.string().optional(),
   banner: z.string().url(),
   cover: z.string().url(),
 });
@@ -21,7 +20,7 @@ export async function GET(request: Request) {
       Object.fromEntries(url.searchParams)
     );
 
-    const { title, banner, cover, episode } = parsedValues;
+    const { title, banner, cover } = parsedValues;
     const description = parsedValues.description
       ? removeHtmlTags(parsedValues.description)
       : env.NEXT_PUBLIC_APP_URL;
@@ -96,8 +95,6 @@ export async function GET(request: Request) {
               }}
             >
               {title}
-
-              {episode ? ` Episode ${episode}` : ""}
             </h1>
             <p
               style={{
