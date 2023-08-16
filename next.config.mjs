@@ -16,11 +16,12 @@ const config = {
             hostname: "artworks.thetvdb.com",
 
         }
-    ]
+    ],
+    unoptimized: true,
   },
   experimental: {
     serverActions: true,
-  }
+  },
 };
  
 export default config;
