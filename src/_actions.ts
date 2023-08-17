@@ -7,7 +7,11 @@ import { accounts } from "./db/schema/auth";
 import { mutateAnilist } from "./lib/anilist";
 import { revalidatePath } from "next/cache";
 
-export async function updateAnimeProgress(animeId: number, progress: number) {
+export async function updateAnimeProgress(
+  animeId: number,
+  progress: number,
+  pathname: string
+) {
   try {
     const session = await auth();
     const account = await db.query.accounts.findFirst({
@@ -34,5 +38,7 @@ export async function updateAnimeProgress(animeId: number, progress: number) {
   } catch (e) {
     const error = e as Error;
     return { ok: false, message: error.message };
+  } finally {
+    revalidatePath(pathname);
   }
 }
