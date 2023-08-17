@@ -1,13 +1,9 @@
 "use client";
 
-import ReactPlayer from "react-player/lazy";
-import { ReactPlayerProps } from "react-player/lazy";
+import { Icons } from "@/components/icons";
+import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
 
-export default function VideoPlayer({
-  url,
-  fallback,
-  playIcon,
-}: ReactPlayerProps) {
+export default function VideoPlayer({ url, playIcon }: ReactPlayerProps) {
   return (
     <div className="relative w-full h-full">
       <ReactPlayer
@@ -15,7 +11,7 @@ export default function VideoPlayer({
         width="100%"
         height="100%"
         controls={true}
-        fallback={fallback}
+        playIcon={playIcon}
       />
     </div>
   );

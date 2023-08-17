@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { checkIsWatched } from "@/lib/anilist";
 import { getAnime, getEpisode, getSource } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
@@ -136,7 +137,11 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     currentEpisodeIndex,
     anime.episodes
   );
-
+  const isWatched = await checkIsWatched({
+    episodeNumber: episode.number,
+    mediaId: anime.mappings.anilist,
+    userName: session?.user.name,
+  });
   return (
     <main className="container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -185,15 +190,16 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
               Previous
             </Link>
           )}
-          {session?.user && (
+          {session?.user ? (
             <UpdateProgressButton
               animeId={anime.anilistId}
               progress={episode.number}
+              isWatched={isWatched}
             >
               <Icons.anilist className="mr-2" />
-              Update
+              {isWatched ? "Mark as unwatched" : "Mark as watched"}
             </UpdateProgressButton>
-          )}
+          ) : null}
 
           {nextEpisode && (
             <Link
