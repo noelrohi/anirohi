@@ -10,21 +10,17 @@ interface Props {
   progress: number;
   animeId: number;
   children: React.ReactNode;
-  isWatched?: boolean;
+  isWatched?: boolean | null;
 }
 
-export default function UpdateProgressButton({
-  progress,
-  animeId,
-  children,
-  isWatched = false,
-}: Props) {
+export default function UpdateProgressButton(props: Props) {
+  const { animeId, children, isWatched = false } = props;
+  const progress = isWatched ? props.progress - 1 : props.progress;
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
   return (
-    // TODO: disable if it's updated already in MediaListCollection
     <Button
-      disabled={isPending || isWatched}
+      disabled={isPending}
       onClick={() => {
         startTransition(async () => {
           const res = await updateAnimeProgress(animeId, progress, pathname);
@@ -38,7 +34,7 @@ export default function UpdateProgressButton({
         });
       }}
     >
-      {isPending ? <Icons.loader className="mr-2" /> : null}
+      {isPending ? <Icons.loader className="mr-2 animate-spin" /> : null}
       {children}
     </Button>
   );
