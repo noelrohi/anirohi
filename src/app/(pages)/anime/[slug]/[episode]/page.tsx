@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import UpdateProgressButton from "./update-progress";
 import VideoPlayer from "./video-player";
+import { EpisodeScrollArea } from "./episodes-scroll-area";
 
 interface EpisodePageProps {
   params: {
@@ -172,12 +173,16 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </AspectRatio>
           </section>
           <aside className="lg:col-span-1">
-            <EpisodeScrollArea
-              className="hidden lg:block"
-              episodes={anime.episodes}
-              slug={params.slug}
-              currentEpisode={episode.number}
-            />
+            <div className="hidden lg:block ml-4">
+              <h4 className="mb-4 text-sm font-medium leading-none">
+                Episodes
+              </h4>
+              <EpisodeScrollArea
+                episodes={anime.episodes}
+                slug={params.slug}
+                currentEpisode={episode.number}
+              />
+            </div>
           </aside>
         </div>
         <div className="flex flex-row gap-1 p-4 justify-end w-fit">
@@ -212,74 +217,22 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         </div>
         <div className="flex flex-row">
           <div className="flex flex-col gap-4 justify-center p-4 w-fit">
-            <h1 className="text-2xl font-bold">{episode.title}</h1>
-            <p className="text-lg">{episode.description}</p>
+            <h1 className="text-lg lg:text-2xl font-bold">{episode.title}</h1>
+            <p className="text-md lg:text-lg">{episode.description}</p>
+            <Separator className="my-2" />
+            <div className="block lg:hidden">
+              <h4 className="mb-4 text-sm font-medium leading-none">
+                Episodes
+              </h4>
+              <EpisodeScrollArea
+                episodes={anime.episodes}
+                slug={params.slug}
+                currentEpisode={episode.number}
+              />
+            </div>
           </div>
         </div>
-        <EpisodeScrollArea
-          className="block lg:hidden"
-          episodes={anime.episodes}
-          slug={params.slug}
-          currentEpisode={episode.number}
-        />
       </div>
     </main>
-  );
-}
-
-interface EpisodeScrollAreaProps extends React.HTMLProps<HTMLDivElement> {
-  slug: string;
-  currentEpisode: number;
-  episodes: AnimeResponse["episodes"];
-}
-
-function EpisodeScrollArea({
-  episodes,
-  slug,
-  currentEpisode,
-  className,
-}: EpisodeScrollAreaProps) {
-  return (
-    <ScrollArea
-      className={cn(
-        "lg:h-[32rem] xl:h-[37rem] w-full rounded-md border ml-2",
-        className
-      )}
-    >
-      <div className="p-4">
-        <h4 className="mb-4 text-sm font-medium leading-none">Episodes</h4>
-        {episodes.map((ep) => (
-          <>
-            <Link
-              href={`/anime/${slug}/${ep.number}`}
-              className="flex flex-row justify-between items-center"
-            >
-              <div className="flex flex-row items-center">
-                <Badge
-                  className={cn(
-                    "px-1 py-0 rounded-full mr-2",
-                    ep.number === currentEpisode &&
-                      "bg-blue-700 dark:bg-blue-400"
-                  )}
-                  variant={"destructive"}
-                >
-                  {ep.number}
-                </Badge>
-                <span
-                  className={cn(
-                    "inline-flex gap-2 items-center justify-between",
-                    ep.number === currentEpisode && "font-bold"
-                  )}
-                >
-                  {ep.title || `Episode ${ep.number}`}
-                </span>
-              </div>
-              {ep.number === currentEpisode && <Icons.check />}
-            </Link>
-            <Separator className="my-2" />
-          </>
-        ))}
-      </div>
-    </ScrollArea>
   );
 }
