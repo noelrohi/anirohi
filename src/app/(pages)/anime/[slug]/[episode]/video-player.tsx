@@ -21,6 +21,11 @@ export default function VideoPlayer({
 
   const [isSeeking, setIsSeeking] = useState(false);
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
+  const [playbackRate, setPlaybackRate] = useState<number>(
+    localStorage.getItem("playbackrate")
+      ? Number(localStorage.getItem("playbackrate"))
+      : 1
+  );
   return (
     <div className="relative w-full h-full">
       {/* <div className="border-2 break-all border-red-500">
@@ -31,6 +36,7 @@ export default function VideoPlayer({
         width="100%"
         height="100%"
         controls={true}
+        playbackRate={playbackRate}
         onEnded={() => {
           localStorage.removeItem(key);
         }}
@@ -38,11 +44,11 @@ export default function VideoPlayer({
           if (isSeeking) {
             return;
           }
-          console.log("not seeking ...");
+          // console.log("not seeking ...");
           player.seekTo(state.playedSeconds);
         }}
         onSeek={(number) => {
-          console.log("seeking ...");
+          // console.log("seeking ...");
           setIsSeeking(true);
         }}
         onProgress={(state) => {
@@ -56,6 +62,10 @@ export default function VideoPlayer({
         }}
         onBuffer={() => {
           localStorage.setItem(key, JSON.stringify(state));
+        }}
+        onPlaybackRateChange={(speed: number) => {
+          setPlaybackRate(speed);
+          localStorage.setItem("playbackrate", String(speed));
         }}
         playIcon={playIcon}
       />
