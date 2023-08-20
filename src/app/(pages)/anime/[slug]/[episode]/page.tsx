@@ -1,8 +1,6 @@
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { checkIsWatched } from "@/lib/anilist";
 import { getAnime, getEpisode, getSource } from "@/lib/enime";
@@ -14,9 +12,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
 import VideoPlayer from "./video-player";
-import { EpisodeScrollArea } from "./episodes-scroll-area";
 
 interface EpisodePageProps {
   params: {
@@ -143,6 +141,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     mediaId: anime.mappings.anilist,
     userName: session?.user.name,
   });
+  const username = session?.user.name;
   return (
     <main className="container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -157,6 +156,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             <AspectRatio ratio={16 / 9}>
               <Suspense>
                 <VideoPlayer
+                  user={username}
                   url={source.url}
                   playIcon={<Icons.play />}
                   fallback={
