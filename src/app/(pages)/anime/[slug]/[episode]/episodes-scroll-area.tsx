@@ -25,7 +25,7 @@ export function EpisodeScrollArea({
   const scrollableRef = useRef<HTMLDivElement>(null);
   const mounted = useMounted();
   if (mounted) {
-    console.log("mounted", mounted);
+    // console.log("mounted", mounted);
     if (scrollableRef.current && targetRef.current) {
       targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
