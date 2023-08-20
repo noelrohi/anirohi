@@ -1,17 +1,15 @@
-import { Close } from "@radix-ui/react-dialog";
 import {
-  GitHubLogoIcon,
-  GearIcon,
-  MagnifyingGlassIcon,
-  SunIcon,
-  MoonIcon,
-  PlayIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
   CheckIcon,
+  GearIcon,
+  GitHubLogoIcon,
+  MagnifyingGlassIcon,
+  MoonIcon,
+  PlayIcon,
+  SunIcon,
 } from "@radix-ui/react-icons";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
-import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 export const Icons = {
   gitHub: GitHubLogoIcon,
@@ -155,6 +153,23 @@ export const Icons = {
           fillRule="evenodd"
           d="m2.87 7.75l1.97 1.97a.75.75 0 1 1-1.06 1.06L.53 7.53L0 7l.53-.53l3.25-3.25a.75.75 0 0 1 1.06 1.06L2.87 6.25h9.88a3.25 3.25 0 0 1 0 6.5h-2a.75.75 0 0 1 0-1.5h2a1.75 1.75 0 1 0 0-3.5H2.87Z"
           clipRule="evenodd"
+        ></path>
+      </svg>
+    );
+  },
+  view: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 32 32"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <circle cx="16" cy="16" r="4" fill="currentColor"></circle>
+        <path
+          fill="currentColor"
+          d="M30.94 15.66A16.69 16.69 0 0 0 16 5A16.69 16.69 0 0 0 1.06 15.66a1 1 0 0 0 0 .68A16.69 16.69 0 0 0 16 27a16.69 16.69 0 0 0 14.94-10.66a1 1 0 0 0 0-.68ZM16 22.5a6.5 6.5 0 1 1 6.5-6.5a6.51 6.51 0 0 1-6.5 6.5Z"
         ></path>
       </svg>
     );
