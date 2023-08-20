@@ -1,9 +1,7 @@
 "use client";
 
-import { Icons } from "@/components/icons";
-import { useMounted } from "@/hooks/use-mounted";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
 
@@ -11,9 +9,12 @@ export default function VideoPlayer({
   url,
   playIcon,
   user,
-}: ReactPlayerProps & { user: string | undefined | null }) {
+}: ReactPlayerProps & {
+  user: string | undefined | null;
+}) {
   const pathname = usePathname();
-  const storedItem = localStorage.getItem(user ? user : pathname);
+  const key = `${user ? user : ""},${pathname}`;
+  const storedItem = localStorage.getItem(key);
   const parsedStoredItem: OnProgressProps = storedItem
     ? JSON.parse(storedItem)
     : { loadedSeconds: 0, playedSeconds: 0, loaded: 0, played: 0 };
@@ -29,8 +30,7 @@ export default function VideoPlayer({
         height="100%"
         controls={true}
         onEnded={() => {
-          if (user) localStorage.removeItem(user);
-          localStorage.removeItem(pathname);
+          localStorage.removeItem(key);
         }}
         onReady={(player) => {
           player.seekTo(state.playedSeconds);
@@ -42,10 +42,10 @@ export default function VideoPlayer({
           setState({ ...state, loadedSeconds: number });
         }}
         onPause={() => {
-          localStorage.setItem(user ? user : pathname, JSON.stringify(state));
+          localStorage.setItem(key, JSON.stringify(state));
         }}
         onBuffer={() => {
-          localStorage.setItem(user ? user : pathname, JSON.stringify(state));
+          localStorage.setItem(key, JSON.stringify(state));
         }}
         playIcon={playIcon}
       />
