@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { getAnime } from "@/lib/enime";
+import { getAnime, getPopular, getRecent } from "@/lib/enime";
 import { absoluteUrl } from "@/lib/utils";
 import parser from "html-react-parser";
 import { Metadata } from "next";
@@ -24,6 +24,18 @@ async function handleSlug(slug: string) {
   const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
   if (!data) notFound();
   return data;
+}
+
+export async function generateStaticParams(): Promise<
+  SlugPageProps["params"][]
+> {
+  const popular = await getPopular();
+  const recent = await getRecent();
+  const paths = [
+    ...popular.data.map((anime) => ({ slug: anime.slug })),
+    ...recent.data.map((ep) => ({ slug: ep.anime.slug })),
+  ];
+  return paths;
 }
 
 export async function generateMetadata({ params }: SlugPageProps) {

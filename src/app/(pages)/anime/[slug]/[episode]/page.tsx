@@ -65,6 +65,25 @@ async function getPreviousEpisode(
   return episodes[currentEpisodeIndex - 1]?.number || null;
 }
 
+// export async function generateStaticParams(): Promise<
+//   EpisodePageProps["params"][]
+// > {
+//   const popular = await getPopular();
+//   const recent = await getRecent();
+//   const popularPaths = popular.data.map((anime) => {
+//     const currentEpisode = anime.currentEpisode;
+//     // loop from 1 to currentEpsode e.g 1073
+//     return Array.from({ length: currentEpisode }, (_, i) => {
+//       return { episode: String(i + 1), slug: anime.slug };
+//     });
+//   });
+//   const recentPaths = recent.data.map((ep) => ({
+//     slug: ep.anime.slug,
+//     episode: String(ep.number),
+//   }));
+//   return [...popularPaths, ...recentPaths].flat();
+// }
+
 export async function generateMetadata({
   params,
 }: EpisodePageProps): Promise<Metadata> {
@@ -141,7 +160,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     mediaId: anime.mappings.anilist,
     userName: session?.user.name,
   });
-  const username = session?.user.name;
+  const username = session?.user?.name;
   return (
     <main className="container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -174,9 +193,6 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           </section>
           <aside className="lg:col-span-1">
             <div className="hidden lg:block ml-4">
-              <h4 className="mb-4 text-sm font-medium leading-none">
-                Episodes
-              </h4>
               <EpisodeScrollArea
                 episodes={anime.episodes}
                 slug={params.slug}
@@ -221,9 +237,6 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             <p className="text-md lg:text-lg">{episode.description}</p>
             <Separator className="my-2" />
             <div className="block lg:hidden">
-              <h4 className="mb-4 text-sm font-medium leading-none">
-                Episodes
-              </h4>
               <EpisodeScrollArea
                 episodes={anime.episodes}
                 slug={params.slug}
