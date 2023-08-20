@@ -18,6 +18,8 @@ export default function VideoPlayer({
   const parsedStoredItem: OnProgressProps = storedItem
     ? JSON.parse(storedItem)
     : { loadedSeconds: 0, playedSeconds: 0, loaded: 0, played: 0 };
+
+  const [isSeeking, setIsSeeking] = useState(false);
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
   return (
     <div className="relative w-full h-full">
@@ -33,7 +35,15 @@ export default function VideoPlayer({
           localStorage.removeItem(key);
         }}
         onReady={(player) => {
+          if (isSeeking) {
+            return;
+          }
+          console.log("not seeking ...");
           player.seekTo(state.playedSeconds);
+        }}
+        onSeek={(number) => {
+          console.log("seeking ...");
+          setIsSeeking(true);
         }}
         onProgress={(state) => {
           setState({ ...state, playedSeconds: state.playedSeconds });
