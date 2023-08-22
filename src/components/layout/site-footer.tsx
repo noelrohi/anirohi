@@ -9,14 +9,14 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 export function SiteFooter() {
   return (
     <footer className="w-full border-t bg-background">
-      <div className="container flex flex-col items-center justify-between space-y-1 py-5 md:h-16 md:flex-row md:py-0">
-        <div className="text-center text-base text-muted-foreground">
+      <div className="container flex flex-row justify-between py-4">
+        <div className="break-normal text-base text-muted-foreground">
           Made by{" "}
           <Link
             href={siteConfig.links.github}
             target="_blank"
             rel="noreferrer"
-            className="underline text-primary underline-offset-4"
+            className="underline text-primary underline-offset-[5px]"
           >
             gneiru
           </Link>
@@ -25,25 +25,21 @@ export function SiteFooter() {
             href="https://docs.enime.moe"
             target="_blank"
             rel="noreferrer"
-            className="underline text-primary underline-offset-4"
+            className="underline text-primary underline-offset-[5px]"
           >
             Enime
           </Link>
           .
         </div>
-        <div className="flex items-center space-x-1">
-          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
-            <div
-              className={cn(
-                buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })
-              )}
-            >
-              <Icons.gitHub className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">GitHub</span>
-            </div>
+        <div className="flex space-x-1">
+          <Link
+            href={siteConfig.links.github}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants({ size: "icon", variant: "ghost" })}
+          >
+            <Icons.gitHub className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">GitHub</span>
           </Link>
           <ThemeToggle />
         </div>
