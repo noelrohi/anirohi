@@ -1,18 +1,35 @@
-import Link from "next/link"
+import Link from "next/link";
 
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
-import { ThemeToggle } from "@/components/layout/theme-toggle"
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export function SiteFooter() {
   return (
     <footer className="w-full border-t bg-background">
       <div className="container flex flex-col items-center justify-between space-y-1 py-5 md:h-16 md:flex-row md:py-0">
         <div className="text-center text-base text-muted-foreground">
-          Built with ♥ by{" "}
-          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">gneiru</Link>
+          Made by{" "}
+          <Link
+            href={siteConfig.links.github}
+            target="_blank"
+            rel="noreferrer"
+            className="underline text-primary underline-offset-4"
+          >
+            gneiru
+          </Link>
+          . Powered by{" "}
+          <Link
+            href="https://docs.enime.moe"
+            target="_blank"
+            rel="noreferrer"
+            className="underline text-primary underline-offset-4"
+          >
+            Enime
+          </Link>
+          .
         </div>
         <div className="flex items-center space-x-1">
           <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
@@ -32,5 +49,5 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
