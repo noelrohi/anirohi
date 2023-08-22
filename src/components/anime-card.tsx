@@ -42,7 +42,9 @@ export function AnimeCard({
         </Link>
       </div>
       <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{anime.title}</h3>
+        <h3 className="font-medium leading-none line-clamp-5 lg:line-clamp-none">
+          {anime.title}
+        </h3>
         <p className="text-xs text-muted-foreground">{anime.description}</p>
       </div>
     </div>
