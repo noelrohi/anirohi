@@ -90,6 +90,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
           alt={data.title.userPreferred}
           fill
           className="object-cover"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 to-background/10" />
 
@@ -103,6 +104,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
               height={125}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover portrait"
+              priority
             />
             <p className="font-bold text-md md:text-2xl">
               {data.title.userPreferred}

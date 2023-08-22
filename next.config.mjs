@@ -1,5 +1,9 @@
-import { hostname } from "os";
 import "./src/env.mjs";
+import nextPwa from "next-pwa";
+
+const withPWA = nextPwa({
+  dest: "public",
+});
  
 /** @type {import("next").NextConfig} */
 const config = {
@@ -24,4 +28,4 @@ const config = {
   },
 };
  
-export default config;
+export default withPWA(config);

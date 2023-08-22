@@ -34,6 +34,8 @@ export function EpisodeCard({
             alt={episode.title}
             width={width}
             height={height}
+            priority
+            blurDataURL="/images/placeholder.png"
             className={cn(
               "h-auto w-auto object-cover transition-all hover:scale-105",
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"

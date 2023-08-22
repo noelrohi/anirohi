@@ -18,7 +18,7 @@ export function SiteFooter() {
             rel="noreferrer"
             className="underline text-primary underline-offset-[5px]"
           >
-            gneiru
+            Rohi
           </Link>
           . Powered by{" "}
           <Link
