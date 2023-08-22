@@ -1,11 +1,14 @@
-import { hostname } from "os";
 import "./src/env.mjs";
+import nextPwa from "next-pwa";
+
+const withPWA = nextPwa({
+  dest: "public",
+});
  
 /** @type {import("next").NextConfig} */
 const config = {
   /** ... */
   images: {
-    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
         {
             protocol: 'https',
@@ -25,4 +28,4 @@ const config = {
   },
 };
  
-export default config;
+export default withPWA(config);
