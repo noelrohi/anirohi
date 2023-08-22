@@ -19,6 +19,8 @@ import * as React from "react";
 interface Data {
   title: string;
   slug: string;
+  year: number;
+  image: string;
 }
 
 export function Combobox() {
@@ -35,10 +37,9 @@ export function Combobox() {
     if (debouncedQuery.length > 0) {
       startTransition(async () => {
         const res = await fetch(`/api/search?q=${debouncedQuery}`);
-        if (res.ok) {
-          const data: Data[] = await res.json();
-          setData(data);
-        }
+        if (!res.ok) setData(null);
+        const data: Data[] = await res.json();
+        setData(data);
       });
     }
   }, [debouncedQuery]);
@@ -93,23 +94,56 @@ export function Combobox() {
           </CommandEmpty>
           {isPending ? (
             <div className="space-y-1 overflow-hidden px-1 py-2">
-              <Skeleton className="h-4 w-10 rounded" />
-              <Skeleton className="h-8 rounded-sm" />
-              <Skeleton className="h-8 rounded-sm" />
+              <div className="flex flex-row">
+                <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
+                <div className="flex flex-col gap-2 justify-center h-15">
+                  <Skeleton className="w-40 h-3" />
+                  <Skeleton className="w-20 h-3" />
+                </div>
+
+                <Skeleton className="h-8 rounded-sm" />
+              </div>
+              <div className="flex flex-row">
+                <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
+                <div className="flex flex-col gap-2 justify-center h-15">
+                  <Skeleton className="w-40 h-3" />
+                  <Skeleton className="w-20 h-3" />
+                </div>
+
+                <Skeleton className="h-8 rounded-sm" />
+              </div>
             </div>
           ) : (
-            data?.map(({ slug, title }) => (
-              <CommandGroup key={slug} className="capitalize">
+            <CommandGroup>
+              {data?.map(({ slug, title, image, year }) => (
                 <CommandItem
                   key={slug}
+                  value={title}
                   onSelect={() =>
-                    handleSelect(() => router.push(`/anime/${slug}`))
+                    handleSelect(() => {
+                      startTransition(() => {
+                        setQuery("");
+                        router.push(`/anime/${slug}`);
+                      });
+                    })
                   }
                 >
-                  {title}
+                  <img
+                    src={image}
+                    alt={title}
+                    className="w-10 h-14 mr-4 rounded-sm"
+                  />
+                  <div className="flex flex-col justify-center">
+                    <h3 className="text-sm font-medium leading-none">
+                      {title}
+                    </h3>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {year}
+                    </p>
+                  </div>
                 </CommandItem>
-              </CommandGroup>
-            ))
+              ))}
+            </CommandGroup>
           )}
         </CommandList>
       </CommandDialog>
