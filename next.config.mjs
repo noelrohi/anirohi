@@ -5,6 +5,7 @@ import "./src/env.mjs";
 const config = {
   /** ... */
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
         {
             protocol: 'https',
