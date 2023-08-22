@@ -1,3 +1,4 @@
+import { AnimeCard } from "@/components/anime-card";
 import { EpisodeCard } from "@/components/episode-card";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -6,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getAnime, getPopular, getRecent } from "@/lib/enime";
-import { absoluteUrl } from "@/lib/utils";
+import { absoluteUrl, getTitle, toTitleCase } from "@/lib/utils";
 import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -155,6 +156,36 @@ export default async function SlugPage({ params }: SlugPageProps) {
       ) : (
         <div className="font-semibold text-xl">No episodes found ...</div>
       )}
+      <Separator />
+      {data.relations.length > 0 ? (
+        <>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold tracking-tight">Relations</h2>
+          </div>
+          <div className="relative">
+            <ScrollArea>
+              <div className="flex space-x-4 pb-4">
+                {data.relations.map(({ anime, type }, idx) => (
+                  <AnimeCard
+                    key={idx}
+                    anime={{
+                      title: getTitle(anime.title),
+                      image: anime.coverImage,
+                      description: toTitleCase(type),
+                      slug: anime.slug,
+                    }}
+                    className="lg:w-[250px] w-28"
+                    aspectRatio="portrait"
+                    width={250}
+                    height={330}
+                  />
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+        </>
+      ) : null}
     </main>
   );
 }

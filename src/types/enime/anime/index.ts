@@ -26,7 +26,14 @@ export interface AnimeResponse {
   lastChecks: { [key: string]: number };
   genre: string[];
   episodes: Episode[];
-  relations: any[];
+  relations: Relation[];
+}
+
+interface Relation {
+  type: string;
+  animeId: string;
+  id: string;
+  anime: AnimeResponse;
 }
 
 interface Episode {
@@ -66,7 +73,7 @@ interface Mappings {
 interface Title {
   native: string;
   romaji: string;
-  english: string;
+  english: string | null;
   userPreferred: string;
 }
 
