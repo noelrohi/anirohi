@@ -12,9 +12,9 @@ interface AnimeCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 type Anime = {
   title: string;
-  episode: number;
   image: string;
   slug: string;
+  description: string;
 };
 
 export function AnimeCard({
@@ -43,7 +43,7 @@ export function AnimeCard({
       </div>
       <div className="space-y-1 text-sm">
         <h3 className="font-medium leading-none">{anime.title}</h3>
-        <p className="text-xs text-muted-foreground">Episode {anime.episode}</p>
+        <p className="text-xs text-muted-foreground">{anime.description}</p>
       </div>
     </div>
   );

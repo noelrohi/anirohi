@@ -8,7 +8,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { env } from "@/env.mjs";
 import { getPopular, getRecent } from "@/lib/enime";
-import { cn } from "@/lib/utils";
+import { cn, getTitle } from "@/lib/utils";
 import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -93,9 +93,9 @@ export default async function HomePage() {
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: anime.title.userPreferred,
+                    title: getTitle(anime.title),
                     image: anime.coverImage,
-                    episode: number,
+                    description: `Episode ${number}`,
                     slug: anime.slug,
                   }}
                   className="lg:w-[250px] w-28"
@@ -124,9 +124,9 @@ export default async function HomePage() {
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: anime.title.userPreferred,
+                    title: getTitle(anime.title),
                     image: anime.coverImage,
-                    episode: anime.currentEpisode,
+                    description: `Episode ${anime.currentEpisode}`,
                     slug: anime.slug,
                   }}
                   className="lg:w-[250px] w-28"
