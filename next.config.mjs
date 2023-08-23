@@ -9,6 +9,7 @@ const withPWA = nextPwa({
 const config = {
   /** ... */
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
         {
             protocol: 'https',
@@ -28,4 +29,4 @@ const config = {
   },
 };
  
-export default withPWA(config);
+export default process.env.NODE_ENV === "development" ? config : withPWA(config);

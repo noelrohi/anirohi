@@ -2,12 +2,11 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
-import { siteConfig } from "@/config/site";
-import { fontMono, fontSans } from "@/lib/fonts";
-import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/toaster";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { siteConfig } from "@/config/site";
+import { inter } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -68,15 +67,9 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" className={inter.variable} suppressHydrationWarning>
         <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable,
-            fontMono.variable
-          )}
-        >
+        <body className="min-h-screen bg-background font-sans antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <TailwindIndicator />
