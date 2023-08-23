@@ -2,19 +2,19 @@ import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { checkIsWatched } from "@/lib/anilist";
-import { getAnime, getEpisode, getSource } from "@/lib/enime";
+import { getAnime, getEpisode } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import VideoPlayer from "./video-player";
+import VideoPlayerSSR from "@/components/video-player/ssr";
 
 interface EpisodePageProps {
   params: {
@@ -41,14 +41,6 @@ async function handleEpisode(
     settleEpisode.status === "fulfilled" ? settleEpisode.value : null;
   if (!episodeData) notFound();
   return episodeData;
-}
-
-async function handleSource(id: string) {
-  const [settleSource] = await Promise.allSettled([getSource(id)]);
-  const source =
-    settleSource.status === "fulfilled" ? settleSource.value : null;
-  if (!source) notFound();
-  return source;
 }
 
 async function getNextEpisode(
@@ -144,7 +136,6 @@ export async function generateMetadata({
 export default async function EpisodePage({ params }: EpisodePageProps) {
   const anime = await handleAnime(params.slug);
   const episode = await handleEpisode(anime.episodes, params.episode);
-  const source = await handleSource(episode.sources[0].id);
   const session = await auth();
 
   const currentEpisodeIndex = episode.anime.episodes.findIndex(
@@ -160,7 +151,6 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     mediaId: anime.mappings.anilist,
     userName: session?.user.name,
   });
-  const username = session?.user?.name;
   return (
     <main className="container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -173,21 +163,8 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         <div className="grid grid-cols-5">
           <section className="col-span-5 lg:col-span-4">
             <AspectRatio ratio={16 / 9}>
-              <Suspense>
-                <VideoPlayer
-                  user={username}
-                  url={source.url}
-                  playIcon={<Icons.play />}
-                  fallback={
-                    <Image
-                      src={episode.image || "/images/placeholder.png"}
-                      alt={episode.title}
-                      fill
-                      priority
-                      className="object-contain"
-                    />
-                  }
-                />
+              <Suspense fallback={<Skeleton className="w-full h-full" />}>
+                <VideoPlayerSSR sourceId={episode.sources[0].id} />
               </Suspense>
             </AspectRatio>
           </section>

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
 
-export default function VideoPlayer({
+export default function VideoPlayerCSR({
   url,
   playIcon,
   user,
