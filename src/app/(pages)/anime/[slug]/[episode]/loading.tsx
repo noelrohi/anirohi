@@ -36,7 +36,7 @@ export function LoadingEpisode() {
         <div className="flex flex-row">
           <div className="flex flex-col gap-4 justify-center p-4 w-fit">
             <Skeleton className="w-40 h-10 rounded-md" />
-            <Skeleton className="w-[36rem] h-40 rounded-md" />
+            <Skeleton className="w-[17rem] lg:w-[36rem] h-40 rounded-md" />
             <Separator className="my-2" />
             <div className="block lg:hidden">
               <div className="hidden lg:block ml-4">
