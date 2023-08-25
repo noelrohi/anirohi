@@ -26,6 +26,7 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.6.0",
+    "@tremor/react": "^3.6.6",
     "@vercel/og": "^0.5.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
