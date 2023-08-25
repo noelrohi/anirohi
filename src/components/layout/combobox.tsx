@@ -113,7 +113,7 @@ export function Combobox() {
                 <Skeleton className="h-8 rounded-sm" />
               </div>
             </div>
-          ) : (
+          ) : data ? (
             <CommandGroup>
               {data?.map(({ slug, title, image, year }) => (
                 <CommandItem
@@ -144,7 +144,7 @@ export function Combobox() {
                 </CommandItem>
               ))}
             </CommandGroup>
-          )}
+          ) : null}
         </CommandList>
       </CommandDialog>
     </>
