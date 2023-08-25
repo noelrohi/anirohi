@@ -1,3 +1,6 @@
+import { ListStats as Stats } from "@/types/anilist/list-stats";
+import { statisticQueries } from "./gql-queries";
+
 export async function queryAnilist(
   query: string,
   token: string,
@@ -71,4 +74,27 @@ export async function checkIsWatched(Props: {
   const { data } = await res.json();
   // console.log(data, "data");
   return data?.MediaList?.progress >= episodeNumber;
+}
+
+export async function getStats(
+  username: string,
+  queryType: keyof typeof statisticQueries
+) {
+  const query = statisticQueries[queryType];
+  const res = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: {
+        name: username,
+      },
+    }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data;
 }
