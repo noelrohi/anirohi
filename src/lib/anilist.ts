@@ -49,7 +49,7 @@ export async function checkIsWatched(Props: {
   episodeNumber: number;
 }) {
   const { userName, mediaId, episodeNumber } = Props;
-  if (!userName) throw new Error(`User '${userName}' not found!!`);
+  if (!userName) return null;
   const query = `query($userName: String, $mediaId: Int){
     MediaList(userName:$userName, mediaId: $mediaId){
       progress
@@ -70,7 +70,7 @@ export async function checkIsWatched(Props: {
       },
     }),
   });
-  if (!res.ok) throw new Error(`User '${userName}' not found!!`);
+  if (!res.ok) return null;
   const { data } = await res.json();
   // console.log(data, "data");
   return data?.MediaList?.progress >= episodeNumber;
