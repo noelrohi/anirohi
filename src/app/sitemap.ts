@@ -1,3 +1,4 @@
+import { db } from "@/db";
 import { env } from "@/env.mjs";
 import { getPopular, getRecent } from "@/lib/enime";
 import { MetadataRoute } from "next";
@@ -39,12 +40,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
+  const users = await db.query.users.findMany();
+  const dashboardRoutes = users.map((user) => ({
+    url: `${env.NEXT_PUBLIC_APP_URL}/u/${user.name}`,
+    lastModified: new Date().toISOString(),
+  }));
+
   return [
     ...new Set([
       ...routesMap,
       ...animeMap,
       ...recentEpisodeRoutes.flat(),
       ...popularEpisodeRoutes.flat(),
+      ...dashboardRoutes,
     ]),
   ];
 }
