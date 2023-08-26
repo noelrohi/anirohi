@@ -27,7 +27,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const user = await db.query.users.findFirst({
     where: eq(users.name, params.name),
   });
-  if (!user) throw new Error("User not found!");
+  if (!user) throw new Error("User not found! Try signing in...");
   return (
     <main className="container">
       <div className="flex flex-col gap-8 py-8">
