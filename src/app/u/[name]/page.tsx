@@ -37,6 +37,19 @@ export async function generateMetadata({ params }: DashboardPageProps) {
     openGraph: {
       title,
       description,
+      images: [
+        {
+          url: absoluteUrl("/opengraph-image.png"),
+          width: 1200,
+          height: 630,
+          alt: "opengraph image",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
       images: [absoluteUrl("/opengraph-image.png")],
     },
   };

@@ -20,6 +20,21 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Home",
     description: "Explore popular and airing anime series",
+    type: "website",
+    url: absoluteUrl(`/home`),
+    images: [
+      {
+        url: absoluteUrl("/opengraph-image.png"),
+        width: 1200,
+        height: 630,
+        alt: "home opengraph image",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Home",
+    description: "Explore popular and airing anime series",
     images: [absoluteUrl("/opengraph-image.png")],
   },
 };
