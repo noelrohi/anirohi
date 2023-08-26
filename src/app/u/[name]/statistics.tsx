@@ -58,12 +58,10 @@ export async function Charts({ username }: Props) {
   };
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {yearData.watchYear && (
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Watch Year
-            </h2>
+          <Card>
+            <Title>Watch Year</Title>
             <AreaChart
               className="mt-6"
               data={yearData.watchYear}
@@ -72,13 +70,11 @@ export async function Charts({ username }: Props) {
               colors={["emerald", "gray", "blue"]}
               yAxisWidth={40}
             />
-          </div>
+          </Card>
         )}
         {yearData.releaseYear && (
-          <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Release Year
-            </h2>
+          <Card>
+            <Title>Release Year</Title>
             <AreaChart
               className="mt-6"
               data={yearData.releaseYear}
@@ -87,7 +83,7 @@ export async function Charts({ username }: Props) {
               colors={["emerald", "gray", "blue"]}
               yAxisWidth={40}
             />
-          </div>
+          </Card>
         )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

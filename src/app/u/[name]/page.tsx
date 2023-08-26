@@ -34,7 +34,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <Suspense fallback={<>Loading ...</>}>
           <GeneralStats username={user.name} />
         </Suspense>
-        <Separator />
         <Suspense fallback={<>Loading ...</>}>
           <Charts username={user.name} />
         </Suspense>
