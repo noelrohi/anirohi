@@ -31,10 +31,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   return (
     <main className="container">
       <div className="flex flex-col gap-8 py-8">
-        <Suspense fallback={<>Loading ...</>}>
+        <Suspense fallback={<div>Loading cards...</div>}>
           <GeneralStats username={user.name} />
         </Suspense>
-        <Suspense fallback={<>Loading ...</>}>
+        <Suspense fallback={<div>Loading charts ...</div>}>
           <Charts username={user.name} />
         </Suspense>
       </div>
