@@ -49,7 +49,7 @@ export async function checkIsWatched(Props: {
   episodeNumber: number;
 }) {
   const { userName, mediaId, episodeNumber } = Props;
-  if (!userName) return null;
+  if (!userName) throw new Error(`User '${userName}' not found!!`);
   const query = `query($userName: String, $mediaId: Int){
     MediaList(userName:$userName, mediaId: $mediaId){
       progress
@@ -70,14 +70,14 @@ export async function checkIsWatched(Props: {
       },
     }),
   });
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error(`User '${userName}' not found!!`);
   const { data } = await res.json();
   // console.log(data, "data");
   return data?.MediaList?.progress >= episodeNumber;
 }
 
 export async function getStats(
-  username: string,
+  userName: string,
   queryType: keyof typeof statisticQueries
 ) {
   const query = statisticQueries[queryType];
@@ -90,11 +90,11 @@ export async function getStats(
     body: JSON.stringify({
       query,
       variables: {
-        name: username,
+        name: userName,
       },
     }),
   });
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error(`User '${userName}' not found!!`);
   const data = await res.json();
   return data;
 }
