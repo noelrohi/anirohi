@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { Suspense } from "react";
 import { Charts, GeneralStats } from "./statistics";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
+import { GeneralStats as GenStat } from "@/types/anilist/general-stats";
 
 interface DashboardPageProps {
   params: {
@@ -21,6 +23,16 @@ export async function generateStaticParams(): Promise<
     return { name: user.name };
   });
   return params;
+}
+
+export async function generateMetadata({ params }: DashboardPageProps) {
+  const data: GenStat = await getStats(params.name, "general");
+
+  const metadata: Metadata = {
+    title: `${params.name}'s Dashboard`,
+    description: `A user of Anirohi. Watched ${data.data.User.statistics.anime.count} animes`,
+  };
+  return metadata;
 }
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
