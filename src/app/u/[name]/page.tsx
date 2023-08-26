@@ -8,6 +8,7 @@ import { Charts, GeneralStats } from "./statistics";
 import { Separator } from "@/components/ui/separator";
 import { Metadata } from "next";
 import { GeneralStats as GenStat } from "@/types/anilist/general-stats";
+import { absoluteUrl } from "@/lib/utils";
 
 interface DashboardPageProps {
   params: {
@@ -36,6 +37,7 @@ export async function generateMetadata({ params }: DashboardPageProps) {
     openGraph: {
       title,
       description,
+      images: [absoluteUrl("/opengraph-image.png")],
     },
   };
   return metadata;

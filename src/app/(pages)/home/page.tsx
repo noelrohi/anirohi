@@ -8,7 +8,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { env } from "@/env.mjs";
 import { getPopular, getRecent } from "@/lib/enime";
-import { cn, getTitle } from "@/lib/utils";
+import { absoluteUrl, cn, getTitle } from "@/lib/utils";
 import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Home",
     description: "Explore popular and airing anime series",
+    images: [absoluteUrl("/opengraph-image.png")],
   },
 };
 
