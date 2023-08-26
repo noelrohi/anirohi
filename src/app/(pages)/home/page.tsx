@@ -17,6 +17,10 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Home",
   description: "Explore popular and airing anime series",
+  openGraph: {
+    title: "Home",
+    description: "Explore popular and airing anime series",
+  },
 };
 
 export default async function HomePage() {
