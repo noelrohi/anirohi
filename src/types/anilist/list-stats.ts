@@ -33,10 +33,10 @@ interface Country {
   minutesWatched: number;
   chaptersRead: number;
   mediaIds: number[];
-  format?: string;
+  format: string;
   length?: string;
   releaseYear?: number;
   score?: number;
-  startYear?: number;
-  status?: string;
+  startYear: number;
+  status: string;
 }

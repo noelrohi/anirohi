@@ -1,6 +1,7 @@
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  CalendarIcon,
   CheckIcon,
   GearIcon,
   GitHubLogoIcon,
@@ -171,6 +172,93 @@ export const Icons = {
           fill="currentColor"
           d="M30.94 15.66A16.69 16.69 0 0 0 16 5A16.69 16.69 0 0 0 1.06 15.66a1 1 0 0 0 0 .68A16.69 16.69 0 0 0 16 27a16.69 16.69 0 0 0 14.94-10.66a1 1 0 0 0 0-.68ZM16 22.5a6.5 6.5 0 1 1 6.5-6.5a6.51 6.51 0 0 1-6.5 6.5Z"
         ></path>
+      </svg>
+    );
+  },
+  television: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path
+          fill="currentColor"
+          d="M21 17H3V5h18m0-2H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v2h8v-2h5a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"
+        ></path>
+      </svg>
+    );
+  },
+  calendar: CalendarIcon,
+  hourglass: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 15 15"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path
+          fill="currentColor"
+          fillRule="evenodd"
+          d="M12 1h2V0H1v1h2v3.672a2.5 2.5 0 0 0 .732 1.767l.707.707a.5.5 0 0 1 0 .708l-1 1A1.5 1.5 0 0 0 3 9.914V14H1v1h13v-1h-2V9.914a1.5 1.5 0 0 0-.44-1.06l-1-1a.5.5 0 0 1 0-.708l1-1a1.5 1.5 0 0 0 .44-1.06V1ZM4.25 5.5h6.543l.06-.06A.5.5 0 0 0 11 5.085V1H4v3.672c0 .296.088.584.25.828Z"
+          clipRule="evenodd"
+        ></path>
+      </svg>
+    );
+  },
+  percentage: (props: IconProps) => {
+    return (
+      <svg
+        width="0.75em"
+        height="1em"
+        viewBox="0 0 384 512"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path
+          fill="currentColor"
+          d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128a64 64 0 1 0-128 0a64 64 0 1 0 128 0zm256 256a64 64 0 1 0-128 0a64 64 0 1 0 128 0z"
+        ></path>
+      </svg>
+    );
+  },
+  division: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 48 48"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <g
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="4"
+        >
+          <circle cx="24" cy="11" r="5"></circle>
+          <circle cx="24" cy="37" r="5"></circle>
+          <path d="M44 24H4"></path>
+        </g>
+      </svg>
+    );
+  },
+  play2: (props: IconProps) => {
+    return (
+      <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <path fill="currentColor" d="M8 5.14v14l11-7l-11-7Z"></path>
       </svg>
     );
   },

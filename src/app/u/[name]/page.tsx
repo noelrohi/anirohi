@@ -4,7 +4,8 @@ import { getStats } from "@/lib/anilist";
 import { AreaChart } from "@tremor/react";
 import { eq } from "drizzle-orm";
 import { Suspense } from "react";
-import { AreaChartYear, GeneralStats } from "./statistics";
+import { Charts, GeneralStats } from "./statistics";
+import { Separator } from "@/components/ui/separator";
 
 interface DashboardPageProps {
   params: {
@@ -26,18 +27,17 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const user = await db.query.users.findFirst({
     where: eq(users.name, params.name),
   });
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error("User not found!");
   return (
     <main className="container">
-      <div className="flex flex-col">
-        {/* <Suspense fallback={<>Loading ...</>}>
+      <div className="flex flex-col gap-8 py-8">
+        <Suspense fallback={<>Loading ...</>}>
           <GeneralStats username={user.name} />
-        </Suspense> */}
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          <Suspense fallback={<>Loading ...</>}>
-            <AreaChartYear username={user.name} />
-          </Suspense>
-        </div>
+        </Suspense>
+        <Separator />
+        <Suspense fallback={<>Loading ...</>}>
+          <Charts username={user.name} />
+        </Suspense>
       </div>
     </main>
   );

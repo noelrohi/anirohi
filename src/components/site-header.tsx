@@ -82,8 +82,8 @@ export async function SiteHeader({ sticky = false }: SiteHeaderProps) {
                         <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/stores">
+                    <DropdownMenuItem asChild disabled={!user.name}>
+                      <Link href={`/u/${user.name}`}>
                         <Icons.dashboard
                           className="mr-2 h-4 w-4"
                           aria-hidden="true"
