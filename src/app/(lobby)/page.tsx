@@ -1,9 +1,9 @@
+import { Icons } from "@/components/icons";
+import ShimmerButton from "@/components/magicui/shimmer-button";
+import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 import Link from "next/link";
 import Balance from "react-wrap-balancer";
-import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
 
 // export const runtime = "edge"
 
@@ -12,26 +12,20 @@ export default function IndexPage() {
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
-            An anime streaming app built with everything new in Next.js 13
+          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1]">
+            An anime streaming app built using Nextjs 13 Server Components.
           </h1>
           <Balance className="max-w-[46rem] text-lg text-muted-foreground sm:text-xl">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
-            maxime consectetur ab. Dicta magnam quas saepe? Illum aspernatur
-            quos laborum doloribus ea, eum praesentium itaque, commodi magni
-            beatae facere reiciendis.
+            maxime consectetur ab. Dicta magnam quas saepe.
           </Balance>
           <div className="space-x-4">
-            <Link href="/home" className={cn(buttonVariants({ size: "lg" }))}>
-              Get Started
-            </Link>
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-            >
-              GitHub
+            <Link href="/home">
+              <ShimmerButton>
+                <span className="whitespace-pre bg-gradient-to-b from-black from-30% to-gray-300/80 bg-clip-text text-center text-sm lg:text-2xl font-semibold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 dark:text-transparent z-10">
+                  Start Watching
+                </span>
+              </ShimmerButton>
             </Link>
           </div>
         </div>
