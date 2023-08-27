@@ -13,7 +13,6 @@ export default function CarouselSlider({
       autoplay
       pauseOnHover
       adaptiveHeight
-      className="rounded-lg"
       defaultControlsConfig={{
         nextButtonText: <Icons.right />,
         prevButtonText: <Icons.left />,
