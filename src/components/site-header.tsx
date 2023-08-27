@@ -26,16 +26,23 @@ interface User {
   lastName: string;
 }
 
-interface SiteHeaderProps {
+interface SiteHeaderProps extends React.ComponentPropsWithoutRef<"header"> {
   sticky?: boolean;
 }
 
-export async function SiteHeader({ sticky = false }: SiteHeaderProps) {
+export async function SiteHeader({
+  sticky = false,
+  className,
+}: SiteHeaderProps) {
   const session = await auth();
   const user = session?.user;
   return (
     <header
-      className={cn("w-full bg-background", sticky && "sticky top-0 z-40 ")}
+      className={cn(
+        "w-full bg-background",
+        sticky && "sticky top-0 z-40 ",
+        className
+      )}
     >
       <div className="container flex h-16 items-center">
         <MainNav items={siteConfig.mainNav} />

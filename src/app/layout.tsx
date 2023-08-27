@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { inter } from "@/lib/fonts";
+import GridPattern from "@/components/magicui/grid-pattern";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -75,6 +76,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <TailwindIndicator />
           </ThemeProvider>
           <Toaster />
+          <GridPattern
+            width={40}
+            height={40}
+            x={-1}
+            y={-1}
+            className={
+              "-z-10 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)] "
+            }
+          />
         </body>
       </html>
     </>
