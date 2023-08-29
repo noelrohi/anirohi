@@ -13,6 +13,7 @@ export default function CarouselSlider({
       autoplay
       pauseOnHover
       adaptiveHeight
+      wrapAround
       defaultControlsConfig={{
         nextButtonText: <Icons.right />,
         prevButtonText: <Icons.left />,

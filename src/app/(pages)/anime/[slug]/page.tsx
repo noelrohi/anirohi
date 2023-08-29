@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: SlugPageProps) {
 export default async function SlugPage({ params }: SlugPageProps) {
   const data = await handleSlug(params.slug);
   return (
-    <main className="container space-y-2">
+    <main className="px-4 lg:container space-y-2">
       <AspectRatio ratio={16 / 3} className="relative min-h-[125px]">
         <Image
           src={data.bannerImage || "/images/placeholder-image.png"}

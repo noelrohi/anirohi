@@ -152,7 +152,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     userName: session?.user.name,
   });
   return (
-    <main className="container">
+    <main className="px-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
         <Link
           href={`/anime/${params.slug}`}

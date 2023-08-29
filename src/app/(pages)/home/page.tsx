@@ -49,7 +49,7 @@ export default async function HomePage() {
   const popularAnime =
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
   return (
-    <div className="container">
+    <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
         <CarouselSlider>
           {popularAnime?.data?.map((anime) => (
