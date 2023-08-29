@@ -1,7 +1,7 @@
 import { Icons } from "@/components/icons";
 import { getSource } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
-import VideoPlayerCSR from "./csr";
+import dynamic from "next/dynamic";
 
 async function handleSource(id: string) {
   const [settleSource] = await Promise.allSettled([getSource(id)]);
@@ -9,6 +9,8 @@ async function handleSource(id: string) {
     settleSource.status === "fulfilled" ? settleSource.value : null;
   return source;
 }
+
+const VideoPlayerCSR = dynamic(() => import("./csr"), { ssr: false });
 
 export default async function VideoPlayerSSR({
   sourceId,

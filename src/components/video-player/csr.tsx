@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useMounted } from "@/hooks/use-mounted";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { OnProgressProps } from "react-player/base";
@@ -13,42 +15,36 @@ export default function VideoPlayerCSR({
   user: string | undefined | null;
 }) {
   const pathname = usePathname();
-  const key = `${user ? user : ""},${pathname}`;
-  const storedItem = localStorage.getItem(key);
-  const parsedStoredItem: OnProgressProps = storedItem
-    ? JSON.parse(storedItem)
+  const [localStorageMedia, setLocalStorageMedia, deleteLocalStorageMedia] =
+    useLocalStorage(`media-${user ? user : "?"}-${pathname}`, "");
+  const parsedStoredItem: OnProgressProps = localStorageMedia
+    ? JSON.parse(localStorageMedia)
     : { loadedSeconds: 0, playedSeconds: 0, loaded: 0, played: 0 };
 
   const [isSeeking, setIsSeeking] = useState(false);
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
-  const [playbackRate, setPlaybackRate] = useState<number>(
-    localStorage.getItem("playbackrate")
-      ? Number(localStorage.getItem("playbackrate"))
-      : 1
+  const [playbackRate, setPlaybackRate] = useLocalStorage(
+    `playbackrate-${user ? user : "X"}`,
+    "1"
   );
   return (
     <div className="relative w-full h-full">
-      {/* <div className="border-2 break-all border-red-500">
-        {JSON.stringify(state)}
-      </div> */}
       <ReactPlayer
         url={url}
         width="100%"
         height="100%"
         controls={true}
-        playbackRate={playbackRate}
+        playbackRate={Number(playbackRate)}
         onEnded={() => {
-          localStorage.removeItem(key);
+          deleteLocalStorageMedia();
         }}
         onReady={(player) => {
           if (isSeeking) {
             return;
           }
-          // console.log("not seeking ...");
           player.seekTo(state.playedSeconds);
         }}
         onSeek={(number) => {
-          // console.log("seeking ...");
           setIsSeeking(true);
         }}
         onProgress={(state) => {
@@ -58,14 +54,13 @@ export default function VideoPlayerCSR({
           setState({ ...state, loadedSeconds: number });
         }}
         onPause={() => {
-          localStorage.setItem(key, JSON.stringify(state));
+          setLocalStorageMedia(JSON.stringify(state));
         }}
         onBuffer={() => {
-          localStorage.setItem(key, JSON.stringify(state));
+          setLocalStorageMedia(JSON.stringify(state));
         }}
         onPlaybackRateChange={(speed: number) => {
-          setPlaybackRate(speed);
-          localStorage.setItem("playbackrate", String(speed));
+          setPlaybackRate(String(speed));
         }}
         playIcon={playIcon}
       />
