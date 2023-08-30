@@ -6,13 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { env } from "@/env.mjs";
+import { db } from "@/db";
+import { histories } from "@/db/schema/main";
 import { getPopular, getRecent } from "@/lib/enime";
+import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn, getTitle } from "@/lib/utils";
+import { and, eq } from "drizzle-orm";
 import parser from "html-react-parser";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -100,6 +105,25 @@ export default async function HomePage() {
         <Separator className="my-2" />
         <div className="flex items-center justify-between">
           <div className="space-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight">History</h2>
+            <p className="text-sm text-muted-foreground">
+              Continue watching what you've left of
+            </p>
+          </div>
+        </div>
+        <div className="relative">
+          <ScrollArea>
+            <div className="flex space-x-4 pb-4">
+              <Suspense fallback={<div>Loading history ...</div>}>
+                <HistoryList />
+              </Suspense>
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
+        <Separator className="my-2" />
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
             <p className="text-sm text-muted-foreground">
               Recently released anime episodes
@@ -162,4 +186,35 @@ export default async function HomePage() {
       </div>
     </div>
   );
+}
+
+async function HistoryList() {
+  const cookieStore = cookies();
+  const historyId = cookieStore.get("historyId")?.value;
+  const session = await auth();
+  const history = await db.query.histories.findFirst({
+    where: and(
+      eq(histories.userId, session?.user.id),
+      eq(histories.id, Number(historyId))
+    ),
+  });
+  if (!history || !history.medias || history.medias.length === 0) {
+    return <p>Your history is empty ...</p>;
+  }
+  return history?.medias?.map((anime, idx) => (
+    <AnimeCard
+      key={idx}
+      anime={{
+        title: anime.title,
+        image: anime.image || absoluteUrl("/images/placeholder.png"),
+        description: `Episode ${anime.episodeNumber}`,
+        slug: `${anime.slug}/${anime.episodeNumber}`,
+      }}
+      progress={anime.played * 100}
+      className="lg:w-[250px] w-28"
+      aspectRatio="portrait"
+      width={250}
+      height={330}
+    />
+  ));
 }

@@ -20,7 +20,7 @@ export async function updateAnimeProgress(
     const session = await auth();
     const account = await db.query.accounts.findFirst({
       where: and(
-        eq(accounts.userId, session.user.id),
+        eq(accounts.userId, session?.user.id),
         eq(accounts.token_type, "bearer")
       ),
     });
@@ -70,13 +70,14 @@ export async function deleteFromHistory(title: string) {
 
     await db.delete(histories).where(sqlCondition);
 
-    throw new Error("History not found, please try again.");
+    revalidatePath("/home");
+    return;
   }
   await db
     .update(histories)
     .set({
       medias: history.medias?.filter((media) => media.title !== title),
-      userId: session.user.id || null,
+      userId: session?.user.id || null,
     })
     .where(sqlCondition);
 
@@ -97,7 +98,7 @@ export async function addToHistory(input: z.infer<typeof historySchema>) {
   if (!historyId) {
     const history = await db.insert(histories).values({
       medias: [input],
-      userId: session.user.id || null,
+      userId: session?.user.id || null,
     });
 
     cookieStore.set("historyId", String(history.insertId));
@@ -115,8 +116,8 @@ export async function addToHistory(input: z.infer<typeof historySchema>) {
     });
 
     await db.delete(histories).where(sqlCondition);
-
-    throw new Error("History not found, please try again.");
+    revalidatePath("/home");
+    return;
   }
 
   const historyItem = history.medias?.find(
@@ -134,7 +135,7 @@ export async function addToHistory(input: z.infer<typeof historySchema>) {
     .update(histories)
     .set({
       medias: history.medias,
-      userId: session.user.id || null,
+      userId: session?.user.id || null,
     })
     .where(sqlCondition);
 

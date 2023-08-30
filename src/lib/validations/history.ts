@@ -6,4 +6,5 @@ export const historySchema = z.object({
   episodeNumber: z.number(),
   played: z.number(),
   seconds: z.number(),
+  slug: z.string(),
 });

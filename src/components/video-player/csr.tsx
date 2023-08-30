@@ -14,9 +14,11 @@ export default function VideoPlayerCSR({
   playIcon,
   user,
   episode,
+  seekSecond,
 }: ReactPlayerProps & {
   user: string | undefined | null;
   episode: EpisodeResponse;
+  seekSecond?: number;
 }) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -40,6 +42,7 @@ export default function VideoPlayerCSR({
         title: episode.anime.title.userPreferred,
         image: episode.anime.coverImage,
         played: state.played,
+        slug: episode.anime.slug,
         seconds: state.playedSeconds,
         episodeNumber: episode.number,
       });
@@ -60,6 +63,7 @@ export default function VideoPlayerCSR({
       if (nextEpisode !== null) {
         await addToHistory({
           title: episode.anime.title.userPreferred,
+          slug: episode.anime.slug,
           image: episode.anime.coverImage,
           played: 0,
           episodeNumber: episode.number + 1,
@@ -75,7 +79,7 @@ export default function VideoPlayerCSR({
     if (isSeeking) {
       return;
     }
-    player.seekTo(state.playedSeconds);
+    player.seekTo(seekSecond || state.playedSeconds);
   };
 
   return (
