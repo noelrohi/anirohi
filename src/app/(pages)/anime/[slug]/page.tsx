@@ -89,7 +89,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
   const data = await handleSlug(params.slug);
   return (
     <main className="px-4 lg:container space-y-2">
-      <AspectRatio ratio={16 / 3} className="relative min-h-[125px]">
+      <AspectRatio ratio={16 / 5} className="relative min-h-[125px]">
         <Image
           src={data.bannerImage || "/images/placeholder-image.png"}
           alt={data.title.userPreferred}
@@ -97,10 +97,8 @@ export default async function SlugPage({ params }: SlugPageProps) {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 to-background/10" />
-
-        <div className="absolute top-0 left-0 w-full h-full backdrop-blur-sm" />
-        <div className="absolute bottom-0 left-0 -mb-[62.5px] ml-4">
+        <div className="absolute inset-0 bg-gradient-to-t from-background to-background/10" />
+        <div className="absolute bottom-0 left-0 -mb-[62.5px] ml-4 max-w-2xl">
           <div className="flex flex-row gap-4">
             <Image
               src={data.coverImage}
@@ -108,7 +106,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
               width={125}
               height={125}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover portrait"
+              className="object-cover portrait rounded-lg"
               priority
             />
             <p className="font-bold text-md md:text-2xl">
@@ -118,11 +116,11 @@ export default async function SlugPage({ params }: SlugPageProps) {
         </div>
         <div className="absolute -bottom-4 left-40">
           <Suspense fallback={<Button>Loading ...</Button>}>
-            <WatchWhat slug={data.slug} />
+            <WatchButton slug={data.slug} />
           </Suspense>
         </div>
       </AspectRatio>
-      <div className="h-32 sm:h-[62.5px]" />
+      <div className="h-[62.5px]" />
       <div className="flex gap-2">
         {data.genre.map((name) => (
           <Badge variant={"secondary"} key={name}>
@@ -196,7 +194,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
   );
 }
 
-async function WatchWhat({ slug }: { slug: string }) {
+async function WatchButton({ slug }: { slug: string }) {
   const session = await auth();
   if (!session?.user) {
     return (
