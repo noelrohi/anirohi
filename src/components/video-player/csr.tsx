@@ -18,7 +18,7 @@ export default function VideoPlayerCSR({
 }: ReactPlayerProps & {
   user: string | undefined | null;
   episode: EpisodeResponse;
-  seekSecond?: number;
+  seekSecond: number | undefined;
 }) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -34,18 +34,22 @@ export default function VideoPlayerCSR({
     `playbackrate-${user ? user : "X"}`,
     "1"
   );
+  const seekToValue = seekSecond && user ? seekSecond : state.playedSeconds;
 
   const handlePause = () => {
     startTransition(async () => {
       console.log(`Played ${(state.played * 100).toFixed(2)}%`);
-      await addToHistory({
-        title: episode.anime.title.userPreferred,
-        image: episode.anime.coverImage,
-        played: state.played,
-        slug: episode.anime.slug,
-        seconds: state.playedSeconds,
-        episodeNumber: episode.number,
-      });
+      if (user) {
+        await addToHistory({
+          slug: episode.anime.slug,
+          title: episode.anime.title.userPreferred,
+          image: episode.anime.coverImage,
+          progress: state.played,
+          pathname,
+          duration: state.playedSeconds,
+          episodeNumber: episode.number,
+        });
+      }
       setLocalStorageMedia(JSON.stringify(state));
     });
   };
@@ -53,25 +57,15 @@ export default function VideoPlayerCSR({
   const handleEnded = () => {
     deleteLocalStorageMedia();
     startTransition(async () => {
-      const currentEpisodeIndex = episode.anime.episodes.findIndex(
-        (e) => e.number === episode.number
-      );
-      const nextEpisode = await getNextEpisode(
-        currentEpisodeIndex,
-        episode.anime.episodes
-      );
-      if (nextEpisode !== null) {
-        await addToHistory({
-          title: episode.anime.title.userPreferred,
-          slug: episode.anime.slug,
-          image: episode.anime.coverImage,
-          played: 0,
-          episodeNumber: episode.number + 1,
-          seconds: 0,
-        });
-      } else {
-        await deleteFromHistory(episode.anime.title.userPreferred);
-      }
+      await addToHistory({
+        slug: episode.anime.slug,
+        title: episode.anime.title.userPreferred,
+        image: episode.anime.coverImage,
+        progress: 100,
+        pathname,
+        duration: state.playedSeconds,
+        episodeNumber: episode.number,
+      });
     });
   };
 
@@ -79,7 +73,7 @@ export default function VideoPlayerCSR({
     if (isSeeking) {
       return;
     }
-    player.seekTo(seekSecond || state.playedSeconds);
+    player.seekTo(seekToValue);
   };
 
   return (

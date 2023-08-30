@@ -11,10 +11,9 @@ import { histories } from "@/db/schema/main";
 import { getPopular, getRecent } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn, getTitle } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import parser from "html-react-parser";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -103,25 +102,9 @@ export default async function HomePage() {
           ))}
         </CarouselSlider>
         <Separator className="my-2" />
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">History</h2>
-            <p className="text-sm text-muted-foreground">
-              Continue watching what you've left of
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          <ScrollArea>
-            <div className="flex space-x-4 pb-4">
-              <Suspense fallback={<div>Loading history ...</div>}>
-                <HistoryList />
-              </Suspense>
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-        <Separator className="my-2" />
+        <Suspense fallback={<div>Loading history ...</div>}>
+          <HistoryList />
+        </Suspense>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
@@ -189,32 +172,48 @@ export default async function HomePage() {
 }
 
 async function HistoryList() {
-  const cookieStore = cookies();
-  const historyId = cookieStore.get("historyId")?.value;
   const session = await auth();
-  const history = await db.query.histories.findFirst({
+  if (!session?.user) return null;
+  const history = await db.query.histories.findMany({
     where: and(
-      eq(histories.userId, session?.user.id),
-      eq(histories.id, Number(historyId))
+      eq(histories.userId, session.user.id),
+      ne(histories.progress, 100)
     ),
   });
-  if (!history || !history.medias || history.medias.length === 0) {
-    return <p>Your history is empty ...</p>;
-  }
-  return history?.medias?.map((anime, idx) => (
-    <AnimeCard
-      key={idx}
-      anime={{
-        title: anime.title,
-        image: anime.image || absoluteUrl("/images/placeholder.png"),
-        description: `Episode ${anime.episodeNumber}`,
-        slug: `${anime.slug}/${anime.episodeNumber}`,
-      }}
-      progress={anime.played * 100}
-      className="lg:w-[250px] w-28"
-      aspectRatio="portrait"
-      width={250}
-      height={330}
-    />
-  ));
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">History</h2>
+          <p className="text-sm text-muted-foreground">
+            Continue watching what you've left of
+          </p>
+        </div>
+      </div>
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {history.map((anime, idx) => (
+              <AnimeCard
+                key={idx}
+                anime={{
+                  title: anime.title,
+                  image: anime.image || absoluteUrl("/images/placeholder.png"),
+                  description: `Episode ${anime.episodeNumber}`,
+                  slug: `${anime.slug}/${anime.episodeNumber}`,
+                }}
+                progress={anime.progress * 100}
+                className="lg:w-[250px] w-28"
+                aspectRatio="portrait"
+                width={250}
+                height={330}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+      <Separator className="my-2" />
+    </>
+  );
 }

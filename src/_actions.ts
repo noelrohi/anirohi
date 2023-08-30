@@ -2,14 +2,11 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { z } from "zod";
 import { db } from "./db";
 import { accounts } from "./db/schema/auth";
-import { histories } from "./db/schema/main";
+import { InsertHistory, histories } from "./db/schema/main";
 import { mutateAnilist } from "./lib/anilist";
 import { auth } from "./lib/nextauth";
-import { historySchema } from "./lib/validations/history";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -47,97 +44,41 @@ export async function updateAnimeProgress(
   }
 }
 
-export async function deleteFromHistory(title: string) {
-  const cookieStore = cookies();
-  const historyId = cookieStore.get("historyId")?.value;
+export async function deleteFromHistory(pathname: string) {
   const session = await auth();
-  const sqlCondition = session?.user
-    ? and(
-        eq(histories.userId, session.user.id),
-        eq(histories.id, Number(historyId))
-      )
-    : eq(histories.id, Number(historyId));
-
-  const history = await db.query.histories.findFirst({
-    where: sqlCondition,
-  });
-  if (!history) {
-    cookieStore.set({
-      name: "historyId",
-      value: "",
-      expires: new Date(0),
-    });
-
-    await db.delete(histories).where(sqlCondition);
-
-    revalidatePath("/home");
-    return;
-  }
+  if (!session?.user) throw new Error("Not authenticated!");
   await db
-    .update(histories)
-    .set({
-      medias: history.medias?.filter((media) => media.title !== title),
-      userId: session?.user.id || null,
-    })
-    .where(sqlCondition);
-
+    .delete(histories)
+    .where(
+      and(
+        eq(histories.userId, session.user.id),
+        eq(histories.pathname, pathname)
+      )
+    );
   revalidatePath("/home");
 }
 
-export async function addToHistory(input: z.infer<typeof historySchema>) {
-  const cookieStore = cookies();
-  const historyId = cookieStore.get("historyId")?.value;
+export async function addToHistory(input: InsertHistory) {
   const session = await auth();
-  const sqlCondition = session?.user
-    ? and(
-        eq(histories.userId, session.user.id),
-        eq(histories.id, Number(historyId))
-      )
-    : eq(histories.id, Number(historyId));
-
-  if (!historyId) {
-    const history = await db.insert(histories).values({
-      medias: [input],
-      userId: session?.user.id || null,
-    });
-
-    cookieStore.set("historyId", String(history.insertId));
-    revalidatePath("/home");
-    return;
-  }
+  if (!session?.user) throw new Error("Not authenticated!");
   const history = await db.query.histories.findFirst({
-    where: sqlCondition,
+    where: and(
+      eq(histories.userId, session.user.id),
+      eq(histories.title, input.title)
+    ),
   });
-  if (!history) {
-    cookieStore.set({
-      name: "historyId",
-      value: "",
-      expires: new Date(0),
-    });
-
-    await db.delete(histories).where(sqlCondition);
-    revalidatePath("/home");
-    return;
-  }
-
-  const historyItem = history.medias?.find(
-    (media) => media.title === input.title
-  );
-
-  if (historyItem) {
-    historyItem.played = input.played;
-    historyItem.episodeNumber = input.episodeNumber;
+  if (history) {
+    await db
+      .update(histories)
+      .set({ ...input, userId: session.user.id })
+      .where(
+        and(
+          eq(histories.userId, session.user.id),
+          eq(histories.title, input.title)
+        )
+      );
   } else {
-    history.medias?.push(input);
+    await db.insert(histories).values({ ...input, userId: session.user.id });
   }
-
-  await db
-    .update(histories)
-    .set({
-      medias: history.medias,
-      userId: session?.user.id || null,
-    })
-    .where(sqlCondition);
-
   revalidatePath("/home");
 }

@@ -1,6 +1,3 @@
-import { historySchema } from "@/lib/validations/history";
-import { z } from "zod";
-
 export type NavItem = {
   title: string;
   href: string;
@@ -22,5 +19,3 @@ export type SiteConfig = {
     href: string;
   }[];
 };
-
-export type HistoryItem = z.infer<typeof historySchema>;
