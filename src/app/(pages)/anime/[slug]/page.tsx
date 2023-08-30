@@ -106,15 +106,15 @@ export default async function SlugPage({ params }: SlugPageProps) {
               width={125}
               height={125}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover portrait rounded-lg"
+              className="object-cover aspect-[7/8] rounded-md"
               priority
             />
-            <p className="font-bold text-md md:text-2xl">
-              {data.title.userPreferred}
-            </p>
           </div>
         </div>
-        <div className="absolute -bottom-4 left-40">
+        <div className="absolute -bottom-4 left-40 space-y-2">
+          <p className="font-bold text-md md:text-2xl">
+            {data.title.userPreferred}
+          </p>
           <Suspense fallback={<Button>Loading ...</Button>}>
             <WatchButton slug={data.slug} />
           </Suspense>
