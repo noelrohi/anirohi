@@ -40,6 +40,7 @@ export default function VideoPlayerCSR({
         title: episode.anime.title.userPreferred,
         image: episode.anime.coverImage,
         played: state.played,
+        seconds: state.playedSeconds,
         episodeNumber: episode.number,
       });
       setLocalStorageMedia(JSON.stringify(state));
@@ -62,11 +63,19 @@ export default function VideoPlayerCSR({
           image: episode.anime.coverImage,
           played: 0,
           episodeNumber: episode.number + 1,
+          seconds: 0,
         });
       } else {
         await deleteFromHistory(episode.anime.title.userPreferred);
       }
     });
+  };
+
+  const handleReady = (player: ReactPlayer) => {
+    if (isSeeking) {
+      return;
+    }
+    player.seekTo(state.playedSeconds);
   };
 
   return (
@@ -79,12 +88,7 @@ export default function VideoPlayerCSR({
         loop={false}
         playbackRate={Number(playbackRate)}
         onEnded={handleEnded}
-        onReady={(player) => {
-          if (isSeeking) {
-            return;
-          }
-          player.seekTo(state.playedSeconds);
-        }}
+        onReady={handleReady}
         onSeek={(number) => {
           setIsSeeking(true);
         }}

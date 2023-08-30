@@ -5,4 +5,5 @@ export const historySchema = z.object({
   image: z.string().nullable(),
   episodeNumber: z.number(),
   played: z.number(),
+  seconds: z.number(),
 });
