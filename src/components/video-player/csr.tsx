@@ -1,9 +1,11 @@
 "use client";
 
+import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useMounted } from "@/hooks/use-mounted";
+import { EpisodeResponse } from "@/types/enime";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { OnProgressProps } from "react-player/base";
 import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
 
@@ -11,10 +13,13 @@ export default function VideoPlayerCSR({
   url,
   playIcon,
   user,
+  episode,
 }: ReactPlayerProps & {
   user: string | undefined | null;
+  episode: EpisodeResponse;
 }) {
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const [localStorageMedia, setLocalStorageMedia, deleteLocalStorageMedia] =
     useLocalStorage(`media-${user ? user : "?"}-${pathname}`, "");
   const parsedStoredItem: OnProgressProps = localStorageMedia
@@ -27,6 +32,18 @@ export default function VideoPlayerCSR({
     `playbackrate-${user ? user : "X"}`,
     "1"
   );
+
+  const handlePause = () => {
+    startTransition(async () => {
+      await addToHistory({
+        title: episode.anime.title.userPreferred,
+        image: episode.anime.coverImage,
+        played: state.played,
+        episodeNumber: episode.number,
+      });
+      setLocalStorageMedia(JSON.stringify(state));
+    });
+  };
   return (
     <div className="relative w-full h-full">
       <ReactPlayer
@@ -54,10 +71,10 @@ export default function VideoPlayerCSR({
           setState({ ...state, loadedSeconds: number });
         }}
         onPause={() => {
-          setLocalStorageMedia(JSON.stringify(state));
+          handlePause();
         }}
         onBuffer={() => {
-          setLocalStorageMedia(JSON.stringify(state));
+          handlePause();
         }}
         onPlaybackRateChange={(speed: number) => {
           setPlaybackRate(String(speed));

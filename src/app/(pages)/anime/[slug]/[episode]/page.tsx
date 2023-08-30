@@ -164,7 +164,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           <section className="col-span-5 lg:col-span-4">
             <AspectRatio ratio={16 / 9}>
               <Suspense fallback={<Skeleton className="w-full h-full" />}>
-                <VideoPlayerSSR sourceId={episode.sources[0].id} />
+                <VideoPlayerSSR episode={episode} />
               </Suspense>
             </AspectRatio>
           </section>

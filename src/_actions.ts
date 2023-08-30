@@ -1,11 +1,15 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { db } from "./db";
-import { auth } from "./lib/nextauth";
-import { accounts } from "./db/schema/auth";
-import { mutateAnilist } from "./lib/anilist";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { z } from "zod";
+import { db } from "./db";
+import { accounts } from "./db/schema/auth";
+import { histories } from "./db/schema/main";
+import { mutateAnilist } from "./lib/anilist";
+import { auth } from "./lib/nextauth";
+import { historySchema } from "./lib/validations/history";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -41,4 +45,47 @@ export async function updateAnimeProgress(
   } finally {
     revalidatePath(pathname);
   }
+}
+
+export async function addToHistory(input: z.infer<typeof historySchema>) {
+  const cookieStore = cookies();
+  const historyId = cookieStore.get("historyId")?.value;
+  if (!historyId) {
+    const history = await db.insert(histories).values({
+      imageUrl: input.image,
+      title: input.title,
+      episodeNumber: input.episodeNumber,
+      progress: input.played,
+    });
+
+    cookieStore.set("historyId", String(history.insertId));
+    revalidatePath("/home");
+    return;
+  }
+  const history = await db.query.histories.findFirst({
+    where: eq(histories.id, Number(historyId)),
+  });
+
+  // TODO: Find a better way to deal with expired historyId
+  if (!history) {
+    cookieStore.set({
+      name: "historyId",
+      value: "",
+      expires: new Date(0),
+    });
+
+    await db.delete(histories).where(eq(histories.id, Number(historyId)));
+
+    throw new Error("History not found, please try again.");
+  }
+
+  await db
+    .update(histories)
+    .set({
+      progress: input.played,
+      episodeNumber: input.episodeNumber,
+    })
+    .where(eq(histories.id, Number(historyId)));
+
+  revalidatePath("/home");
 }
