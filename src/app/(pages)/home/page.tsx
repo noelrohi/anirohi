@@ -186,7 +186,7 @@ async function HistoryList() {
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">History</h2>
           <p className="text-sm text-muted-foreground">
-            Continue watching what you've left of
+            Continue watching what you&apos;ve left of
           </p>
         </div>
       </div>
