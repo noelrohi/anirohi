@@ -21,7 +21,7 @@ export async function generateStaticParams(): Promise<
 > {
   const users = await db.query.users.findMany();
   const params = users.map((user) => {
-    return { name: user.name };
+    return { name: user.name! };
   });
   return params;
 }
@@ -65,10 +65,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     <main className="container">
       <div className="flex flex-col gap-8 py-8">
         <Suspense fallback={<div>Loading cards...</div>}>
-          <GeneralStats username={user.name} />
+          <GeneralStats username={user.name!} />
         </Suspense>
         <Suspense fallback={<div>Loading charts ...</div>}>
-          <Charts username={user.name} />
+          <Charts username={user.name!} />
         </Suspense>
       </div>
     </main>
