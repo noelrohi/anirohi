@@ -109,7 +109,7 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
             <p className="text-sm text-muted-foreground">
-              Recently released anime episodes
+              Freshly aired episodes of anime that have been recently released.
             </p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Popular</h2>
             <p className="text-sm text-muted-foreground">
-              Hot airing anime series
+              Currently airing anime series in high demand.
             </p>
           </div>
         </div>
@@ -186,7 +186,7 @@ async function HistoryList() {
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">History</h2>
           <p className="text-sm text-muted-foreground">
-            Continue watching what you&apos;ve left of
+            Pick up where you left off in your video watching progress.
           </p>
         </div>
       </div>
