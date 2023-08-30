@@ -1,8 +1,7 @@
 "use client";
 
-import { addToHistory, deleteFromHistory } from "@/_actions";
+import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { getNextEpisode } from "@/lib/utils";
 import { EpisodeResponse } from "@/types/enime";
 import { usePathname } from "next/navigation";
 import { useState, useTransition } from "react";

@@ -3,16 +3,21 @@ import { EpisodeCard } from "@/components/episode-card";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { db } from "@/db";
+import { histories } from "@/db/schema/main";
 import { getAnime, getPopular, getRecent } from "@/lib/enime";
+import { auth } from "@/lib/nextauth";
 import { absoluteUrl, getTitle, toTitleCase } from "@/lib/utils";
+import { and, eq } from "drizzle-orm";
 import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 interface SlugPageProps {
   params: {
@@ -112,10 +117,9 @@ export default async function SlugPage({ params }: SlugPageProps) {
           </div>
         </div>
         <div className="absolute -bottom-4 left-40">
-          <Link href={`/anime/${data.slug}/1`} className={buttonVariants()}>
-            <Icons.play className="mr-2" />
-            Watch Episode 1
-          </Link>
+          <Suspense fallback={<Button>Loading ...</Button>}>
+            <WatchWhat slug={data.slug} />
+          </Suspense>
         </div>
       </AspectRatio>
       <div className="h-32 sm:h-[62.5px]" />
@@ -189,5 +193,35 @@ export default async function SlugPage({ params }: SlugPageProps) {
         </>
       ) : null}
     </main>
+  );
+}
+
+async function WatchWhat({ slug }: { slug: string }) {
+  const session = await auth();
+  if (!session?.user) {
+    return (
+      <>
+        <Link href={`/anime/${slug}/1`} className={buttonVariants()}>
+          <Icons.play className="mr-2" />
+          Watch ep. 1
+        </Link>
+      </>
+    );
+  }
+  const progress = await db.query.histories.findFirst({
+    where: and(eq(histories.userId, session.user.id), eq(histories.slug, slug)),
+  });
+  return (
+    <>
+      <Link
+        href={`/anime/${slug}/${progress?.episodeNumber || 1}`}
+        className={buttonVariants()}
+      >
+        <Icons.play className="mr-2" />
+        {progress?.episodeNumber
+          ? `Continue ep. ${progress.episodeNumber}`
+          : `Start ep. ${1}`}
+      </Link>
+    </>
   );
 }
