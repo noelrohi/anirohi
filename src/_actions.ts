@@ -47,26 +47,20 @@ export async function updateAnimeProgress(
   }
 }
 
-export async function addToHistory(input: z.infer<typeof historySchema>) {
+export async function deleteFromHistory(title: string) {
   const cookieStore = cookies();
   const historyId = cookieStore.get("historyId")?.value;
-  if (!historyId) {
-    const history = await db.insert(histories).values({
-      imageUrl: input.image,
-      title: input.title,
-      episodeNumber: input.episodeNumber,
-      progress: input.played,
-    });
+  const session = await auth();
+  const sqlCondition = session?.user
+    ? and(
+        eq(histories.userId, session.user.id),
+        eq(histories.id, Number(historyId))
+      )
+    : eq(histories.id, Number(historyId));
 
-    cookieStore.set("historyId", String(history.insertId));
-    revalidatePath("/home");
-    return;
-  }
   const history = await db.query.histories.findFirst({
-    where: eq(histories.id, Number(historyId)),
+    where: sqlCondition,
   });
-
-  // TODO: Find a better way to deal with expired historyId
   if (!history) {
     cookieStore.set({
       name: "historyId",
@@ -74,18 +68,75 @@ export async function addToHistory(input: z.infer<typeof historySchema>) {
       expires: new Date(0),
     });
 
-    await db.delete(histories).where(eq(histories.id, Number(historyId)));
+    await db.delete(histories).where(sqlCondition);
 
     throw new Error("History not found, please try again.");
+  }
+  await db
+    .update(histories)
+    .set({
+      medias: history.medias?.filter((media) => media.title !== title),
+      userId: session.user.id || null,
+    })
+    .where(sqlCondition);
+
+  revalidatePath("/home");
+}
+
+export async function addToHistory(input: z.infer<typeof historySchema>) {
+  const cookieStore = cookies();
+  const historyId = cookieStore.get("historyId")?.value;
+  const session = await auth();
+  const sqlCondition = session?.user
+    ? and(
+        eq(histories.userId, session.user.id),
+        eq(histories.id, Number(historyId))
+      )
+    : eq(histories.id, Number(historyId));
+
+  if (!historyId) {
+    const history = await db.insert(histories).values({
+      medias: [input],
+      userId: session.user.id || null,
+    });
+
+    cookieStore.set("historyId", String(history.insertId));
+    revalidatePath("/home");
+    return;
+  }
+  const history = await db.query.histories.findFirst({
+    where: sqlCondition,
+  });
+  if (!history) {
+    cookieStore.set({
+      name: "historyId",
+      value: "",
+      expires: new Date(0),
+    });
+
+    await db.delete(histories).where(sqlCondition);
+
+    throw new Error("History not found, please try again.");
+  }
+
+  const historyItem = history.medias?.find(
+    (media) => media.title === input.title
+  );
+
+  if (historyItem) {
+    historyItem.played = input.played;
+    historyItem.episodeNumber = input.episodeNumber;
+  } else {
+    history.medias?.push(input);
   }
 
   await db
     .update(histories)
     .set({
-      progress: input.played,
-      episodeNumber: input.episodeNumber,
+      medias: history.medias,
+      userId: session.user.id || null,
     })
-    .where(eq(histories.id, Number(historyId)));
+    .where(sqlCondition);
 
   revalidatePath("/home");
 }

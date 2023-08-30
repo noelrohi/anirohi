@@ -28,3 +28,12 @@ export function toTitleCase(str: string): string {
 export function getTitle(anime: AnimeResponse["title"]) {
   return anime.english ? anime.english : anime.userPreferred;
 }
+
+export async function getNextEpisode(
+  currentEpisodeIndex: number,
+  episodes: {
+    number: number;
+  }[]
+) {
+  return episodes[currentEpisodeIndex + 1]?.number || null;
+}

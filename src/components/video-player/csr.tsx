@@ -1,8 +1,8 @@
 "use client";
 
-import { addToHistory } from "@/_actions";
+import { addToHistory, deleteFromHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { useMounted } from "@/hooks/use-mounted";
+import { getNextEpisode } from "@/lib/utils";
 import { EpisodeResponse } from "@/types/enime";
 import { usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -35,6 +35,7 @@ export default function VideoPlayerCSR({
 
   const handlePause = () => {
     startTransition(async () => {
+      console.log(`Played ${(state.played * 100).toFixed(2)}%`);
       await addToHistory({
         title: episode.anime.title.userPreferred,
         image: episode.anime.coverImage,
@@ -44,6 +45,30 @@ export default function VideoPlayerCSR({
       setLocalStorageMedia(JSON.stringify(state));
     });
   };
+
+  const handleEnded = () => {
+    deleteLocalStorageMedia();
+    startTransition(async () => {
+      const currentEpisodeIndex = episode.anime.episodes.findIndex(
+        (e) => e.number === episode.number
+      );
+      const nextEpisode = await getNextEpisode(
+        currentEpisodeIndex,
+        episode.anime.episodes
+      );
+      if (nextEpisode !== null) {
+        await addToHistory({
+          title: episode.anime.title.userPreferred,
+          image: episode.anime.coverImage,
+          played: 0,
+          episodeNumber: episode.number + 1,
+        });
+      } else {
+        await deleteFromHistory(episode.anime.title.userPreferred);
+      }
+    });
+  };
+
   return (
     <div className="relative w-full h-full">
       <ReactPlayer
@@ -51,10 +76,9 @@ export default function VideoPlayerCSR({
         width="100%"
         height="100%"
         controls={true}
+        loop={false}
         playbackRate={Number(playbackRate)}
-        onEnded={() => {
-          deleteLocalStorageMedia();
-        }}
+        onEnded={handleEnded}
         onReady={(player) => {
           if (isSeeking) {
             return;
@@ -70,12 +94,8 @@ export default function VideoPlayerCSR({
         onDuration={(number) => {
           setState({ ...state, loadedSeconds: number });
         }}
-        onPause={() => {
-          handlePause();
-        }}
-        onBuffer={() => {
-          handlePause();
-        }}
+        onPause={handlePause}
+        onBuffer={handlePause}
         onPlaybackRateChange={(speed: number) => {
           setPlaybackRate(String(speed));
         }}

@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { checkIsWatched } from "@/lib/anilist";
 import { getAnime, getEpisode } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn } from "@/lib/utils";
+import { absoluteUrl, cn, getNextEpisode } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -41,13 +41,6 @@ async function handleEpisode(
     settleEpisode.status === "fulfilled" ? settleEpisode.value : null;
   if (!episodeData) notFound();
   return episodeData;
-}
-
-async function getNextEpisode(
-  currentEpisodeIndex: number,
-  episodes: AnimeResponse["episodes"]
-) {
-  return episodes[currentEpisodeIndex + 1]?.number || null;
 }
 
 async function getPreviousEpisode(
