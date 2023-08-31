@@ -2,11 +2,13 @@
 
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { getNextEpisode } from "@/lib/utils";
 import { EpisodeResponse } from "@/types/enime";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { OnProgressProps } from "react-player/base";
 import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
+import { toast } from "sonner";
 
 export default function VideoPlayerCSR({
   url,
@@ -20,6 +22,7 @@ export default function VideoPlayerCSR({
   seekSecond: number | undefined;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [localStorageMedia, setLocalStorageMedia, deleteLocalStorageMedia] =
     useLocalStorage(`media-${user ? user : "?"}-${pathname}`, "");
@@ -65,6 +68,17 @@ export default function VideoPlayerCSR({
         duration: state.playedSeconds,
         episodeNumber: episode.number,
       });
+      const currentEpisodeIndex = episode.anime.episodes.findIndex(
+        (e) => e.number === episode.number
+      );
+      const nextEpisode = await getNextEpisode(
+        currentEpisodeIndex,
+        episode.anime.episodes
+      );
+      if (nextEpisode) {
+        toast.loading("Redirecting to next episode..");
+        router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
+      }
     });
   };
 
