@@ -2,11 +2,13 @@
 
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { db } from "./db";
-import { accounts } from "./db/schema/auth";
-import { InsertHistory, histories } from "./db/schema/main";
-import { mutateAnilist } from "./lib/anilist";
-import { auth } from "./lib/nextauth";
+import { db } from "@/db";
+import { accounts } from "@/db/schema/auth";
+import { InsertHistory, histories } from "@/db/schema/main";
+import { mutateAnilist } from "@/lib/anilist";
+import { auth } from "@/lib/nextauth";
+import { headers } from "next/headers";
+import { ratelimit } from "@/lib/utils";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -45,6 +47,18 @@ export async function updateAnimeProgress(
 }
 
 export async function deleteFromHistory(pathname: string) {
+  const ip = headers().get("x-forwarded-for");
+  const { success, limit, remaining, reset } = await ratelimit.limit(
+    ip ?? "anonymous" + "-deleteFromHistory"
+  );
+  if (!success) {
+    console.log(
+      `ratelimit hit for deleteFromHistory , reset in ${new Date(
+        reset
+      ).toUTCString()}`
+    );
+    return;
+  }
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated!");
   await db
@@ -59,6 +73,18 @@ export async function deleteFromHistory(pathname: string) {
 }
 
 export async function addToHistory(input: InsertHistory) {
+  const ip = headers().get("x-forwarded-for");
+  const { success, limit, remaining, reset } = await ratelimit.limit(
+    ip ?? "anonymous" + "-addToHistory"
+  );
+  if (!success) {
+    console.log(
+      `ratelimit hit for addToHistory , reset in ${new Date(
+        reset
+      ).toUTCString()}`
+    );
+    return;
+  }
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated!");
   const history = await db.query.histories.findFirst({

@@ -7,6 +7,8 @@ export const env = createEnv({
     ANILIST_ID: z.string(),
     ANILIST_SECRET: z.string(),
     NEXT_AUTH_SECRET: z.string(),
+    KV_REST_API_URL: z.string().url(),
+    KV_REST_API_TOKEN: z.string()
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
@@ -17,5 +19,7 @@ export const env = createEnv({
     ANILIST_ID: process.env.ANILIST_ID,
     ANILIST_SECRET: process.env.ANILIST_SECRET,
     NEXT_AUTH_SECRET: process.env.NEXT_AUTH_SECRET,
+    KV_REST_API_URL: process.env.KV_REST_API_URL,
+    KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN
   },
 });

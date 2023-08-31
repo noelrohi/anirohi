@@ -2,6 +2,8 @@ import { env } from "@/env.mjs";
 import { AnimeResponse } from "@/types/enime";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { kv } from "@vercel/kv";
+import { Ratelimit } from "@upstash/ratelimit";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,3 +39,8 @@ export async function getNextEpisode(
 ) {
   return episodes[currentEpisodeIndex + 1]?.number || null;
 }
+
+export const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.fixedWindow(5, "60s"),
+});
