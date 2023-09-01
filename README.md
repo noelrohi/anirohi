@@ -27,6 +27,10 @@ Here are some of the features that Anirohi provides:
 
 ### Anilist Integration
 
+Check your stats
+
+![Anilist Dashboard](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/anilist-dashboard.png)
+
 While watching authenticated, you can update your Anilist anime progress.
 
 ![Anilist Update Button](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/mark-anilist.png)
