@@ -1,6 +1,7 @@
 "use client";
 import { OAuthProviders } from "@/lib/nextauth";
 import { signIn, signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 interface AuthButtonProps {
   provider?: OAuthProviders;
@@ -10,7 +11,15 @@ interface AuthButtonProps {
 
 export function SignIn({ provider, children, className }: AuthButtonProps) {
   return (
-    <button onClick={() => signIn(provider)} className={className}>
+    <button
+      onClick={() => {
+        toast.loading("Signing in...");
+        signIn(provider).then(() => {
+          toast.dismiss();
+        });
+      }}
+      className={className}
+    >
       {children}
     </button>
   );
@@ -18,7 +27,16 @@ export function SignIn({ provider, children, className }: AuthButtonProps) {
 
 export function SignOut({ children, className }: AuthButtonProps) {
   return (
-    <button onClick={() => signOut()} className={className}>
+    <button
+      onClick={() => {
+        toast.loading("Signing out...");
+        signOut().then(() => {
+          toast.dismiss();
+          toast.success("Signed out successfully");
+        });
+      }}
+      className={className}
+    >
       {children}
     </button>
   );
