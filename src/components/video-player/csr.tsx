@@ -76,8 +76,15 @@ export default function VideoPlayerCSR({
         episode.anime.episodes
       );
       if (nextEpisode) {
-        toast.loading("Redirecting to next episode..");
-        router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
+        toast("Go to next episode?", {
+          action: {
+            label: "Yes",
+            onClick: () => {
+              toast.loading(`Going to episode ${nextEpisode}`);
+              router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
+            },
+          },
+        });
       }
     });
   };
