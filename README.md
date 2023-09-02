@@ -4,7 +4,7 @@
 </a>
 
 <p align="center">
-  An open-source anime streaming site build with Nextjs 13 app router.
+  An open-source anime streaming site built with Nextjs 13 app router.
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 ## Introduction
 
-Anirohi is an open-source link management tool for modern marketing teams to create, share, and track short links. Built with [Nextjs](https://nextjs.org/), [Enime API](https://docs.enime.moe), [Anilist](https://anilist.gitbook.io/), and [PlanetScale MySQL](https://planetscale.com/).
+Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Enime API](https://docs.enime.moe), [Anilist](https://anilist.gitbook.io/), and [PlanetScale MySQL](https://planetscale.com/).
 
 Here are some of the features that Anirohi provides:
 
