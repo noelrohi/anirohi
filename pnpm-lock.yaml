@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth/core':
-    specifier: ^0.11.1
-    version: 0.11.1
+    specifier: ^0.14.0
+    version: 0.14.0
   '@auth/drizzle-adapter':
     specifier: ^0.3.1
     version: 0.3.1
@@ -177,8 +177,8 @@ packages:
       leven: 3.1.0
     dev: false
 
-  /@auth/core@0.0.0-manual.59d8da33:
-    resolution: {integrity: sha512-ZTaUedTobGEvQPhEeJLmnsdGbztG10T0rK8TA4wH87Eb8oBHInI//3zRngX6T9hEcZ+/OJnIANw0JrGDqUDREA==}
+  /@auth/core@0.0.0-manual.e9863699:
+    resolution: {integrity: sha512-/hVzGuFw7nAZimliD8kpuKnNjvkRu+jpaVhYB/FaIXLNJFNwhbO2MgXBnr5tvLIHgRJnR5C9UN5RNpQXiFHuSA==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -209,6 +209,22 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
+  /@auth/core@0.14.0:
+    resolution: {integrity: sha512-kZMwjFWDGxSI/e4+HO6KeTmuMFMWu6qIzgF1k87HbKdxNFis3K1PXz7md3fCB4+5ije93Uld1ZNUdlmB2rAHww==}
+    peerDependencies:
+      nodemailer: ^6.8.0
+    peerDependenciesMeta:
+      nodemailer:
+        optional: true
+    dependencies:
+      '@panva/hkdf': 1.1.1
+      cookie: 0.5.0
+      jose: 4.14.4
+      oauth4webapi: 2.3.0
+      preact: 10.11.3
+      preact-render-to-string: 5.2.3(preact@10.11.3)
+    dev: false
+
   /@auth/drizzle-adapter@0.3.1:
     resolution: {integrity: sha512-zSuewnrozY0EZYVrt2T5VY0R+wA3chXncanmUgvAgoX+pcussKMVFmnSrSYuc3i4vfM2qCmAa6S6dkSH5RViSA==}
     dependencies:
@@ -223,7 +239,7 @@ packages:
       next: ^13.4.6
       react: ^18.2.0
     dependencies:
-      '@auth/core': 0.0.0-manual.59d8da33
+      '@auth/core': 0.0.0-manual.e9863699
       next: 13.4.12(@babel/core@7.22.10)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
@@ -5904,7 +5920,7 @@ packages:
       nodemailer:
         optional: true
     dependencies:
-      '@auth/core': 0.0.0-manual.59d8da33
+      '@auth/core': 0.0.0-manual.e9863699
       '@auth/nextjs': 0.0.0-manual.179c08d4(next@13.4.12)(react@18.2.0)
       next: 13.4.12(@babel/core@7.22.10)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0

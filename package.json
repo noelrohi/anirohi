@@ -14,7 +14,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@auth/core": "^0.11.1",
+    "@auth/core": "^0.14.0",
     "@auth/drizzle-adapter": "^0.3.1",
     "@planetscale/database": "^1.10.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
