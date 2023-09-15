@@ -51,5 +51,5 @@ dayjs.extend(relativetime);
 
 export function getRelativeTime(date: string | undefined) {
   if (typeof date === "undefined") return "";
-  return dayjs().from(dayjs(date));
+  return dayjs(date).fromNow();
 }
