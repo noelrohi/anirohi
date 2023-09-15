@@ -7,6 +7,7 @@ import {
   GitHubLogoIcon,
   MagnifyingGlassIcon,
   MoonIcon,
+  PaperPlaneIcon,
   PlayIcon,
   SunIcon,
 } from "@radix-ui/react-icons";
@@ -262,4 +263,5 @@ export const Icons = {
       </svg>
     );
   },
+  send: PaperPlaneIcon,
 };

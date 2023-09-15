@@ -1,20 +1,25 @@
+import { SignIn } from "@/components/auth";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import VideoPlayerSSR from "@/components/video-player/ssr";
+import { db } from "@/db";
+import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
 import { getAnime, getEpisode } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn, getNextEpisode } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
+import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import VideoPlayerSSR from "@/components/video-player/ssr";
 
 interface EpisodePageProps {
   params: {
@@ -145,7 +150,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     userName: session?.user.name,
   });
   return (
-    <main className="px-4 lg:container">
+    <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
         <Link
           href={`/anime/${params.slug}`}
@@ -171,7 +176,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </div>
           </aside>
         </div>
-        <div className="flex flex-row gap-1 p-4 justify-end w-fit">
+        <div className="flex flex-row gap-1 justify-end w-fit">
           {previousEpisode && (
             <Link
               className={buttonVariants({ variant: "secondary" })}
@@ -201,21 +206,62 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </Link>
           )}
         </div>
-        <div className="flex flex-row">
-          <div className="flex flex-col gap-4 justify-center p-4 w-fit">
-            <h1 className="text-lg lg:text-2xl font-bold">{episode.title}</h1>
-            <p className="text-md lg:text-lg">{episode.description}</p>
-            <Separator className="my-2" />
-            <div className="block lg:hidden">
-              <EpisodeScrollArea
-                episodes={anime.episodes}
-                slug={params.slug}
-                currentEpisode={episode.number}
-              />
-            </div>
-          </div>
+        <h1 className="text-lg lg:text-2xl font-bold">{episode.title}</h1>
+        <p className="text-md lg:text-lg">{episode.description}</p>
+        <Separator className="my-2" />
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Comment Section
+          </h2>
+          {session?.user ? (
+            <>
+              <CommentForm slug={params.slug} episodeNumber={episode.number} />
+            </>
+          ) : (
+            <SignIn
+              className={buttonVariants({
+                size: "sm",
+              })}
+              provider="anilist"
+            >
+              Sign In to Leave Comment
+              <span className="sr-only">Sign In</span>
+            </SignIn>
+          )}
+          <Comments slug={params.slug} episodeNumber={episode.number} />
+        </div>
+        <Separator className="my-2" />
+        <div className="block lg:hidden">
+          <EpisodeScrollArea
+            episodes={anime.episodes}
+            slug={params.slug}
+            currentEpisode={episode.number}
+          />
         </div>
       </div>
     </main>
+  );
+}
+
+interface CommentsProps {
+  episodeNumber: number;
+  slug: string;
+}
+
+async function Comments({ episodeNumber, slug }: CommentsProps) {
+  const comments = await db.query.comments.findMany({
+    where: and(
+      eq(comment.episodeNumber, episodeNumber),
+      eq(comment.slug, slug)
+    ),
+  });
+  return (
+    <div>
+      {comments.map((comment) => (
+        <>
+          <p>{comment.text}</p>
+        </>
+      ))}
+    </div>
   );
 }

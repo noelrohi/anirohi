@@ -4,7 +4,12 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { accounts } from "@/db/schema/auth";
-import { InsertHistory, histories } from "@/db/schema/main";
+import {
+  InsertComments,
+  InsertHistory,
+  comments,
+  histories,
+} from "@/db/schema/main";
 import { mutateAnilist } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
 import { headers } from "next/headers";
@@ -75,7 +80,7 @@ export async function deleteFromHistory(pathname: string) {
 export async function addToHistory(input: InsertHistory) {
   const ip = headers().get("x-forwarded-for");
   const { success, limit, remaining, reset } = await ratelimit.limit(
-    ip ?? "anonymous" + "-addToHistory"
+    (ip ?? "anonymous") + "-addToHistory"
   );
   if (!success) {
     console.log(
@@ -107,4 +112,21 @@ export async function addToHistory(input: InsertHistory) {
     await db.insert(histories).values({ ...input, userId: session.user.id });
   }
   revalidatePath("/home");
+}
+
+export async function addComment(input: InsertComments) {
+  const ip = headers().get("x-forwarded-for");
+  const { success, limit, remaining, reset } = await ratelimit.limit(
+    (ip ?? "anonymous") + "-addComment"
+  );
+  if (!success) {
+    console.log(
+      `ratelimit hit for addComment , reset in ${new Date(reset).toUTCString()}`
+    );
+    return;
+  }
+  const session = await auth();
+  if (!session?.user) throw new Error("Not authenticated!");
+  await db.insert(comments).values({ ...input });
+  revalidatePath(`/anime/${input.slug}/${input.episodeNumber}}`);
 }

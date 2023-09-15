@@ -39,7 +39,7 @@ export const comments = mySqlTable(
     id: serial("id").primaryKey(),
     slug: varchar("slug", { length: 255 }).notNull(),
     episodeNumber: int("episode_number").notNull(),
-    text: varchar("image", { length: 255 }),
+    text: varchar("image", { length: 255 }).notNull(),
     userId: varchar("userId", { length: 255 }),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
