@@ -79,13 +79,15 @@ export default function VideoPlayerCSR({
           episode.anime.episodes
         );
         if (nextEpisode) {
+          const url = `/anime/${episode.anime.slug}/${nextEpisode}`;
+          router.prefetch(url);
           toast("Go to next episode?", {
             duration: 60 * 5 * 1000,
             action: {
               label: "Yes",
               onClick: () => {
                 toast.loading(`Going to episode ${nextEpisode}`);
-                router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
+                router.push(url);
               },
             },
           });
