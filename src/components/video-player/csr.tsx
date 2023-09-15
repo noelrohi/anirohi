@@ -31,6 +31,7 @@ export default function VideoPlayerCSR({
     : { loadedSeconds: 0, playedSeconds: 0, loaded: 0, played: 0 };
 
   const [isSeeking, setIsSeeking] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
   const [playbackRate, setPlaybackRate] = useLocalStorage(
     `playbackrate-${user ? user : "X"}`,
@@ -57,36 +58,40 @@ export default function VideoPlayerCSR({
   };
 
   const handleEnded = () => {
-    deleteLocalStorageMedia();
-    startTransition(async () => {
-      await addToHistory({
-        slug: episode.anime.slug,
-        title: episode.anime.title.userPreferred,
-        image: episode.anime.coverImage,
-        progress: 100,
-        pathname,
-        duration: state.playedSeconds,
-        episodeNumber: episode.number,
-      });
-      const currentEpisodeIndex = episode.anime.episodes.findIndex(
-        (e) => e.number === episode.number
-      );
-      const nextEpisode = await getNextEpisode(
-        currentEpisodeIndex,
-        episode.anime.episodes
-      );
-      if (nextEpisode) {
-        toast("Go to next episode?", {
-          action: {
-            label: "Yes",
-            onClick: () => {
-              toast.loading(`Going to episode ${nextEpisode}`);
-              router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
-            },
-          },
+    if (!isEnded) {
+      setIsEnded(true);
+      deleteLocalStorageMedia();
+      startTransition(async () => {
+        await addToHistory({
+          slug: episode.anime.slug,
+          title: episode.anime.title.userPreferred,
+          image: episode.anime.coverImage,
+          progress: 100,
+          pathname,
+          duration: state.playedSeconds,
+          episodeNumber: episode.number,
         });
-      }
-    });
+        const currentEpisodeIndex = episode.anime.episodes.findIndex(
+          (e) => e.number === episode.number
+        );
+        const nextEpisode = await getNextEpisode(
+          currentEpisodeIndex,
+          episode.anime.episodes
+        );
+        if (nextEpisode) {
+          toast("Go to next episode?", {
+            duration: 60 * 5 * 1000,
+            action: {
+              label: "Yes",
+              onClick: () => {
+                toast.loading(`Going to episode ${nextEpisode}`);
+                router.push(`/anime/${episode.anime.slug}/${nextEpisode}`);
+              },
+            },
+          });
+        }
+      });
+    }
   };
 
   const handleReady = (player: ReactPlayer) => {
