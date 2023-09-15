@@ -59,7 +59,7 @@ export function CommentForm(props: CommentFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 relative max-w-sm"
+        className="space-y-1 relative h-full"
       >
         <FormField
           control={form.control}
@@ -74,15 +74,19 @@ export function CommentForm(props: CommentFormProps) {
           )}
         />
         <Button
-          className="absolute -top-8 right-0"
           type="submit"
-          variant="ghost"
+          className="inline-flex gap-2 absolute top-2 right-2"
           disabled={sending}
         >
           {sending ? (
-            <Icons.loader className={"animate-spin"} />
+            <>
+              Adding comment <Icons.loader className="animate-spin" />
+            </>
           ) : (
-            <Icons.send />
+            <>
+              Add comment
+              <Icons.send />
+            </>
           )}
         </Button>
       </form>

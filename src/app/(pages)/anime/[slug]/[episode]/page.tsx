@@ -265,7 +265,7 @@ async function Comments({ episodeNumber, slug }: CommentsProps) {
     <div className="flex flex-col gap-2">
       {comments.map((comment) => (
         <>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row gap-4">
             <Avatar className="h-10 w-10">
               <AvatarImage
                 src={comment.user?.image!}
@@ -273,7 +273,7 @@ async function Comments({ episodeNumber, slug }: CommentsProps) {
               />
               <AvatarFallback>G</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col">
               <div>{comment.user?.name}</div>
               <div className="text-muted-foreground">
                 {getRelativeTime(comment.createdAt?.toString())}
