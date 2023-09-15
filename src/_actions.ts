@@ -127,6 +127,6 @@ export async function addComment(input: InsertComments) {
   }
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated!");
-  await db.insert(comments).values({ ...input });
+  await db.insert(comments).values({ ...input, userId: session.user.id });
   revalidatePath(`/anime/${input.slug}/${input.episodeNumber}}`);
 }

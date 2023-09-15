@@ -10,7 +10,7 @@ import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
 import { getAnime, getEpisode } from "@/lib/enime";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, getNextEpisode } from "@/lib/utils";
+import { absoluteUrl, cn, getNextEpisode, getRelativeTime } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
@@ -20,6 +20,7 @@ import { Suspense } from "react";
 import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface EpisodePageProps {
   params: {
@@ -209,7 +210,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         <h1 className="text-lg lg:text-2xl font-bold">{episode.title}</h1>
         <p className="text-md lg:text-lg">{episode.description}</p>
         <Separator className="my-2" />
-        <div className="space-y-1">
+        <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             Comment Section
           </h2>
@@ -228,10 +229,12 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
               <span className="sr-only">Sign In</span>
             </SignIn>
           )}
-          <Comments slug={params.slug} episodeNumber={episode.number} />
+          <Suspense fallback={<>Loading comments ...</>}>
+            <Comments slug={params.slug} episodeNumber={episode.number} />
+          </Suspense>
         </div>
-        <Separator className="my-2" />
         <div className="block lg:hidden">
+          <Separator className="my-2" />
           <EpisodeScrollArea
             episodes={anime.episodes}
             slug={params.slug}
@@ -254,12 +257,31 @@ async function Comments({ episodeNumber, slug }: CommentsProps) {
       eq(comment.episodeNumber, episodeNumber),
       eq(comment.slug, slug)
     ),
+    with: {
+      user: true,
+    },
   });
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       {comments.map((comment) => (
         <>
-          <p>{comment.text}</p>
+          <div className="flex flex-row gap-2">
+            <Avatar className="h-10 w-10">
+              <AvatarImage
+                src={comment.user?.image!}
+                alt={comment.user?.name!}
+              />
+              <AvatarFallback>G</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-2">
+              <div>{comment.user?.name}</div>
+              <div className="text-muted-foreground">
+                {getRelativeTime(comment.createdAt?.toString())}
+              </div>
+              <div className="mt-2">{comment.text}</div>
+            </div>
+          </div>
+          <Separator orientation="horizontal" />
         </>
       ))}
     </div>

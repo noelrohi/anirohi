@@ -3,7 +3,9 @@ import { AnimeResponse } from "@/types/enime";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { kv } from "@vercel/kv";
+import dayjs from "dayjs";
 import { Ratelimit } from "@upstash/ratelimit";
+import relativetime from "dayjs/plugin/relativeTime";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,3 +46,10 @@ export const ratelimit = new Ratelimit({
   redis: kv,
   limiter: Ratelimit.fixedWindow(5, "60s"),
 });
+
+dayjs.extend(relativetime);
+
+export function getRelativeTime(date: string | undefined) {
+  if (typeof date === "undefined") return "";
+  return dayjs().from(dayjs(date));
+}

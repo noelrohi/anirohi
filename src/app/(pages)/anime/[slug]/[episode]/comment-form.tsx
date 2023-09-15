@@ -1,10 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,9 +8,13 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Icons } from "@/components/icons";
 import { addComment } from "@/_actions";
+import { Icons } from "@/components/icons";
 import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 
