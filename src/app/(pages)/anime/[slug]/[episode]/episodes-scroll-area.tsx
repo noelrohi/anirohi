@@ -38,7 +38,7 @@ export function EpisodeScrollArea({
           size={"sm"}
           variant={"outline"}
         >
-          <Icons.view className="mr-2" /> View current
+          <Icons.view className="mr-2" /> Scroll to current
         </Button>
       </div>
       <ScrollArea className="h-[10rem] lg:h-[32rem] xl:h-[33rem] w-full rounded-md border">

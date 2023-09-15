@@ -151,7 +151,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           href={`/anime/${params.slug}`}
           className={cn("w-fit", buttonVariants({ variant: "outline" }))}
         >
-          <Icons.goBack className="mr-2" /> Go back
+          <Icons.goBack className="mr-2" /> View Series
         </Link>
         <div className="grid grid-cols-5">
           <section className="col-span-5 lg:col-span-4">
