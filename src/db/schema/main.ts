@@ -33,6 +33,31 @@ export const histories = mySqlTable(
   }
 );
 
+export const comments = mySqlTable(
+  "comments",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull(),
+    episodeNumber: int("episode_number").notNull(),
+    text: varchar("image", { length: 255 }),
+    userId: varchar("userId", { length: 255 }),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => {
+    return {
+      slugIdx: index("slug_idx").on(table.slug),
+      userIdx: index("user_idx").on(table.userId),
+    };
+  }
+);
+
+export type InsertComments = InferInsertModel<typeof comments>;
+
+export const commentRelations = relations(comments, ({ one }) => ({
+  user: one(users, { fields: [comments.userId], references: [users.id] }),
+}));
+
 export type InsertHistory = InferInsertModel<typeof histories>;
 
 export const watchListRelations = relations(histories, ({ one }) => ({
