@@ -45,7 +45,7 @@ Share the link and see the detailed OG Image about the series or episode. Powere
 
 Share your thoughts in episode
 
-<i>TODO</i>
+![Comment Section](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/comment-section.png)
 
 ## Run Locally
 
