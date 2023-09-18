@@ -7,7 +7,6 @@ import { ScrollArea, ScrollViewport } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
-import { AnimeResponse } from "@/types/enime";
 import { IAnimeInfo } from "@consumet/extensions";
 import Link from "next/link";
 import { useRef } from "react";

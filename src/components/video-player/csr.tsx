@@ -3,7 +3,6 @@
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { getAnimeTitle, getNextEpisode } from "@/lib/utils";
-import { EpisodeResponse } from "@/types/enime";
 import { IAnimeEpisode, IAnimeInfo } from "@consumet/extensions";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
