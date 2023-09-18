@@ -8,13 +8,14 @@ import { Separator } from "@/components/ui/separator";
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import { AnimeResponse } from "@/types/enime";
+import { IAnimeInfo } from "@consumet/extensions";
 import Link from "next/link";
 import { useRef } from "react";
 
 interface EpisodeScrollAreaProps extends React.HTMLProps<HTMLDivElement> {
   slug: string;
   currentEpisode: number;
-  episodes: AnimeResponse["episodes"];
+  episodes: IAnimeInfo["episodes"] | undefined;
 }
 
 export function EpisodeScrollArea({
@@ -43,7 +44,7 @@ export function EpisodeScrollArea({
       </div>
       <ScrollArea className="h-[10rem] lg:h-[32rem] xl:h-[33rem] w-full rounded-md border">
         <ScrollViewport className="p-4" ref={scrollableRef}>
-          {episodes.map((ep) => (
+          {episodes?.map((ep) => (
             <div
               ref={ep.number === currentEpisode ? targetRef : null}
               key={ep.id}

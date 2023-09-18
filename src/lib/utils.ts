@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { kv } from "@vercel/kv";
 import dayjs from "dayjs";
 import { Ratelimit } from "@upstash/ratelimit";
+import { IAnimeInfo, ITitle } from "@consumet/extensions";
 import relativetime from "dayjs/plugin/relativeTime";
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,17 +30,11 @@ export function toTitleCase(str: string): string {
     .join(" ");
 }
 
-export function getTitle(anime: AnimeResponse["title"]) {
-  return anime.english ? anime.english : anime.userPreferred;
-}
-
 export async function getNextEpisode(
   currentEpisodeIndex: number,
-  episodes: {
-    number: number;
-  }[]
+  episodes: IAnimeInfo["episodes"] | undefined
 ) {
-  return episodes[currentEpisodeIndex + 1]?.number || null;
+  return episodes ? episodes[currentEpisodeIndex + 1].number : null;
 }
 
 export const ratelimit = new Ratelimit({
@@ -52,4 +47,12 @@ dayjs.extend(relativetime);
 export function getRelativeTime(date: string | undefined) {
   if (typeof date === "undefined") return "";
   return dayjs(date).fromNow();
+}
+
+export function getAnimeTitle(title: string | ITitle) {
+  return typeof title === "string"
+    ? title
+    : title.english
+    ? title.english
+    : title.userPreferred;
 }

@@ -2,8 +2,9 @@
 
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { getNextEpisode } from "@/lib/utils";
+import { getAnimeTitle, getNextEpisode } from "@/lib/utils";
 import { EpisodeResponse } from "@/types/enime";
+import { IAnimeEpisode, IAnimeInfo } from "@consumet/extensions";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { OnProgressProps } from "react-player/base";
@@ -18,7 +19,7 @@ export default function VideoPlayerCSR({
   seekSecond,
 }: ReactPlayerProps & {
   user: string | undefined | null;
-  episode: EpisodeResponse;
+  episode: IAnimeEpisode & { anime: IAnimeInfo };
   seekSecond: number | undefined;
 }) {
   const pathname = usePathname();
@@ -44,9 +45,9 @@ export default function VideoPlayerCSR({
       console.log(`Played ${(state.played * 100).toFixed(2)}%`);
       if (user) {
         await addToHistory({
-          slug: episode.anime.slug,
-          title: episode.anime.title.userPreferred,
-          image: episode.anime.coverImage,
+          slug: episode.anime.id,
+          title: getAnimeTitle(episode.anime.title)!,
+          image: episode.anime.image,
           progress: state.played,
           pathname,
           duration: state.playedSeconds,
@@ -64,16 +65,17 @@ export default function VideoPlayerCSR({
       startTransition(async () => {
         await addToHistory({
           slug: episode.anime.slug,
-          title: episode.anime.title.userPreferred,
+          title: getAnimeTitle(episode.anime.title)!,
           image: episode.anime.coverImage,
           progress: 100,
           pathname,
           duration: state.playedSeconds,
           episodeNumber: episode.number,
         });
-        const currentEpisodeIndex = episode.anime.episodes.findIndex(
-          (e) => e.number === episode.number
-        );
+        const currentEpisodeIndex =
+          episode.anime.episodes?.findIndex(
+            (e) => e.number === episode.number
+          ) || 0;
         const nextEpisode = await getNextEpisode(
           currentEpisodeIndex,
           episode.anime.episodes

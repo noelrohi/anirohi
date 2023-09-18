@@ -8,11 +8,10 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
-import { getPopular, getRecent } from "@/lib/enime";
+import { getPopular, getRecent } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, getTitle } from "@/lib/utils";
+import { absoluteUrl, cn, getAnimeTitle } from "@/lib/utils";
 import { and, eq, ne } from "drizzle-orm";
-import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -52,38 +51,39 @@ export default async function HomePage() {
     recentSettled.status === "fulfilled" ? recentSettled.value : null;
   const popularAnime =
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
+
   return (
     <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
         <CarouselSlider>
-          {popularAnime?.data?.map((anime) => (
-            <AspectRatio
-              ratio={16 / 7}
-              className="relative"
-              key={anime.anilistId}
-            >
+          {popularAnime?.map((anime) => (
+            <AspectRatio ratio={16 / 7} className="relative" key={anime.id}>
               <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
                     <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
-                      {anime.title.userPreferred}
+                      {getAnimeTitle(anime.title)}
                     </h1>
                   </div>
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-                    {parser(anime.description)}
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Reiciendis itaque repudiandae, voluptatem ipsa reprehenderit
+                    neque officiis culpa tempore, minus modi facere veritatis
+                    pariatur dolores eligendi maxime labore expedita cupiditate
+                    nisi!
                   </div>
                   <div className="hidden md:block">
                     <div className="flex flex-shrink-0 gap-1 flex-wrap ">
-                      {anime.genre.map((name) => (
-                        <Badge variant={"secondary"} key={name}>
-                          {name}
+                      {anime.genres.map((genre: string) => (
+                        <Badge variant={"secondary"} key={genre}>
+                          {genre}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <Link
                     className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
-                    href={`/anime/${anime.slug}`}
+                    href={`/anime/${anime.id}`}
                   >
                     <Icons.play className="mr-2" />
                     Watch Now
@@ -91,8 +91,8 @@ export default async function HomePage() {
                 </div>
               </div>
               <Image
-                src={anime.bannerImage}
-                alt={anime.title.userPreferred}
+                src={anime.image!}
+                alt={getAnimeTitle(anime.title) ?? ""}
                 fill
                 className="absolute inset-0 object-cover"
                 priority
@@ -116,14 +116,14 @@ export default async function HomePage() {
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {recentAnime?.data.map(({ anime, number }, idx) => (
+              {recentAnime?.map((episode, idx) => (
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: getTitle(anime.title),
-                    image: anime.coverImage,
-                    description: `Episode ${number}`,
-                    slug: anime.slug,
+                    title: getAnimeTitle(episode.title)!,
+                    image: episode.image!,
+                    description: `Episode ${episode.episodeNumber}`,
+                    slug: episode.id,
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"
@@ -147,14 +147,14 @@ export default async function HomePage() {
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {popularAnime?.data.map((anime, idx) => (
+              {popularAnime?.map((anime, idx) => (
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: getTitle(anime.title),
-                    image: anime.coverImage,
-                    description: `Episode ${anime.currentEpisode}`,
-                    slug: anime.slug,
+                    title: getAnimeTitle(anime.title)!,
+                    image: anime.image!,
+                    description: ``,
+                    slug: anime.id,
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"

@@ -16,6 +16,7 @@
   "dependencies": {
     "@auth/core": "^0.14.0",
     "@auth/drizzle-adapter": "^0.3.1",
+    "@consumet/extensions": "^1.5.1",
     "@hookform/resolvers": "^3.3.1",
     "@planetscale/database": "^1.10.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -41,7 +42,6 @@
     "drizzle-orm": "^0.28.5",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
-    "html-react-parser": "^4.2.1",
     "next": "13.4.12",
     "next-auth": "0.0.0-manual.b53ca00b",
     "next-pwa": "5.6.0",

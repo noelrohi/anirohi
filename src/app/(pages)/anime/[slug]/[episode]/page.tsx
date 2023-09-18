@@ -1,6 +1,7 @@
 import { SignIn } from "@/components/auth";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,10 +9,16 @@ import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
 import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
-import { getAnime, getEpisode } from "@/lib/enime";
+import { getAnime, getEpisode } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, getNextEpisode, getRelativeTime } from "@/lib/utils";
-import { AnimeResponse } from "@/types/enime";
+import {
+  absoluteUrl,
+  cn,
+  getAnimeTitle,
+  getNextEpisode,
+  getRelativeTime,
+} from "@/lib/utils";
+import { IAnimeInfo } from "@consumet/extensions";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -20,7 +27,6 @@ import { Suspense } from "react";
 import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface EpisodePageProps {
   params: {
@@ -35,25 +41,11 @@ async function handleAnime(slug: string) {
   if (!anime) notFound();
   return anime;
 }
-
-async function handleEpisode(
-  episodes: AnimeResponse["episodes"],
-  episode: string
-) {
-  const episodeId = episodes.find((ep) => String(ep.number) === episode)?.id;
-  if (!episodeId) notFound();
-  const [settleEpisode] = await Promise.allSettled([getEpisode(episodeId)]);
-  const episodeData =
-    settleEpisode.status === "fulfilled" ? settleEpisode.value : null;
-  if (!episodeData) notFound();
-  return episodeData;
-}
-
 async function getPreviousEpisode(
   currentEpisodeIndex: number,
-  episodes: AnimeResponse["episodes"]
+  episodes: IAnimeInfo["episodes"]
 ) {
-  return episodes[currentEpisodeIndex - 1]?.number || null;
+  return episodes ? episodes[currentEpisodeIndex - 1]?.number : null;
 }
 
 // export async function generateStaticParams(): Promise<
@@ -78,24 +70,25 @@ async function getPreviousEpisode(
 export async function generateMetadata({
   params,
 }: EpisodePageProps): Promise<Metadata> {
+  const anime = await handleAnime(params.slug);
   const {
     episodes,
-    title: { userPreferred: animeTitle },
+    title,
     description: animeDescription,
     coverImage,
     bannerImage,
-  } = await handleAnime(params.slug);
-  const episode = await handleEpisode(episodes, params.episode);
+  } = anime;
+  const animeTitle = getAnimeTitle(title);
+  const episode = anime.episodes?.find(
+    (ep) => String(ep.number) === params.episode
+  )!;
 
   const ogUrl = new URL(absoluteUrl("/api/og"));
   ogUrl.searchParams.set(
     "title",
     episode.title || `${animeTitle} Episode ${episode.number}`
   );
-  ogUrl.searchParams.set(
-    "description",
-    episode.description || animeDescription
-  );
+  ogUrl.searchParams.set("description", episode.description ?? "");
   ogUrl.searchParams.set(
     "cover",
     coverImage || "/images/placeholder-image.png"
@@ -134,22 +127,22 @@ export async function generateMetadata({
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
   const anime = await handleAnime(params.slug);
-  const episode = await handleEpisode(anime.episodes, params.episode);
+  const episode = anime.episodes?.find(
+    (ep) => String(ep.number) === params.episode
+  );
+  const episodeId = episode?.id;
+  if (!episodeId) throw new Error("Episode id not found!");
   const session = await auth();
 
-  const currentEpisodeIndex = episode.anime.episodes.findIndex(
-    (e) => String(e.number) === params.episode
-  );
+  const currentEpisodeIndex =
+    anime.episodes?.findIndex((e) => String(e.number) === params.episode) || 0;
   const nextEpisode = await getNextEpisode(currentEpisodeIndex, anime.episodes);
   const previousEpisode = await getPreviousEpisode(
     currentEpisodeIndex,
     anime.episodes
   );
-  const isWatched = await checkIsWatched({
-    episodeNumber: episode.number,
-    mediaId: anime.mappings.anilist,
-    userName: session?.user.name,
-  });
+  const isWatched = false;
+  const videoData = { ...episode, anime };
   return (
     <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -163,7 +156,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           <section className="col-span-5 lg:col-span-4">
             <AspectRatio ratio={16 / 9}>
               <Suspense fallback={<Skeleton className="w-full h-full" />}>
-                <VideoPlayerSSR episode={episode} />
+                <VideoPlayerSSR episode={videoData} />
               </Suspense>
             </AspectRatio>
           </section>
