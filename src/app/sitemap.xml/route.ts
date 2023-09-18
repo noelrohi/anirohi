@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { db } from "@/db";
-import { getPopular, getRecent } from "@/lib/enime";
+import { season, top } from "@/lib/jikan";
 
 async function generateSiteMap() {
   const routesMap = ["", "/home"].map((route) => ({
@@ -10,39 +10,42 @@ async function generateSiteMap() {
     priority: 1.0,
   }));
 
-  const [recent, popular] = await Promise.all([getRecent(), getPopular()]);
+  const [recent, popular] = await Promise.all([
+    top.getTopAnime(),
+    season.getSeasonNow(),
+  ]);
   const animeMap = [
-    ...recent.data.map(({ anime }) => ({
-      url: `${siteConfig.url}/anime/${anime.slug}`,
+    ...recent.data.map((anime) => ({
+      url: `${siteConfig.url}/anime/${anime.mal_id}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.9,
     })),
-    ...popular.data.map(({ slug }) => ({
-      url: `${siteConfig.url}/anime/${slug}`,
+    ...popular.data.map((anime) => ({
+      url: `${siteConfig.url}/anime/${anime.mal_id}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.9,
     })),
   ];
-  const recentEpisodeRoutes = recent.data.map(({ anime, number }) => {
+  const recentEpisodeRoutes = recent.data.map((anime) => {
     // loop from 1 to the number of episodes
     // and return an array of objects
     // with the url and lastModified
-    return [...Array(number).keys()].map((_, index) => ({
-      url: `${siteConfig.url}/anime/${anime.slug}/${index + 1}`,
+    return [...Array(anime.episodes).keys()].map((_, index) => ({
+      url: `${siteConfig.url}/anime/${anime.mal_id}/${index + 1}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.8,
     }));
   });
 
-  const popularEpisodeRoutes = popular.data.map(({ slug, currentEpisode }) => {
+  const popularEpisodeRoutes = popular.data.map((anime) => {
     // loop from 1 to the number of episodes
     // and return an array of objects
     // with the url and lastModified
-    return [...Array(currentEpisode).keys()].map((_, index) => ({
-      url: `${siteConfig.url}/anime/${slug}/${index + 1}`,
+    return [...Array(anime.episodes).keys()].map((_, index) => ({
+      url: `${siteConfig.url}/anime/${anime.mal_id}/${index + 1}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.8,
