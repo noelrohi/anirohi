@@ -2,8 +2,8 @@
 
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { getAnimeTitle, getNextEpisode } from "@/lib/utils";
-import { IAnimeEpisode, IAnimeInfo } from "@consumet/extensions";
+import { absoluteUrl, getNextEpisode } from "@/lib/utils";
+import { Anime, AnimeEpisode } from "@tutkli/jikan-ts";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { OnProgressProps } from "react-player/base";
@@ -18,7 +18,7 @@ export default function VideoPlayerCSR({
   seekSecond,
 }: ReactPlayerProps & {
   user: string | undefined | null;
-  episode: IAnimeEpisode & { anime: IAnimeInfo };
+  episode: AnimeEpisode & { anime: Anime };
   seekSecond: number | undefined;
 }) {
   const pathname = usePathname();
@@ -44,13 +44,15 @@ export default function VideoPlayerCSR({
       console.log(`Played ${(state.played * 100).toFixed(2)}%`);
       if (user) {
         await addToHistory({
-          slug: episode.anime.id,
-          title: getAnimeTitle(episode.anime.title)!,
-          image: episode.anime.image,
+          slug: String(episode.anime.mal_id),
+          title: episode.anime.title,
+          image:
+            episode.anime.images?.jpg.image_url ||
+            absoluteUrl("/images/placeholder-image.png"),
           progress: state.played,
           pathname,
           duration: state.playedSeconds,
-          episodeNumber: episode.number,
+          episodeNumber: episode.mal_id,
         });
       }
       setLocalStorageMedia(JSON.stringify(state));
@@ -63,31 +65,26 @@ export default function VideoPlayerCSR({
       deleteLocalStorageMedia();
       startTransition(async () => {
         await addToHistory({
-          slug: episode.anime.slug,
-          title: getAnimeTitle(episode.anime.title)!,
-          image: episode.anime.coverImage,
+          slug: String(episode.anime.mal_id),
+          title: episode.anime.title,
+          image:
+            episode.anime.images?.jpg.image_url ||
+            absoluteUrl("/images/placeholder-image.png"),
           progress: 100,
           pathname,
           duration: state.playedSeconds,
-          episodeNumber: episode.number,
+          episodeNumber: episode.mal_id,
         });
-        const currentEpisodeIndex =
-          episode.anime.episodes?.findIndex(
-            (e) => e.number === episode.number
-          ) || 0;
-        const nextEpisode = await getNextEpisode(
-          currentEpisodeIndex,
-          episode.anime.episodes
-        );
-        if (nextEpisode) {
-          const url = `/anime/${episode.anime.slug}/${nextEpisode}`;
+        const hasNextEp = episode.anime.episodes > episode.mal_id;
+        if (hasNextEp) {
+          const url = `/anime/${episode.anime.mal_id}/${episode.mal_id + 1}`;
           router.prefetch(url);
           toast("Go to next episode?", {
             duration: 60 * 5 * 1000,
             action: {
               label: "Yes",
               onClick: () => {
-                toast.loading(`Going to episode ${nextEpisode}`);
+                toast.loading(`Going to episode ${episode.mal_id + 1}`);
                 router.push(url);
               },
             },

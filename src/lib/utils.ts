@@ -1,12 +1,11 @@
 import { env } from "@/env.mjs";
-import { AnimeResponse } from "@/types/enime";
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { kv } from "@vercel/kv";
-import dayjs from "dayjs";
+import { AnimeEpisode } from "@tutkli/jikan-ts";
 import { Ratelimit } from "@upstash/ratelimit";
-import { IAnimeInfo, ITitle } from "@consumet/extensions";
+import { kv } from "@vercel/kv";
+import { clsx, type ClassValue } from "clsx";
+import dayjs from "dayjs";
 import relativetime from "dayjs/plugin/relativeTime";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -32,9 +31,9 @@ export function toTitleCase(str: string): string {
 
 export async function getNextEpisode(
   currentEpisodeIndex: number,
-  episodes: IAnimeInfo["episodes"] | undefined
+  episodes: AnimeEpisode[]
 ) {
-  return episodes ? episodes[currentEpisodeIndex + 1].number : null;
+  return episodes ? episodes[currentEpisodeIndex + 1]?.mal_id : null;
 }
 
 export const ratelimit = new Ratelimit({
@@ -47,12 +46,4 @@ dayjs.extend(relativetime);
 export function getRelativeTime(date: string | undefined) {
   if (typeof date === "undefined") return "";
   return dayjs(date).fromNow();
-}
-
-export function getAnimeTitle(title: string | ITitle) {
-  return typeof title === "string"
-    ? title
-    : title.english
-    ? title.english
-    : title.userPreferred;
 }

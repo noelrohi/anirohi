@@ -25,7 +25,7 @@ interface SlugPageProps {
   };
 }
 
-async function handleSlug(slug: string) {
+export async function handleSlug(slug: string) {
   const [settleSlug] = await Promise.allSettled([
     anime.getAnimeById(Number(slug)),
   ]);

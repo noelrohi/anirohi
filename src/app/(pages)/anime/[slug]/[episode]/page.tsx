@@ -8,25 +8,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
 import { comments as comment } from "@/db/schema/main";
-import { checkIsWatched } from "@/lib/anilist";
-import { getAnime, getEpisode } from "@/lib/consumet";
+import { checkIsWatched, getMediaIdByMalId } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
-import {
-  absoluteUrl,
-  cn,
-  getAnimeTitle,
-  getNextEpisode,
-  getRelativeTime,
-} from "@/lib/utils";
-import { IAnimeInfo } from "@consumet/extensions";
+import { absoluteUrl, cn, getNextEpisode, getRelativeTime } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { handleSlug } from "../page";
+import { anime } from "@/lib/jikan";
+import { AnimeEpisode } from "@tutkli/jikan-ts";
 
 interface EpisodePageProps {
   params: {
@@ -35,17 +29,11 @@ interface EpisodePageProps {
   };
 }
 
-async function handleAnime(slug: string) {
-  const [settleAnime] = await Promise.allSettled([getAnime(slug)]);
-  const anime = settleAnime.status === "fulfilled" ? settleAnime.value : null;
-  if (!anime) notFound();
-  return anime;
-}
 async function getPreviousEpisode(
   currentEpisodeIndex: number,
-  episodes: IAnimeInfo["episodes"]
+  episodes: AnimeEpisode[]
 ) {
-  return episodes ? episodes[currentEpisodeIndex - 1]?.number : null;
+  return episodes ? episodes[currentEpisodeIndex - 1]?.mal_id : null;
 }
 
 // export async function generateStaticParams(): Promise<
@@ -67,44 +55,34 @@ async function getPreviousEpisode(
 //   return [...popularPaths, ...recentPaths].flat();
 // }
 
-export async function generateMetadata({
-  params,
-}: EpisodePageProps): Promise<Metadata> {
-  const anime = await handleAnime(params.slug);
-  const {
-    episodes,
-    title,
-    description: animeDescription,
-    coverImage,
-    bannerImage,
-  } = anime;
-  const animeTitle = getAnimeTitle(title);
-  const episode = anime.episodes?.find(
-    (ep) => String(ep.number) === params.episode
-  )!;
-
-  const ogUrl = new URL(absoluteUrl("/api/og"));
-  ogUrl.searchParams.set(
-    "title",
-    episode.title || `${animeTitle} Episode ${episode.number}`
+export async function generateMetadata({ params }: EpisodePageProps) {
+  const slugData = await handleSlug(params.slug);
+  const episodeData = await anime.getAnimeEpisodeById(
+    Number(params.slug),
+    Number(params.episode)
   );
-  ogUrl.searchParams.set("description", episode.description ?? "");
+  const title = episodeData.data.title || slugData.title;
+  // @ts-ignore
+  const description = episodeData.data.synopsis || slugData.synopsis;
+  const ogUrl = new URL(absoluteUrl("/api/og"));
+  ogUrl.searchParams.set("title", title);
+  ogUrl.searchParams.set("description", description);
   ogUrl.searchParams.set(
     "cover",
-    coverImage || "/images/placeholder-image.png"
+    slugData.trailer.images?.maximum_image_url ||
+      "/images/placeholder-image.png"
   );
   ogUrl.searchParams.set(
     "banner",
-    bannerImage || "/images/placeholder-image.png"
+    slugData.images?.jpg.image_url || "/images/placeholder-image.png"
   );
-  ogUrl.searchParams.set("episode", String(params.episode));
 
-  return {
-    title: episode.title,
-    description: episode.description,
+  const metadata: Metadata = {
+    title,
+    description,
     openGraph: {
-      title: episode.title || `${animeTitle} Episode ${episode.number}`,
-      description: episode.description || animeDescription,
+      title,
+      description,
       type: "website",
       url: absoluteUrl(`/anime/${params.slug}`),
       images: [
@@ -112,37 +90,45 @@ export async function generateMetadata({
           url: ogUrl.toString(),
           width: 1200,
           height: 630,
-          alt: episode.title || `${animeTitle} Episode ${episode.number}`,
+          alt: title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: episode.title || `${animeTitle} Episode ${episode.number}`,
-      description: episode.description || animeDescription,
+      title,
+      description,
       images: [ogUrl.toString()],
     },
   };
+  return metadata;
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
-  const anime = await handleAnime(params.slug);
-  const episode = anime.episodes?.find(
-    (ep) => String(ep.number) === params.episode
+  const slugData = await handleSlug(params.slug);
+  const episodeData = await anime.getAnimeEpisodeById(
+    Number(params.slug),
+    Number(params.episode)
   );
-  const episodeId = episode?.id;
+  const episodes = await anime.getAnimeEpisodes(Number(params.slug));
+  const episodeId = episodeData.data.mal_id;
   if (!episodeId) throw new Error("Episode id not found!");
   const session = await auth();
 
   const currentEpisodeIndex =
-    anime.episodes?.findIndex((e) => String(e.number) === params.episode) || 0;
-  const nextEpisode = await getNextEpisode(currentEpisodeIndex, anime.episodes);
+    episodes.data?.findIndex((e) => String(e.mal_id) === params.episode) || 0;
+  const nextEpisode = await getNextEpisode(currentEpisodeIndex, episodes.data);
   const previousEpisode = await getPreviousEpisode(
     currentEpisodeIndex,
-    anime.episodes
+    episodes.data
   );
-  const isWatched = false;
-  const videoData = { ...episode, anime };
+  const anilistId = await getMediaIdByMalId(slugData.mal_id);
+  const isWatched = await checkIsWatched({
+    userName: session?.user?.name,
+    episodeNumber: episodeId,
+    mediaId: anilistId,
+  });
+  const videoData = { ...episodeData.data, anime: slugData };
   return (
     <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -163,9 +149,9 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           <aside className="lg:col-span-1">
             <div className="hidden lg:block ml-4">
               <EpisodeScrollArea
-                episodes={anime.episodes}
+                episodes={episodes.data}
                 slug={params.slug}
-                currentEpisode={episode.number}
+                currentEpisode={Number(params.episode)}
               />
             </div>
           </aside>
@@ -182,8 +168,8 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           )}
           {session?.user ? (
             <UpdateProgressButton
-              animeId={anime.anilistId}
-              progress={episode.number}
+              animeId={anilistId}
+              progress={Number(params.episode)}
               isWatched={isWatched}
             >
               <Icons.anilist className="mr-2" />
@@ -200,8 +186,11 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </Link>
           )}
         </div>
-        <h1 className="text-lg lg:text-2xl font-bold">{episode.title}</h1>
-        <p className="text-md lg:text-lg">{episode.description}</p>
+        <h1 className="text-lg lg:text-2xl font-bold">
+          {episodeData.data.title}
+        </h1>
+        {/* @ts-ignore  */}
+        <p className="text-md lg:text-lg">{episodeData.data.synopsis}</p>
         <Separator className="my-2" />
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
@@ -209,7 +198,10 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           </h2>
           {session?.user ? (
             <>
-              <CommentForm slug={params.slug} episodeNumber={episode.number} />
+              <CommentForm
+                slug={params.slug}
+                episodeNumber={Number(params.episode)}
+              />
             </>
           ) : (
             <SignIn
@@ -223,15 +215,18 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </SignIn>
           )}
           <Suspense fallback={<>Loading comments ...</>}>
-            <Comments slug={params.slug} episodeNumber={episode.number} />
+            <Comments
+              slug={params.slug}
+              episodeNumber={Number(params.episode)}
+            />
           </Suspense>
         </div>
         <div className="block lg:hidden">
           <Separator className="my-2" />
           <EpisodeScrollArea
-            episodes={anime.episodes}
+            episodes={episodes.data}
             slug={params.slug}
-            currentEpisode={episode.number}
+            currentEpisode={Number(params.episode)}
           />
         </div>
       </div>

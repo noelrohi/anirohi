@@ -1,4 +1,3 @@
-import { ListStats as Stats } from "@/types/anilist/list-stats";
 import { statisticQueries } from "./gql-queries";
 
 export async function queryAnilist(
@@ -41,6 +40,30 @@ export async function mutateAnilist(
   });
   const data = await res.json();
   return data;
+}
+
+export async function getMediaIdByMalId(mal_id: number) {
+  const query = `query($id: Int){
+    Media(id: $id){
+      id
+    }
+  }`;
+  const res = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: {
+        id: mal_id,
+      },
+    }),
+  });
+  if (!res.ok) return null;
+  const { data } = await res.json();
+  return data?.Media?.id;
 }
 
 export async function checkIsWatched(Props: {
