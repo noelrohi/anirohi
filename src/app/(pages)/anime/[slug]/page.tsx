@@ -1,4 +1,4 @@
-import { AnimeCard } from "@/components/anime-card";
+import { revalidate } from "@/app/sitemap.xml/route";
 import { EpisodeCard } from "@/components/episode-card";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -8,11 +8,11 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
-import { getAnime, getPopular, getRecent } from "@/lib/enime";
+import { anime, season, top } from "@/lib/jikan";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, getTitle, toTitleCase } from "@/lib/utils";
+import { absoluteUrl } from "@/lib/utils";
+import { JikanResourceRelation } from "@tutkli/jikan-ts";
 import { and, eq } from "drizzle-orm";
-import parser from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,20 +26,22 @@ interface SlugPageProps {
 }
 
 async function handleSlug(slug: string) {
-  const [settleSlug] = await Promise.allSettled([getAnime(slug)]);
+  const [settleSlug] = await Promise.allSettled([
+    anime.getAnimeById(Number(slug)),
+  ]);
   const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
   if (!data) notFound();
-  return data;
+  return data.data;
 }
 
 export async function generateStaticParams(): Promise<
   SlugPageProps["params"][]
 > {
-  const popular = await getPopular();
-  const recent = await getRecent();
+  const seasonal = await season.getSeasonNow();
+  const popular = await top.getTopAnime();
   const paths = [
-    ...popular.data.map((anime) => ({ slug: anime.slug })),
-    ...recent.data.map((ep) => ({ slug: ep.anime.slug })),
+    ...popular.data.map((anime) => ({ slug: String(anime.mal_id) })),
+    ...seasonal.data.map((anime) => ({ slug: String(anime.mal_id) })),
   ];
   return paths;
 }
@@ -47,23 +49,23 @@ export async function generateStaticParams(): Promise<
 export async function generateMetadata({ params }: SlugPageProps) {
   const data = await handleSlug(params.slug);
   const ogUrl = new URL(absoluteUrl("/api/og"));
-  ogUrl.searchParams.set("title", data.title.userPreferred);
-  ogUrl.searchParams.set("description", data.description);
+  ogUrl.searchParams.set("title", data.title);
+  ogUrl.searchParams.set("description", data.synopsis);
   ogUrl.searchParams.set(
     "cover",
-    data.coverImage || "/images/placeholder-image.png"
+    data.trailer.images?.maximum_image_url || "/images/placeholder-image.png"
   );
   ogUrl.searchParams.set(
     "banner",
-    data.bannerImage || "/images/placeholder-image.png"
+    data.images.jpg.image_url || "/images/placeholder-image.png"
   );
 
   const metadata: Metadata = {
-    title: data.title.userPreferred,
-    description: data.description,
+    title: data.title,
+    description: data.synopsis,
     openGraph: {
-      title: data.title.userPreferred,
-      description: data.description,
+      title: data.title,
+      description: data.synopsis,
       type: "website",
       url: absoluteUrl(`/anime/${params.slug}`),
       images: [
@@ -71,14 +73,14 @@ export async function generateMetadata({ params }: SlugPageProps) {
           url: ogUrl.toString(),
           width: 1200,
           height: 630,
-          alt: data.title.userPreferred,
+          alt: data.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: data.title.userPreferred,
-      description: data.description,
+      title: data.title,
+      description: data.synopsis,
       images: [ogUrl.toString()],
     },
   };
@@ -91,8 +93,11 @@ export default async function SlugPage({ params }: SlugPageProps) {
     <main className="px-4 lg:container space-y-2">
       <AspectRatio ratio={16 / 5} className="relative min-h-[125px]">
         <Image
-          src={data.bannerImage || "/images/placeholder-image.png"}
-          alt={data.title.userPreferred}
+          src={
+            data.trailer.images?.maximum_image_url ||
+            "/images/placeholder-image.png"
+          }
+          alt={data.title}
           fill
           className="object-cover"
           priority
@@ -101,8 +106,8 @@ export default async function SlugPage({ params }: SlugPageProps) {
         <div className="absolute bottom-0 left-0 -mb-[62.5px] ml-4 max-w-2xl">
           <div className="flex flex-row gap-4">
             <Image
-              src={data.coverImage}
-              alt={data.title.romaji}
+              src={data.images.jpg.image_url}
+              alt={data.title}
               width={125}
               height={125}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -112,85 +117,115 @@ export default async function SlugPage({ params }: SlugPageProps) {
           </div>
         </div>
         <div className="absolute -bottom-4 left-40 space-y-2">
-          <p className="font-bold text-md md:text-2xl">
-            {data.title.userPreferred}
-          </p>
+          <p className="font-bold text-md md:text-2xl">{data.title}</p>
           <Suspense fallback={<Button>Loading ...</Button>}>
-            <WatchButton slug={data.slug} />
+            <WatchButton slug={String(data.mal_id)} />
           </Suspense>
         </div>
       </AspectRatio>
       <div className="h-[62.5px]" />
       <div className="flex gap-2">
-        {data.genre.map((name) => (
-          <Badge variant={"secondary"} key={name}>
+        {data.genres.map(({ name, mal_id }) => (
+          <Badge variant={"secondary"} key={mal_id}>
             {name}
           </Badge>
         ))}
       </div>
-      <div className="text-xs md:text-sm"> {parser(data.description)}</div>
+      <div className="text-xs md:text-sm"> {data.synopsis}</div>
       <Separator />
-      {data.episodes.length > 0 ? (
-        <>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold tracking-tight">Episodes</h2>
-          </div>
-          <div className="relative">
-            <ScrollArea>
-              <div className="flex space-x-4 pb-4">
-                {data.episodes.reverse().map((episode, idx) => (
-                  <EpisodeCard
-                    key={idx}
-                    episode={{
-                      title: episode.title,
-                      image: episode.image || "/images/placeholder-image.png",
-                      number: episode.number,
-                      slug: data.slug,
-                    }}
-                    className="lg:w-[200px] w-28"
-                    width={250}
-                    height={330}
-                  />
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-        </>
+      {data.episodes > 0 ? (
+        <AnimeEpisodes mal_id={data.mal_id} image={data.images.jpg.image_url} />
       ) : (
         <div className="font-semibold text-xl">No episodes found ...</div>
       )}
       <Separator />
-      {data.relations.length > 0 ? (
-        <>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold tracking-tight">Relations</h2>
-          </div>
-          <div className="relative">
-            <ScrollArea>
-              <div className="flex space-x-4 pb-4">
-                {data.relations.map(({ anime, type }, idx) => (
-                  <AnimeCard
-                    key={idx}
-                    anime={{
-                      title: getTitle(anime.title),
-                      image: anime.coverImage,
-                      description: toTitleCase(type),
-                      slug: anime.slug,
-                    }}
-                    className="lg:w-[250px] w-28"
-                    aspectRatio="portrait"
-                    width={250}
-                    height={330}
-                  />
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-        </>
-      ) : null}
+      <Relations mal_id={data.mal_id} />
     </main>
+  );
+}
+
+interface Props {
+  mal_id: number;
+  image?: string;
+}
+
+async function AnimeEpisodes({ mal_id, image }: Props) {
+  const { data } = await anime.getAnimeEpisodes(mal_id);
+  const images = await anime.getAnimePictures(mal_id);
+  const imageSRC =
+    images.data[0].images?.jpg.image_url ||
+    image ||
+    absoluteUrl("/images/placeholder-image.png");
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold tracking-tight">Episodes</h2>
+      </div>
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {data.reverse().map(({ title, mal_id: number }) => (
+              <EpisodeCard
+                key={number}
+                episode={{
+                  title,
+                  mal_id,
+                  number,
+                  image: imageSRC,
+                }}
+                className="lg:w-[200px] w-28"
+                width={250}
+                height={330}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+    </>
+  );
+}
+
+async function Relations({ mal_id }: Props) {
+  const res = await fetch(
+    `https://api.jikan.moe/v4/anime/${mal_id}/relations`,
+    {
+      next: {
+        revalidate: 300,
+      },
+    }
+  );
+  if (!res.ok) return null;
+
+  const { data }: { data: JikanResourceRelation[] } = await res.json();
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold tracking-tight">Relations</h2>
+      </div>
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {data.map(({ entry, relation }, idx) => {
+              return entry
+                .filter((e) => e.type === "anime")
+                .map((anime) => (
+                  <div key={anime.mal_id}>
+                    <Link
+                      href={`/anime/${anime.mal_id}`}
+                      className="underline underline-offset-4"
+                    >
+                      {anime.name}
+                    </Link>
+                    <div className="text-xs text-gray-500">{relation}</div>
+                  </div>
+                ));
+            })}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+    </>
   );
 }
 

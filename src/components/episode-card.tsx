@@ -28,7 +28,10 @@ export function EpisodeCard({
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
-        <Link href={`/anime/${episode.mal_id}/${episode.number}`}>
+        <Link
+          href={`/anime/${episode.mal_id}/${episode.number}`}
+          className="relative"
+        >
           <Image
             src={episode.image}
             alt={episode.title}
@@ -41,6 +44,9 @@ export function EpisodeCard({
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
             )}
           />
+          <div className="absolute top-2 right-2">
+            <span className="rounded-full h-4 w-4 bg-blue-500"></span>
+          </div>
         </Link>
       </div>
       <div className="space-y-1 text-sm">
