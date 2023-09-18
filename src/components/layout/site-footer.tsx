@@ -22,14 +22,23 @@ export function SiteFooter() {
           </Link>
           . Powered by{" "}
           <Link
-            href="https://docs.enime.moe"
+            href="https://github.com/tutkli/jikan-ts"
             target="_blank"
             rel="noreferrer"
             className="underline text-primary underline-offset-[5px]"
           >
-            Enime
-          </Link>
-          .
+            Jikan TS
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="https://docs.consumet.org"
+            target="_blank"
+            rel="noreferrer"
+            className="underline text-primary underline-offset-[5px]"
+          >
+            Consumet API
+          </Link>{" "}
+          <i>for video sources</i>.
         </div>
         <div className="flex space-x-1">
           <Link
