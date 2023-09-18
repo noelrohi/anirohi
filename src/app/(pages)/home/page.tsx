@@ -8,9 +8,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
-import { getPopular, getRecent } from "@/lib/consumet";
+import { season, top } from "@/lib/jikan";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, getAnimeTitle } from "@/lib/utils";
+import { absoluteUrl, cn } from "@/lib/utils";
 import { and, eq, ne } from "drizzle-orm";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -43,12 +43,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [recentSettled, popularSettled] = await Promise.allSettled([
-    getRecent(),
-    getPopular(),
+  const [seasonalSettled, popularSettled] = await Promise.allSettled([
+    season.getSeasonNow(),
+    top.getTopAnime(),
   ]);
-  const recentAnime =
-    recentSettled.status === "fulfilled" ? recentSettled.value : null;
+  const seasonalAnime =
+    seasonalSettled.status === "fulfilled" ? seasonalSettled.value : null;
   const popularAnime =
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
 
@@ -56,34 +56,30 @@ export default async function HomePage() {
     <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
         <CarouselSlider>
-          {popularAnime?.map((anime) => (
-            <AspectRatio ratio={16 / 7} className="relative" key={anime.id}>
+          {seasonalAnime?.data.map((anime) => (
+            <AspectRatio ratio={16 / 7} className="relative" key={anime.mal_id}>
               <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
                     <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
-                      {getAnimeTitle(anime.title)}
+                      {anime.title}
                     </h1>
                   </div>
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Reiciendis itaque repudiandae, voluptatem ipsa reprehenderit
-                    neque officiis culpa tempore, minus modi facere veritatis
-                    pariatur dolores eligendi maxime labore expedita cupiditate
-                    nisi!
+                    {anime.synopsis}
                   </div>
                   <div className="hidden md:block">
                     <div className="flex flex-shrink-0 gap-1 flex-wrap ">
-                      {anime.genres.map((genre: string) => (
-                        <Badge variant={"secondary"} key={genre}>
-                          {genre}
+                      {anime.genres.map(({ name, mal_id }) => (
+                        <Badge variant={"secondary"} key={mal_id}>
+                          {name}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <Link
                     className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
-                    href={`/anime/${anime.id}`}
+                    href={`/anime/${anime.mal_id}`}
                   >
                     <Icons.play className="mr-2" />
                     Watch Now
@@ -91,8 +87,12 @@ export default async function HomePage() {
                 </div>
               </div>
               <Image
-                src={anime.image!}
-                alt={getAnimeTitle(anime.title) ?? ""}
+                src={
+                  anime.trailer.images?.maximum_image_url ||
+                  anime.images.jpg.maximum_image_url ||
+                  anime.images.jpg.image_url
+                }
+                alt={anime.title}
                 fill
                 className="absolute inset-0 object-cover"
                 priority
@@ -107,23 +107,23 @@ export default async function HomePage() {
         </Suspense>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Seasonal</h2>
             <p className="text-sm text-muted-foreground">
-              Freshly aired episodes of anime that have been recently released.
+              Anime series available this season
             </p>
           </div>
         </div>
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {recentAnime?.map((episode, idx) => (
+              {seasonalAnime?.data.map((anime, idx) => (
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: getAnimeTitle(episode.title)!,
-                    image: episode.image!,
-                    description: `Episode ${episode.episodeNumber}`,
-                    slug: episode.id,
+                    title: anime.title,
+                    image: anime.images.jpg.image_url,
+                    description: `Episode ${anime.episodes || 1}`,
+                    slug: String(anime.mal_id),
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"
@@ -140,21 +140,21 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Popular</h2>
             <p className="text-sm text-muted-foreground">
-              Currently airing anime series in high demand.
+              Anime series in high demand.
             </p>
           </div>
         </div>
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {popularAnime?.map((anime, idx) => (
+              {popularAnime?.data.map((anime, idx) => (
                 <AnimeCard
                   key={idx}
                   anime={{
-                    title: getAnimeTitle(anime.title)!,
-                    image: anime.image!,
-                    description: ``,
-                    slug: anime.id,
+                    title: anime.title,
+                    image: anime.images.jpg.image_url,
+                    description: anime.status,
+                    slug: String(anime.mal_id),
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"

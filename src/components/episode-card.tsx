@@ -14,7 +14,7 @@ type Episode = {
   title: string;
   number: number;
   image: string;
-  slug: string;
+  mal_id: number;
 };
 
 export function EpisodeCard({
@@ -28,7 +28,7 @@ export function EpisodeCard({
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md">
-        <Link href={`/anime/${episode.slug}/${episode.number}`}>
+        <Link href={`/anime/${episode.mal_id}/${episode.number}`}>
           <Image
             src={episode.image}
             alt={episode.title}
