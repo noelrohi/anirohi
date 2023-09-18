@@ -30,13 +30,13 @@ export default async function VideoPlayerSSR({
     `https://api.consumet.org/anime/gogoanime/${episode.anime.title}`,
     { next: { revalidate: 60 * 5 } }
   );
-  if (!searchRes.ok) return <>Oops, I can't find this series.</>;
+  if (!searchRes.ok) return <>Oops, I can&#39;t find this series.</>;
   const searchData = await searchRes.json();
   const seriesRes = await fetch(
     `https://api.consumet.org/anime/gogoanime/info/${searchData.results[0]?.id}`,
     { next: { revalidate: 60 * 5 } }
   );
-  if (!seriesRes.ok) return <>Oops, I can't find this series.</>;
+  if (!seriesRes.ok) return <>Oops, I can&#39;t find this series.</>;
   const seriesData = await seriesRes.json();
   const res = await fetch(
     `https://api.consumet.org/anime/gogoanime/watch/${
