@@ -16,20 +16,20 @@ interface DashboardPageProps {
   };
 }
 
-export async function generateStaticParams(): Promise<
-  DashboardPageProps["params"][]
-> {
-  const users = await db.query.users.findMany();
-  const params = users.map((user) => {
-    return { name: user.name! };
-  });
-  return params;
-}
+// export async function generateStaticParams(): Promise<
+//   DashboardPageProps["params"][]
+// > {
+//   const users = await db.query.users.findMany();
+//   const params = users.map((user) => {
+//     return { name: user.name! };
+//   });
+//   return params;
+// }
 
 export async function generateMetadata({ params }: DashboardPageProps) {
-  // const data: GenStat = await getStats(params.name, "general");
+  const data: GenStat = await getStats(params.name, "general");
   const title = `${params.name}'s Dashboard`;
-  const description = `A user of Anirohi.`;
+  const description = `A user of Anirohi. Watch anime ${data.data.User.statistics.anime.count} times`;
 
   const metadata: Metadata = {
     title,
