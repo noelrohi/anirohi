@@ -120,7 +120,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
         </div>
       </AspectRatio>
       <div className="h-[62.5px]" />
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {data.genres.map((genre, index) => (
           <Badge variant={"secondary"} key={index}>
             {genre}
@@ -186,7 +186,7 @@ function Relations({
   return (
     <>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">Recommended</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Relations</h2>
       </div>
       <div className="relative">
         <ScrollArea>
