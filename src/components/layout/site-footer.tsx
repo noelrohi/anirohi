@@ -22,12 +22,12 @@ export function SiteFooter() {
           </Link>
           . Powered by{" "}
           <Link
-            href="https://github.com/tutkli/jikan-ts"
+            href="https://anilist.co/graphiql"
             target="_blank"
             rel="noreferrer"
             className="underline text-primary underline-offset-[5px]"
           >
-            Jikan TS
+            Anilist
           </Link>{" "}
           and{" "}
           <Link

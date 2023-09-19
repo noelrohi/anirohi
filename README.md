@@ -17,7 +17,7 @@
 
 ## Introduction
 
-Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Jikan](https://docs.api.jikan.moe), [Anilist](https://anilist.gitbook.io/), and [PlanetScale MySQL](https://planetscale.com/).
+Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Consumet](https://docs.consumet.org), [Anilist](https://anilist.gitbook.io/), and [PlanetScale MySQL](https://planetscale.com/).
 
 Here are some of the features that Anirohi provides:
 
@@ -86,7 +86,7 @@ Start the server
 
 ## Implementation
 
-Anirohi is built as a standard Next.js application with [Jikan](https://docs.api.jikan.moe) as data provider, also [Consumet](https://docs.consumet.org) for providing video sources. <br>
+Anirohi is built as a standard Next.js application with [Consumet](https://docs.consumet.org). <br>
 [Satori](https://og-playground.vercel.app/) is used for generating open-graph images based on Anime series and episode. <br>
 [Anilist](https://anilist.gitbook.io/) is used as the auth provider as well as for mutating user progress. <br>
 [React-player](https://www.npmjs.com/package/react-player) is used to play video sources to watch anime on. <br>
