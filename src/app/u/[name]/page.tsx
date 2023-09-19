@@ -27,9 +27,9 @@ export async function generateStaticParams(): Promise<
 }
 
 export async function generateMetadata({ params }: DashboardPageProps) {
-  const data: GenStat = await getStats(params.name, "general");
+  // const data: GenStat = await getStats(params.name, "general");
   const title = `${params.name}'s Dashboard`;
-  const description = `A user of Anirohi. Watched ${data.data.User.statistics.anime.count} animes`;
+  const description = `A user of Anirohi.`;
 
   const metadata: Metadata = {
     title,
