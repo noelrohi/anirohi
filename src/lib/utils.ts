@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { AnimeEpisode } from "@tutkli/jikan-ts";
+import { AnimeInfo } from "@/types/consumet";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { clsx, type ClassValue } from "clsx";
@@ -29,11 +29,18 @@ export function toTitleCase(str: string): string {
     .join(" ");
 }
 
-export async function getNextEpisode(
+export async function nextEpisode(
   currentEpisodeIndex: number,
-  episodes: AnimeEpisode[]
+  episodes: AnimeInfo["episodes"]
 ) {
-  return episodes ? episodes[currentEpisodeIndex + 1]?.mal_id : null;
+  return episodes ? episodes[currentEpisodeIndex + 1]?.number : null;
+}
+
+export async function prevEpisode(
+  currentEpisodeIndex: number,
+  episodes: AnimeInfo["episodes"]
+) {
+  return episodes ? episodes[currentEpisodeIndex - 1]?.number : null;
 }
 
 export const ratelimit = new Ratelimit({

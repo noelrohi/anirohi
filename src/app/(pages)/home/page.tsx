@@ -66,11 +66,11 @@ export default async function HomePage() {
                     </h1>
                   </div>
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Repellat in ipsum debitis mollitia asperiores! Consequatur
-                    consectetur sunt, repudiandae accusamus quae enim cum
-                    officia architecto pariatur laboriosam, perspiciatis
-                    provident cupiditate unde!
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Voluptates voluptatibus dicta nemo temporibus autem commodi
+                    laudantium eligendi laborum. Ea, itaque. Nostrum quo impedit
+                    mollitia aperiam delectus, eaque unde temporibus
+                    consequuntur.
                   </div>
                   <div className="hidden md:block">
                     <div className="flex flex-shrink-0 gap-1 flex-wrap ">
@@ -107,9 +107,9 @@ export default async function HomePage() {
         </Suspense>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Seasonal</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
             <p className="text-sm text-muted-foreground">
-              Anime series available this season
+              Freshly aired episodes of anime that have been recently released.
             </p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Popular</h2>
             <p className="text-sm text-muted-foreground">
-              Anime series in high demand.
+              Current anime series in high demand.
             </p>
           </div>
         </div>

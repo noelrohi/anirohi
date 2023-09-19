@@ -1,8 +1,9 @@
 import { Icons } from "@/components/icons";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
+import { watch } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { Anime, AnimeEpisode } from "@tutkli/jikan-ts";
+import { AnimeInfo } from "@/types/consumet";
 import { and, eq } from "drizzle-orm";
 import dynamic from "next/dynamic";
 
@@ -11,7 +12,7 @@ const VideoPlayerCSR = dynamic(() => import("./csr"), { ssr: false });
 export default async function VideoPlayerSSR({
   episode,
 }: {
-  episode: AnimeEpisode & { anime: Anime };
+  episode: AnimeInfo["episodes"][0] & { anime: AnimeInfo };
 }) {
   const session = await auth();
   let seekToValue, username;
@@ -19,33 +20,14 @@ export default async function VideoPlayerSSR({
     const history = await db.query.histories.findFirst({
       where: and(
         eq(histories.userId, session.user.id),
-        eq(histories.slug, String(episode.anime.mal_id)),
-        eq(histories.episodeNumber, episode.mal_id)
+        eq(histories.slug, String(episode.anime.id)),
+        eq(histories.episodeNumber, episode.number)
       ),
     });
     seekToValue = history?.duration;
     username = session.user?.name;
   }
-  const searchRes = await fetch(
-    `https://api.consumet.org/anime/gogoanime/${episode.anime.title}`,
-    { next: { revalidate: 60 * 5 } }
-  );
-  if (!searchRes.ok) return <>Oops, I can&#39;t find this series.</>;
-  const searchData = await searchRes.json();
-  const seriesRes = await fetch(
-    `https://api.consumet.org/anime/gogoanime/info/${searchData.results[0]?.id}`,
-    { next: { revalidate: 60 * 5 } }
-  );
-  if (!seriesRes.ok) return <>Oops, I can&#39;t find this series.</>;
-  const seriesData = await seriesRes.json();
-  const res = await fetch(
-    `https://api.consumet.org/anime/gogoanime/watch/${
-      seriesData.episodes.find((e: any) => e.number == episode.mal_id)?.id
-    }`,
-    { next: { revalidate: 60 * 5 } }
-  );
-  if (!res.ok) return <>Oops, something went wrong!</>;
-  const data = await res.json();
+  const data = await watch({ episodeId: episode.id });
   return (
     <VideoPlayerCSR
       user={username}

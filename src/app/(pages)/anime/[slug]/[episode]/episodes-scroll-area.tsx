@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollViewport } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { AnimeEpisode } from "@tutkli/jikan-ts";
+import { AnimeInfo } from "@/types/consumet";
 import Link from "next/link";
 import { useRef } from "react";
 
 interface EpisodeScrollAreaProps extends React.HTMLProps<HTMLDivElement> {
   slug: string;
   currentEpisode: number;
-  episodes: AnimeEpisode[];
+  episodes: AnimeInfo["episodes"];
 }
 
 export function EpisodeScrollArea({
@@ -44,34 +44,34 @@ export function EpisodeScrollArea({
         <ScrollViewport className="p-4" ref={scrollableRef}>
           {episodes?.map((ep) => (
             <div
-              ref={ep.mal_id === currentEpisode ? targetRef : null}
-              key={ep.mal_id}
+              ref={ep.number === currentEpisode ? targetRef : null}
+              key={ep.number}
             >
               <Link
-                href={`/anime/${slug}/${ep.mal_id}`}
+                href={`/anime/${slug}/${ep.number}`}
                 className="flex flex-row justify-between items-center"
               >
                 <div className="flex flex-row items-center">
                   <Badge
                     className={cn(
                       "px-1 py-0 rounded-full mr-2",
-                      ep.mal_id === currentEpisode &&
+                      ep.number === currentEpisode &&
                         "bg-blue-700 dark:bg-blue-400"
                     )}
                     variant={"destructive"}
                   >
-                    {ep.mal_id}
+                    {ep.number}
                   </Badge>
                   <span
                     className={cn(
                       "inline-flex gap-2 items-center justify-between",
-                      ep.mal_id === currentEpisode && "font-bold"
+                      ep.number === currentEpisode && "font-bold"
                     )}
                   >
-                    {ep.title || `Episode ${ep.mal_id}`}
+                    {`Episode ${ep.number}`}
                   </span>
                 </div>
-                {ep.mal_id === currentEpisode && <Icons.check />}
+                {ep.number === currentEpisode && <Icons.check />}
               </Link>
               <Separator className="my-2" />
             </div>

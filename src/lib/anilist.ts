@@ -1,3 +1,4 @@
+import { MediaQuery } from "@/types/anilist/media";
 import { statisticQueries } from "./gql-queries";
 
 export async function queryAnilist(
@@ -42,9 +43,9 @@ export async function mutateAnilist(
   return data;
 }
 
-export async function getMediaIdByMalId(mal_id: number) {
-  const query = `query($id: Int){
-    Media(id: $id){
+export async function getMediaIdByTitle(title: string) {
+  const query = `query($query: String, type:ANIME){
+    Media(search: $query){
       id
     }
   }`;
@@ -57,7 +58,7 @@ export async function getMediaIdByMalId(mal_id: number) {
     body: JSON.stringify({
       query,
       variables: {
-        id: mal_id,
+        query: title,
       },
     }),
   });
@@ -66,13 +67,78 @@ export async function getMediaIdByMalId(mal_id: number) {
   return data?.Media?.id;
 }
 
+export async function getCoverImageByTitle(title: string) {
+  const query = `query ($query: String) {
+    Media(search: $query, type: ANIME) {
+      id
+      description
+      coverImage {
+        extraLarge
+        large
+        medium
+        color
+      }
+      bannerImage
+      relations {
+        edges {
+          id
+          node {
+            coverImage {
+              extraLarge
+              large
+              medium
+              color
+            }
+            startDate {
+              year
+              month
+              day
+            }
+            type
+            siteUrl
+            title {
+              romaji
+              english
+              native
+              userPreferred
+            }
+          }
+        }
+      }
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+    }
+  }`;
+  const res = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: {
+        query: title,
+      },
+    }),
+    next: { revalidate: 60 * 60 * 24 },
+  });
+  if (!res.ok) return null;
+  const { data }: MediaQuery = await res.json();
+  return data;
+}
+
 export async function checkIsWatched(Props: {
   userName: string | null | undefined;
-  mediaId: number;
+  mediaId: number | undefined;
   episodeNumber: number;
 }) {
   const { userName, mediaId, episodeNumber } = Props;
-  if (!userName) return null;
+  if (!userName && !mediaId) return null;
   const query = `query($userName: String, $mediaId: Int){
     MediaList(userName:$userName, mediaId: $mediaId){
       progress
