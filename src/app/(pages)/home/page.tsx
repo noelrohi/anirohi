@@ -101,7 +101,7 @@ export default async function HomePage() {
                     title: ep.title,
                     image: ep.image,
                     description: `Episode ${ep.episodeNumber}`,
-                    slug: ep.id,
+                    slug: `${ep.id}/${ep.episodeNumber}`,
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"

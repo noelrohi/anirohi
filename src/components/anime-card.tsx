@@ -15,7 +15,8 @@ interface AnimeCardProps extends React.HTMLAttributes<HTMLDivElement> {
 type Anime = {
   title: string;
   image: string;
-  slug: string;
+  slug?: string;
+  link?: string;
   description: string;
 };
 
@@ -28,10 +29,11 @@ export function AnimeCard({
   className,
   ...props
 }: AnimeCardProps) {
+  const href = anime.slug ? `/anime/${anime.slug}` : anime.link ?? "#";
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md relative">
-        <Link href={`/anime/${anime.slug}`}>
+        <Link href={href}>
           <Image
             src={anime.image}
             alt={anime.title}

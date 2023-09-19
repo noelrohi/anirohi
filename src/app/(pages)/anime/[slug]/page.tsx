@@ -198,7 +198,7 @@ function Relations({
                   title: relation.node.title.english,
                   image: relation.node.coverImage.large,
                   description: `${relation.node.startDate.year} | ${relation.node.type}`,
-                  slug: relation.node.siteUrl,
+                  link: relation.node.siteUrl,
                 }}
                 className="lg:w-[250px] w-28"
                 aspectRatio="portrait"
