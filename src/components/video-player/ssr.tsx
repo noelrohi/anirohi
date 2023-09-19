@@ -31,7 +31,10 @@ export default async function VideoPlayerSSR({
   return (
     <VideoPlayerCSR
       user={username}
-      url={data.sources[0].url}
+      url={
+        data.sources.find((s) => s.quality === "720p")?.url ||
+        data.sources[0].url
+      }
       episode={episode}
       playIcon={<Icons.play />}
       seekSecond={seekToValue}
