@@ -210,3 +210,49 @@ export const statisticQueries = {
               }
             }`,
 };
+
+export const animeInfo = `query ($query: String) {
+    Media(search: $query, type: ANIME) {
+      id
+      description
+      coverImage {
+        extraLarge
+        large
+        medium
+        color
+      }
+      bannerImage
+      relations {
+        edges {
+          id
+          node {
+            coverImage {
+              extraLarge
+              large
+              medium
+              color
+            }
+            startDate {
+              year
+              month
+              day
+            }
+            type
+            siteUrl
+            title {
+              romaji
+              english
+              native
+              userPreferred
+            }
+          }
+        }
+      }
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+    }
+  }`;

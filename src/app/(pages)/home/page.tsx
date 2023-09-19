@@ -8,7 +8,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
-import { season, top } from "@/lib/jikan";
+import { recent, topAiring } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
 import { and, eq, ne } from "drizzle-orm";
@@ -43,12 +43,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [seasonalSettled, popularSettled] = await Promise.allSettled([
-    season.getSeasonNow(),
-    top.getTopAnime(),
+  const [recentSettled, popularSettled] = await Promise.allSettled([
+    recent(),
+    topAiring(),
   ]);
-  const seasonalAnime =
-    seasonalSettled.status === "fulfilled" ? seasonalSettled.value : null;
+  const recentEpisodes =
+    recentSettled.status === "fulfilled" ? recentSettled.value : null;
   const popularAnime =
     popularSettled.status === "fulfilled" ? popularSettled.value : null;
 
@@ -56,8 +56,8 @@ export default async function HomePage() {
     <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
         <CarouselSlider>
-          {seasonalAnime?.data.map((anime) => (
-            <AspectRatio ratio={16 / 7} className="relative" key={anime.mal_id}>
+          {popularAnime?.results.map((anime) => (
+            <AspectRatio ratio={16 / 7} className="relative" key={anime.id}>
               <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
                 <div className="flex flex-col gap-4 max-w-xl">
                   <div className="flex gap-2">
@@ -66,20 +66,24 @@ export default async function HomePage() {
                     </h1>
                   </div>
                   <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-                    {anime.synopsis}
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Voluptates voluptatibus dicta nemo temporibus autem commodi
+                    laudantium eligendi laborum. Ea, itaque. Nostrum quo impedit
+                    mollitia aperiam delectus, eaque unde temporibus
+                    consequuntur.
                   </div>
                   <div className="hidden md:block">
                     <div className="flex flex-shrink-0 gap-1 flex-wrap ">
-                      {anime.genres.map(({ name, mal_id }) => (
-                        <Badge variant={"secondary"} key={mal_id}>
-                          {name}
+                      {anime.genres.map((genre, index) => (
+                        <Badge variant={"secondary"} key={index}>
+                          {genre}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <Link
                     className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
-                    href={`/anime/${anime.mal_id}`}
+                    href={`/anime/${anime.id}`}
                   >
                     <Icons.play className="mr-2" />
                     Watch Now
@@ -87,11 +91,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <Image
-                src={
-                  anime.trailer.images?.maximum_image_url ||
-                  anime.images.jpg.maximum_image_url ||
-                  anime.images.jpg.image_url
-                }
+                src={anime.image}
                 alt={anime.title}
                 fill
                 className="absolute inset-0 object-cover"
@@ -107,23 +107,23 @@ export default async function HomePage() {
         </Suspense>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Seasonal</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
             <p className="text-sm text-muted-foreground">
-              Anime series available this season
+              Freshly aired episodes of anime that have been recently released.
             </p>
           </div>
         </div>
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {seasonalAnime?.data.map((anime, idx) => (
+              {recentEpisodes?.results.map((ep) => (
                 <AnimeCard
-                  key={idx}
+                  key={ep.id}
                   anime={{
-                    title: anime.title,
-                    image: anime.images.jpg.image_url,
-                    description: `Episode ${anime.episodes || 1}`,
-                    slug: String(anime.mal_id),
+                    title: ep.title,
+                    image: ep.image,
+                    description: `Episode ${ep.episodeNumber}`,
+                    slug: ep.id,
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"
@@ -140,21 +140,21 @@ export default async function HomePage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Popular</h2>
             <p className="text-sm text-muted-foreground">
-              Anime series in high demand.
+              Current anime series in high demand.
             </p>
           </div>
         </div>
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
-              {popularAnime?.data.map((anime, idx) => (
+              {popularAnime?.results.map((anime) => (
                 <AnimeCard
-                  key={idx}
+                  key={anime.id}
                   anime={{
                     title: anime.title,
-                    image: anime.images.jpg.image_url,
-                    description: anime.status,
-                    slug: String(anime.mal_id),
+                    image: anime.image,
+                    description: "",
+                    slug: anime.id,
                   }}
                   className="lg:w-[250px] w-28"
                   aspectRatio="portrait"

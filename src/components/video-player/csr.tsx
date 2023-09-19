@@ -2,8 +2,8 @@
 
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { absoluteUrl, getNextEpisode } from "@/lib/utils";
-import { Anime, AnimeEpisode } from "@tutkli/jikan-ts";
+import { absoluteUrl, nextEpisode as getNextEpisode } from "@/lib/utils";
+import { AnimeInfo } from "@/types/consumet";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { OnProgressProps } from "react-player/base";
@@ -18,7 +18,7 @@ export default function VideoPlayerCSR({
   seekSecond,
 }: ReactPlayerProps & {
   user: string | undefined | null;
-  episode: AnimeEpisode & { anime: Anime };
+  episode: AnimeInfo["episodes"][0] & { anime: AnimeInfo };
   seekSecond: number | undefined;
 }) {
   const pathname = usePathname();
@@ -44,15 +44,14 @@ export default function VideoPlayerCSR({
       console.log(`Played ${(state.played * 100).toFixed(2)}%`);
       if (user) {
         await addToHistory({
-          slug: String(episode.anime.mal_id),
+          slug: String(episode.anime.id),
           title: episode.anime.title,
           image:
-            episode.anime.images?.jpg.image_url ||
-            absoluteUrl("/images/placeholder-image.png"),
+            episode.anime.image || absoluteUrl("/images/placeholder-image.png"),
           progress: state.played,
           pathname,
           duration: state.playedSeconds,
-          episodeNumber: episode.mal_id,
+          episodeNumber: episode.number,
         });
       }
       setLocalStorageMedia(JSON.stringify(state));
@@ -65,26 +64,25 @@ export default function VideoPlayerCSR({
       deleteLocalStorageMedia();
       startTransition(async () => {
         await addToHistory({
-          slug: String(episode.anime.mal_id),
+          slug: String(episode.anime.id),
           title: episode.anime.title,
           image:
-            episode.anime.images?.jpg.image_url ||
-            absoluteUrl("/images/placeholder-image.png"),
+            episode.anime.image || absoluteUrl("/images/placeholder-image.png"),
           progress: 100,
           pathname,
           duration: state.playedSeconds,
-          episodeNumber: episode.mal_id,
+          episodeNumber: episode.number,
         });
-        const hasNextEp = episode.anime.episodes > episode.mal_id;
+        const hasNextEp = episode.anime.totalEpisodes > episode.number;
         if (hasNextEp) {
-          const url = `/anime/${episode.anime.mal_id}/${episode.mal_id + 1}`;
+          const url = `/anime/${episode.anime.id}/${episode.number + 1}`;
           router.prefetch(url);
           toast("Go to next episode?", {
             duration: 60 * 5 * 1000,
             action: {
               label: "Yes",
               onClick: () => {
-                toast.loading(`Going to episode ${episode.mal_id + 1}`);
+                toast.loading(`Going to episode ${episode.number + 1}`);
                 router.push(url);
               },
             },

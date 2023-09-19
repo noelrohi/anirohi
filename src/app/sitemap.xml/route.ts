@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { db } from "@/db";
-import { season, top } from "@/lib/jikan";
+import { recent as Recent, topAiring } from "@/lib/consumet";
 
 async function generateSiteMap() {
   const routesMap = ["", "/home"].map((route) => ({
@@ -10,47 +10,44 @@ async function generateSiteMap() {
     priority: 1.0,
   }));
 
-  const [recent, popular] = await Promise.all([
-    top.getTopAnime(),
-    season.getSeasonNow(),
-  ]);
+  const [popular, recent] = await Promise.all([topAiring(), Recent()]);
   const animeMap = [
-    ...recent.data.map((anime) => ({
-      url: `${siteConfig.url}/anime/${anime.mal_id}`,
+    ...recent.results.map((anime) => ({
+      url: `${siteConfig.url}/anime/${anime.id}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.9,
     })),
-    ...popular.data.map((anime) => ({
-      url: `${siteConfig.url}/anime/${anime.mal_id}`,
+    ...popular.results.map((anime) => ({
+      url: `${siteConfig.url}/anime/${anime.id}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.9,
     })),
   ];
-  const recentEpisodeRoutes = recent.data.map((anime) => {
+  const recentEpisodeRoutes = recent.results.map((anime) => {
     // loop from 1 to the number of episodes
     // and return an array of objects
     // with the url and lastModified
-    return [...Array(anime.episodes).keys()].map((_, index) => ({
-      url: `${siteConfig.url}/anime/${anime.mal_id}/${index + 1}`,
+    return [...Array(anime.episodeNumber).keys()].map((_, index) => ({
+      url: `${siteConfig.url}/anime/${anime.id}/${index + 1}`,
       lastModified: new Date().toISOString(),
       changeFreq: "weekly",
       priority: 0.8,
     }));
   });
 
-  const popularEpisodeRoutes = popular.data.map((anime) => {
-    // loop from 1 to the number of episodes
-    // and return an array of objects
-    // with the url and lastModified
-    return [...Array(anime.episodes).keys()].map((_, index) => ({
-      url: `${siteConfig.url}/anime/${anime.mal_id}/${index + 1}`,
-      lastModified: new Date().toISOString(),
-      changeFreq: "weekly",
-      priority: 0.8,
-    }));
-  });
+  // const popularEpisodeRoutes = popular.results.map((anime) => {
+  //   // loop from 1 to the number of episodes
+  //   // and return an array of objects
+  //   // with the url and lastModified
+  //   return [...Array(anime.).keys()].map((_, index) => ({
+  //     url: `${siteConfig.url}/anime/${anime.mal_id}/${index + 1}`,
+  //     lastModified: new Date().toISOString(),
+  //     changeFreq: "weekly",
+  //     priority: 0.8,
+  //   }));
+  // });
 
   const users = await db.query.users.findMany();
   const dashboardRoutes = users.map((user) => ({
@@ -66,7 +63,7 @@ async function generateSiteMap() {
       ...dashboardRoutes,
       ...animeMap,
       ...recentEpisodeRoutes.flat(),
-      ...popularEpisodeRoutes.flat(),
+      // ...popularEpisodeRoutes.flat(),
     ]),
   ];
 

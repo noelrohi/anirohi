@@ -8,32 +8,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
 import { comments as comment } from "@/db/schema/main";
-import { checkIsWatched, getMediaIdByMalId } from "@/lib/anilist";
+import { checkIsWatched, getMediaIdByTitle } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, getNextEpisode, getRelativeTime } from "@/lib/utils";
+import {
+  absoluteUrl,
+  cn,
+  getRelativeTime,
+  nextEpisode,
+  prevEpisode,
+} from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { handleSlug } from "../page";
 import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import { handleSlug } from "../page";
-import { anime } from "@/lib/jikan";
-import { AnimeEpisode } from "@tutkli/jikan-ts";
 
 interface EpisodePageProps {
   params: {
     episode: string;
     slug: string;
   };
-}
-
-async function getPreviousEpisode(
-  currentEpisodeIndex: number,
-  episodes: AnimeEpisode[]
-) {
-  return episodes ? episodes[currentEpisodeIndex - 1]?.mal_id : null;
 }
 
 // export async function generateStaticParams(): Promise<
@@ -56,27 +53,17 @@ async function getPreviousEpisode(
 // }
 
 export async function generateMetadata({ params }: EpisodePageProps) {
-  const slugData = await handleSlug(params.slug);
-  const episodeData = await anime.getAnimeEpisodeById(
-    Number(params.slug),
-    Number(params.episode)
-  );
-  const title = episodeData.data.title || slugData.title;
-  // @ts-ignore
-  const description = episodeData.data.synopsis || slugData.synopsis;
+  const { consumet, anilist } = await handleSlug(params.slug);
+  const title =
+    (anilist?.title.english ?? consumet.title) + ` Ep. ${params.episode}`;
+  const description = anilist?.description ?? consumet.description;
+  const cover = anilist?.coverImage.large ?? consumet.image;
+  const banner = anilist?.bannerImage ?? absoluteUrl("/opengraph-image.png");
   const ogUrl = new URL(absoluteUrl("/api/og"));
   ogUrl.searchParams.set("title", title);
   ogUrl.searchParams.set("description", description);
-  ogUrl.searchParams.set(
-    "cover",
-    slugData.trailer.images?.maximum_image_url ||
-      "/images/placeholder-image.png"
-  );
-  ogUrl.searchParams.set(
-    "banner",
-    slugData.images?.jpg.image_url || "/images/placeholder-image.png"
-  );
-
+  ogUrl.searchParams.set("cover", cover);
+  ogUrl.searchParams.set("banner", banner);
   const metadata: Metadata = {
     title,
     description,
@@ -105,30 +92,23 @@ export async function generateMetadata({ params }: EpisodePageProps) {
 }
 
 export default async function EpisodePage({ params }: EpisodePageProps) {
-  const slugData = await handleSlug(params.slug);
-  const episodeData = await anime.getAnimeEpisodeById(
-    Number(params.slug),
-    Number(params.episode)
-  );
-  const episodes = await anime.getAnimeEpisodes(Number(params.slug));
-  const episodeId = episodeData.data.mal_id;
+  const { consumet: slugData, anilist } = await handleSlug(params.slug);
+  const episodes = slugData.episodes;
+  const episodeData = episodes.find((e) => e.number === Number(params.episode));
+  const episodeId = episodeData?.id;
   if (!episodeId) throw new Error("Episode id not found!");
   const session = await auth();
 
   const currentEpisodeIndex =
-    episodes.data?.findIndex((e) => String(e.mal_id) === params.episode) || 0;
-  const nextEpisode = await getNextEpisode(currentEpisodeIndex, episodes.data);
-  const previousEpisode = await getPreviousEpisode(
-    currentEpisodeIndex,
-    episodes.data
-  );
-  const anilistId = await getMediaIdByMalId(slugData.mal_id);
+    episodes.findIndex((e) => String(e.number) === params.episode) || 0;
+  const nextEp = await nextEpisode(currentEpisodeIndex, episodes);
+  const prevEp = await prevEpisode(currentEpisodeIndex, episodes);
   const isWatched = await checkIsWatched({
     userName: session?.user?.name,
-    episodeNumber: episodeId,
-    mediaId: anilistId,
+    episodeNumber: episodeData.number,
+    mediaId: anilist?.id,
   });
-  const videoData = { ...episodeData.data, anime: slugData };
+  const videoData = { ...episodeData, anime: slugData };
   return (
     <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -149,7 +129,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           <aside className="lg:col-span-1">
             <div className="hidden lg:block ml-4">
               <EpisodeScrollArea
-                episodes={episodes.data}
+                episodes={episodes}
                 slug={params.slug}
                 currentEpisode={Number(params.episode)}
               />
@@ -157,18 +137,18 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           </aside>
         </div>
         <div className="flex flex-row gap-1 justify-end w-fit">
-          {previousEpisode && (
+          {prevEp && (
             <Link
               className={buttonVariants({ variant: "secondary" })}
-              href={`/anime/${params.slug}/${previousEpisode}`}
+              href={`/anime/${params.slug}/${prevEp}`}
             >
               <Icons.left className="mr-2" />
               Previous
             </Link>
           )}
-          {session?.user ? (
+          {session?.user && anilist?.id ? (
             <UpdateProgressButton
-              animeId={anilistId}
+              animeId={anilist.id}
               progress={Number(params.episode)}
               isWatched={isWatched}
             >
@@ -177,20 +157,19 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             </UpdateProgressButton>
           ) : null}
 
-          {nextEpisode && (
+          {nextEp && (
             <Link
               className={buttonVariants({ variant: "secondary" })}
-              href={`/anime/${params.slug}/${nextEpisode}`}
+              href={`/anime/${params.slug}/${nextEp}`}
             >
               Next <Icons.right className="ml-2" />
             </Link>
           )}
         </div>
         <h1 className="text-lg lg:text-2xl font-bold">
-          {episodeData.data.title}
+          Episode {params.episode} - {slugData.title}
         </h1>
-        {/* @ts-ignore  */}
-        <p className="text-md lg:text-lg">{episodeData.data.synopsis}</p>
+        {/* <p className="text-md lg:text-lg">{episodeData.description}</p> */}
         <Separator className="my-2" />
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold tracking-tight">
@@ -224,7 +203,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         <div className="block lg:hidden">
           <Separator className="my-2" />
           <EpisodeScrollArea
-            episodes={episodes.data}
+            episodes={episodes}
             slug={params.slug}
             currentEpisode={Number(params.episode)}
           />
