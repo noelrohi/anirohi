@@ -171,22 +171,27 @@ async function HistoryList() {
       <div className="relative">
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
-            {history.map((anime, idx) => (
-              <AnimeCard
-                key={idx}
-                anime={{
-                  title: anime.title,
-                  image: anime.image || absoluteUrl("/images/placeholder.png"),
-                  description: `Episode ${anime.episodeNumber}`,
-                  slug: `${anime.slug}/${anime.episodeNumber}`,
-                }}
-                progress={anime.progress * 100}
-                className="lg:w-[250px] w-28"
-                aspectRatio="portrait"
-                width={250}
-                height={330}
-              />
-            ))}
+            {history.length !== 0 ? (
+              history.map((anime, idx) => (
+                <AnimeCard
+                  key={idx}
+                  anime={{
+                    title: anime.title,
+                    image:
+                      anime.image || absoluteUrl("/images/placeholder.png"),
+                    description: `Episode ${anime.episodeNumber}`,
+                    slug: `${anime.slug}/${anime.episodeNumber}`,
+                  }}
+                  progress={anime.progress * 100}
+                  className="lg:w-[250px] w-28"
+                  aspectRatio="portrait"
+                  width={250}
+                  height={330}
+                />
+              ))
+            ) : (
+              <>You have no history yet. Try watching some!</>
+            )}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
