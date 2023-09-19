@@ -40,7 +40,7 @@ export function AnimeCard({
             blurDataURL="/images/placeholder.png"
             priority
             className={cn(
-              "h-auto w-auto object-cover transition-all hover:scale-105",
+              "h-full w-full object-cover transition-all hover:scale-105",
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
             )}
           />
