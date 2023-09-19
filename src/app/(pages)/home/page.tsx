@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
+import { getMediaDataByTitle } from "@/lib/anilist";
 import { recent, topAiring } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
@@ -16,6 +18,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import htmlParse from "html-react-parser";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -57,47 +60,22 @@ export default async function HomePage() {
       <div className="flex flex-col gap-2">
         <CarouselSlider>
           {popularAnime?.results.map((anime) => (
-            <AspectRatio ratio={16 / 7} className="relative" key={anime.id}>
-              <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
-                <div className="flex flex-col gap-4 max-w-xl">
-                  <div className="flex gap-2">
-                    <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
-                      {anime.title}
-                    </h1>
-                  </div>
-                  <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Voluptates voluptatibus dicta nemo temporibus autem commodi
-                    laudantium eligendi laborum. Ea, itaque. Nostrum quo impedit
-                    mollitia aperiam delectus, eaque unde temporibus
-                    consequuntur.
-                  </div>
-                  <div className="hidden md:block">
-                    <div className="flex flex-shrink-0 gap-1 flex-wrap ">
-                      {anime.genres.map((genre, index) => (
-                        <Badge variant={"secondary"} key={index}>
-                          {genre}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <Link
-                    className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
-                    href={`/anime/${anime.id}`}
-                  >
-                    <Icons.play className="mr-2" />
-                    Watch Now
-                  </Link>
-                </div>
-              </div>
-              <Image
-                src={anime.image}
-                alt={anime.title}
-                fill
-                className="absolute inset-0 object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-background to-background/60 md:to-background/40" />
+            <AspectRatio ratio={16 / 7} key={anime.id}>
+              <Suspense
+                fallback={
+                  <>
+                    <AspectRatio ratio={16 / 7} key={anime.id}>
+                      <Skeleton className="h-full w-full" />
+                    </AspectRatio>
+                  </>
+                }
+              >
+                <CarouselItem
+                  key={anime.id}
+                  slug={anime.id}
+                  title={anime.title}
+                />
+              </Suspense>
             </AspectRatio>
           ))}
         </CarouselSlider>
@@ -215,5 +193,69 @@ async function HistoryList() {
       </div>
       <Separator className="my-2" />
     </>
+  );
+}
+
+async function CarouselItem({
+  slug,
+  title: animeTitle,
+}: {
+  slug: string;
+  title: string;
+}) {
+  const data = await getMediaDataByTitle({
+    title: animeTitle,
+    revalidate: 60 * 60 * 24,
+  });
+  if (!data)
+    return (
+      <div className="relative">
+        <Skeleton className="w-full h-full" />
+        <div className="absolute flex justify-center items-center">
+          Failed to load!
+        </div>
+      </div>
+    );
+  const { Media: anime } = data;
+  const title = anime.title?.english || anime.title?.userPreferred;
+  return (
+    <AspectRatio ratio={16 / 7} className="relative">
+      <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
+        <div className="flex flex-col gap-4 max-w-xl">
+          <div className="flex gap-2">
+            <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
+              {title}
+            </h1>
+          </div>
+          <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
+            {htmlParse(anime.description)}
+          </div>
+          <div className="hidden md:block">
+            <div className="flex flex-shrink-0 gap-1 flex-wrap ">
+              {anime.genres.map((genre, index) => (
+                <Badge variant={"secondary"} key={index}>
+                  {genre}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <Link
+            className={cn(buttonVariants({ size: "sm" }), "max-w-fit")}
+            href={`/anime/${slug}`}
+          >
+            <Icons.play className="mr-2" />
+            Watch Now
+          </Link>
+        </div>
+      </div>
+      <Image
+        src={anime.bannerImage || absoluteUrl("/images/placeholder.png")}
+        alt={title}
+        fill
+        className="absolute inset-0 object-cover"
+        priority
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-background to-background/60 md:to-background/40" />
+    </AspectRatio>
   );
 }

@@ -221,6 +221,7 @@ export const animeInfo = `query ($query: String) {
         medium
         color
       }
+      genres
       bannerImage
       relations {
         edges {

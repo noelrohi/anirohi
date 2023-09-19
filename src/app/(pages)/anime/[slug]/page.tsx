@@ -31,7 +31,7 @@ export async function handleSlug(slug: string) {
   const [settleSlug] = await Promise.allSettled([animeInfo(slug)]);
   const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
   if (!data) notFound();
-  const anilist = await getMediaDataByTitle(data.title);
+  const anilist = await getMediaDataByTitle({ title: data.title });
 
   return { consumet: data, anilist: anilist?.Media };
 }

@@ -13,6 +13,7 @@ interface Media {
   bannerImage: string;
   relations: Relations;
   title: Title;
+  genres: string[];
 }
 
 interface CoverImage {

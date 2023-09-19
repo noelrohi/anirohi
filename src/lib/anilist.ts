@@ -1,6 +1,5 @@
 import { MediaQuery } from "@/types/anilist/media";
-import { statisticQueries } from "./gql-queries";
-import { animeInfo } from "./consumet";
+import { statisticQueries, animeInfo } from "./gql-queries";
 
 export async function queryAnilist(
   query: string,
@@ -68,7 +67,15 @@ export async function getMediaIdByTitle(title: string) {
   return data?.Media?.id;
 }
 
-export async function getMediaDataByTitle(title: string) {
+export async function getMediaDataByTitle({
+  title,
+  revalidate,
+}: {
+  title: string;
+  revalidate?: number | false;
+}) {
+  const options: NextFetchRequestConfig =
+    typeof revalidate === "number" ? { revalidate } : { revalidate: false };
   const query = animeInfo;
   const res = await fetch("https://graphql.anilist.co", {
     method: "POST",
@@ -82,7 +89,7 @@ export async function getMediaDataByTitle(title: string) {
         query: title,
       },
     }),
-    next: { revalidate: 60 * 60 * 24 },
+    next: options,
   });
   if (!res.ok) return null;
   const { data }: MediaQuery = await res.json();
