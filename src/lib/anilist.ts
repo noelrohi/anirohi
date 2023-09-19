@@ -1,5 +1,6 @@
 import { MediaQuery } from "@/types/anilist/media";
 import { statisticQueries } from "./gql-queries";
+import { animeInfo } from "./consumet";
 
 export async function queryAnilist(
   query: string,
@@ -68,51 +69,7 @@ export async function getMediaIdByTitle(title: string) {
 }
 
 export async function getMediaDataByTitle(title: string) {
-  const query = `query ($query: String) {
-    Media(search: $query, type: ANIME) {
-      id
-      description
-      coverImage {
-        extraLarge
-        large
-        medium
-        color
-      }
-      bannerImage
-      relations {
-        edges {
-          id
-          node {
-            coverImage {
-              extraLarge
-              large
-              medium
-              color
-            }
-            startDate {
-              year
-              month
-              day
-            }
-            type
-            siteUrl
-            title {
-              romaji
-              english
-              native
-              userPreferred
-            }
-          }
-        }
-      }
-      title {
-        romaji
-        english
-        native
-        userPreferred
-      }
-    }
-  }`;
+  const query = animeInfo;
   const res = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: {
