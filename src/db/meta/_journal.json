@@ -15,6 +15,13 @@
       "when": 1693545886366,
       "tag": "0001_illegal_redwing",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1695104915293,
+      "tag": "0002_kind_oracle",
+      "breakpoints": true
     }
   ]
 }
