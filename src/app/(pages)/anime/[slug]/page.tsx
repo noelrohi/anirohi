@@ -18,7 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getCoverImageByTitle } from "@/lib/anilist";
+import { getMediaDataByTitle } from "@/lib/anilist";
 import { MediaQuery } from "@/types/anilist/media";
 
 interface SlugPageProps {
@@ -31,7 +31,7 @@ export async function handleSlug(slug: string) {
   const [settleSlug] = await Promise.allSettled([animeInfo(slug)]);
   const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
   if (!data) notFound();
-  const anilist = await getCoverImageByTitle(data.title);
+  const anilist = await getMediaDataByTitle(data.title);
 
   return { consumet: data, anilist: anilist?.Media };
 }

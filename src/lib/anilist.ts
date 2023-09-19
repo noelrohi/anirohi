@@ -67,7 +67,7 @@ export async function getMediaIdByTitle(title: string) {
   return data?.Media?.id;
 }
 
-export async function getCoverImageByTitle(title: string) {
+export async function getMediaDataByTitle(title: string) {
   const query = `query ($query: String) {
     Media(search: $query, type: ANIME) {
       id

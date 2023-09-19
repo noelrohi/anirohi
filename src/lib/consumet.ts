@@ -10,13 +10,13 @@ import {
 const url = "https://api.consumet.org/anime/gogoanime";
 
 export async function recent() {
-  const response = await fetch(`${url}/recent-episodes`);
+  const response = await fetch(`${url}/recent-episodes`, { cache: "no-cache" });
   if (!response.ok) throw new Error("Failed to fetch recent episodes.");
   const data: ConsumetResponse<Recent> = await response.json();
   return data;
 }
 export async function topAiring() {
-  const response = await fetch(`${url}/top-airing`);
+  const response = await fetch(`${url}/top-airing`, { cache: "no-cache" });
   if (!response.ok) throw new Error("Failed to fetch top airing.");
   const data: ConsumetResponse<TopAiring> = await response.json();
   return data;
@@ -35,7 +35,7 @@ export async function search({ query, page = 1 }: SearchProps) {
 }
 
 export async function animeInfo(animeId: string) {
-  const response = await fetch(`${url}/info/${animeId}`);
+  const response = await fetch(`${url}/info/${animeId}`, { cache: "no-cache" });
   if (!response.ok) throw new Error("Failed to fetch anime info.");
   const data: AnimeInfo = await response.json();
   return data;
