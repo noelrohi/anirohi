@@ -1,7 +1,7 @@
 import { env } from "@/env.mjs";
 import { removeHtmlTags } from "@/lib/utils";
-import { ImageResponse } from "@vercel/og";
 import type { ServerRuntime } from "next";
+import { ImageResponse } from "next/server";
 import * as z from "zod";
 
 const ogImageSchema = z.object({
