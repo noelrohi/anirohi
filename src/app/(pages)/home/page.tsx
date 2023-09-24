@@ -233,7 +233,7 @@ async function CarouselItem({
             </h1>
           </div>
           <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-            {htmlParse(anime.description)}
+            {anime.description ? htmlParse(anime.description) : ""}
           </div>
           <div className="hidden md:block">
             <div className="flex flex-shrink-0 gap-1 flex-wrap ">
