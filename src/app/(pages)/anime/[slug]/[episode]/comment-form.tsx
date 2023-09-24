@@ -10,23 +10,25 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  useCallback,
+  experimental_useOptimistic as useOptimistic,
   useState,
   useTransition,
-  experimental_useOptimistic as useOptimistic,
 } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { addComment } from "@/_actions";
-import { Icons } from "@/components/icons";
-import { Textarea } from "@/components/ui/textarea";
-import { z } from "zod";
-import { Comments, CommentsWithUser, InsertComments } from "@/db/schema/main";
-import { Session } from "next-auth";
 import { SignIn } from "@/components/auth";
+import { Icons } from "@/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getRelativeTime } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { CommentsWithUser } from "@/db/schema/main";
+import { cn, getRelativeTime } from "@/lib/utils";
+import { Session } from "next-auth";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { z } from "zod";
 
 const schema = z.object({
   text: z.string().min(1, { message: "Comment must be at least 1 character" }),
@@ -43,7 +45,27 @@ interface CommentFormWithListProps {
 
 export function CommentFormWithList(props: CommentFormWithListProps) {
   const [sending, setIsSending] = useState(false);
-  // const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const createQueryString = useCallback(
+    (params: Record<string, string | number | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams?.toString());
+
+      for (const [key, value] of Object.entries(params)) {
+        if (value === null) {
+          newSearchParams.delete(key);
+        } else {
+          newSearchParams.set(key, String(value));
+        }
+      }
+
+      return newSearchParams.toString();
+    },
+    [searchParams]
+  );
+  const isOld = searchParams.get("isOld") === "true";
   const [optimisticComments, addOptimisticComment] = useOptimistic(
     props.comments,
     (state, newComment: CommentsWithUser) => [...state, newComment]
@@ -60,12 +82,12 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
     addOptimisticComment({
       ...props.comments[0],
       createdAt: new Date(),
-      user: {
-        ...props.comments[0].user!,
-        image: props.session?.user?.image || null,
-        name: props.session?.user?.name || null,
-
-      } || null
+      user:
+        {
+          ...props.comments[0].user!,
+          image: props.session?.user?.image || null,
+          name: props.session?.user?.name || null,
+        } || null,
     });
     try {
       await addComment({
@@ -82,7 +104,29 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      <div className="inline-flex gap-4">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Comment Section
+        </h2>
+        <Button
+          disabled={isPending}
+          onClick={() =>
+            startTransition(() => {
+              router.replace(
+                `${pathname}?${createQueryString({
+                  isOld: isOld ? 'false' : 'true',
+                })}`,
+                { scroll: false }
+              );
+            })
+          }
+          variant={"secondary"}
+        >
+          <Icons.arrow className={cn("mr-2", isOld ? "rotate-180" : "")} />
+          {!isOld ? "Show older" : "Show newer"}
+        </Button>
+      </div>
       {props.session?.user ? (
         <>
           <Form {...form}>
@@ -157,6 +201,6 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
           </>
         ))}
       </>
-    </>
+    </div>
   );
 }

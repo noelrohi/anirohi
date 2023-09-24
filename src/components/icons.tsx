@@ -1,4 +1,5 @@
 import {
+  ArrowDownIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
   CalendarIcon,
@@ -264,4 +265,5 @@ export const Icons = {
     );
   },
   send: PaperPlaneIcon,
+  arrow: ArrowDownIcon
 };

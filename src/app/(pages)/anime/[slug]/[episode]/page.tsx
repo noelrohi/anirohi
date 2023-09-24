@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
-import { comments as comment } from "@/db/schema/main";
+import { comments as comment, comments } from "@/db/schema/main";
 import { checkIsWatched, getMediaIdByTitle } from "@/lib/anilist";
 import { Session, auth } from "@/lib/nextauth";
 import {
@@ -17,7 +17,7 @@ import {
   nextEpisode,
   prevEpisode,
 } from "@/lib/utils";
-import { and, eq } from "drizzle-orm";
+import { and, eq, param } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -30,6 +30,9 @@ interface EpisodePageProps {
   params: {
     episode: string;
     slug: string;
+  };
+  searchParams: {
+    [key: string]: string | string[] | undefined;
   };
 }
 
@@ -91,12 +94,16 @@ export async function generateMetadata({ params }: EpisodePageProps) {
   return metadata;
 }
 
-export default async function EpisodePage({ params }: EpisodePageProps) {
+export default async function EpisodePage({
+  params,
+  searchParams,
+}: EpisodePageProps) {
   const { consumet: slugData, anilist } = await handleSlug(params.slug);
   const episodes = slugData.episodes;
   const episodeData = episodes.find((e) => e.number === Number(params.episode));
   const episodeId = episodeData?.id;
-  if (!episodeId) throw new Error("Episode id not found!");
+  if (!episodeId)
+    throw new Error(`Episode id not found! Ep: ${JSON.stringify(episodeData)}`);
   const session = await auth();
 
   const currentEpisodeIndex =
@@ -109,6 +116,16 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     mediaId: anilist?.id,
   });
   const videoData = { ...episodeData, anime: slugData };
+  const commentItems = await db.query.comments.findMany({
+    where: and(
+      eq(comment.episodeNumber, Number(params.episode)),
+      eq(comment.slug, params.slug)
+    ),
+    with: {
+      user: true,
+    },
+    orderBy: (comments, {desc}) => [desc(comments.createdAt)],
+  });
   return (
     <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -171,19 +188,14 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         </h1>
         {/* <p className="text-md lg:text-lg">{episodeData.description}</p> */}
         <Separator className="my-2" />
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Comment Section
-          </h2>
 
-          <Suspense fallback={<>Loading comments ...</>}>
-            <CommentSection
-              slug={params.slug}
-              episodeNumber={Number(params.episode)}
-              session={session}
-            />
-          </Suspense>
-        </div>
+        <CommentFormWithList
+          session={session}
+          slug={params.slug}
+          episodeNumber={Number(params.episode)}
+          comments={searchParams?.isOld !== 'true' ? commentItems : commentItems.reverse()}
+        />
+
         <div className="block lg:hidden">
           <Separator className="my-2" />
           <EpisodeScrollArea
@@ -194,37 +206,5 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         </div>
       </div>
     </main>
-  );
-}
-
-interface CommentSectionProps {
-  episodeNumber: number;
-  slug: string;
-  session: Session;
-}
-
-async function CommentSection({
-  episodeNumber,
-  slug,
-  session,
-}: CommentSectionProps) {
-  const comments = await db.query.comments.findMany({
-    where: and(
-      eq(comment.episodeNumber, episodeNumber),
-      eq(comment.slug, slug)
-    ),
-    with: {
-      user: true,
-    },
-  });
-  return (
-    <>
-      <CommentFormWithList
-        session={session}
-        slug={slug}
-        episodeNumber={episodeNumber}
-        comments={comments}
-      />
-    </>
   );
 }
