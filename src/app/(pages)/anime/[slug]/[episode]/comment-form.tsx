@@ -78,17 +78,24 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
   });
 
   async function onSubmit(values: Inputs) {
-    setIsSending(true);
     addOptimisticComment({
-      ...props.comments[0],
+      episodeNumber: props.episodeNumber,
+      id: Math.random(),
+      slug: props.slug,
+      text: values.text,
+      updatedAt: new Date(),
+      userId: props.session.user.id,
       createdAt: new Date(),
       user:
         {
-          ...props.comments[0].user!,
+          id: props.session?.user?.id,
+          email: props.session?.user?.email ?? "",
+          emailVerified: new Date(),
           image: props.session?.user?.image || null,
           name: props.session?.user?.name || null,
         } || null,
     });
+    form.reset();
     try {
       await addComment({
         text: values.text,
@@ -97,9 +104,6 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
       });
     } catch (error) {
       toast.error("Uh-oh! Something went wrong.");
-    } finally {
-      setIsSending(false);
-      form.reset();
     }
   }
 
@@ -115,7 +119,7 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
             startTransition(() => {
               router.replace(
                 `${pathname}?${createQueryString({
-                  isOld: isOld ? 'false' : 'true',
+                  isOld: isOld ? "false" : "true",
                 })}`,
                 { scroll: false }
               );
