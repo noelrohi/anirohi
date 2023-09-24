@@ -114,7 +114,7 @@ export async function addToHistory(input: InsertHistory) {
   revalidatePath("/home");
 }
 
-export async function addComment(input: InsertComments) {
+export async function addComment(input: InsertComments, pathname?: string) {
   const ip = headers().get("x-forwarded-for");
   const { success, limit, remaining, reset } = await ratelimit.limit(
     (ip ?? "anonymous") + "-addComment"
@@ -128,5 +128,5 @@ export async function addComment(input: InsertComments) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated!");
   await db.insert(comments).values({ ...input, userId: session.user.id });
-  revalidatePath(`/anime/${input.slug}/${input.episodeNumber}}`);
+  if(pathname) revalidatePath(pathname);
 }

@@ -68,7 +68,7 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
   const isOld = searchParams.get("isOld") === "true";
   const [optimisticComments, addOptimisticComment] = useOptimistic(
     props.comments,
-    (state, newComment: CommentsWithUser) => [...state, newComment]
+    (state, newComment: CommentsWithUser) => !isOld ? [newComment, ...state] : [...state, newComment]
   );
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -101,7 +101,7 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
         text: values.text,
         slug: props.slug,
         episodeNumber: props.episodeNumber,
-      });
+      }, pathname);
     } catch (error) {
       toast.error("Uh-oh! Something went wrong.");
     }
