@@ -9,7 +9,7 @@ import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
 import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched, getMediaIdByTitle } from "@/lib/anilist";
-import { auth } from "@/lib/nextauth";
+import { Session, auth } from "@/lib/nextauth";
 import {
   absoluteUrl,
   cn,
@@ -22,9 +22,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { handleSlug } from "../page";
-import { CommentForm } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { CommentFormWithList } from "./comment-form";
 
 interface EpisodePageProps {
   params: {
@@ -175,28 +175,12 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           <h2 className="text-2xl font-semibold tracking-tight">
             Comment Section
           </h2>
-          {session?.user ? (
-            <>
-              <CommentForm
-                slug={params.slug}
-                episodeNumber={Number(params.episode)}
-              />
-            </>
-          ) : (
-            <SignIn
-              className={buttonVariants({
-                size: "sm",
-              })}
-              provider="anilist"
-            >
-              Sign In to Leave Comment
-              <span className="sr-only">Sign In</span>
-            </SignIn>
-          )}
+
           <Suspense fallback={<>Loading comments ...</>}>
-            <Comments
+            <CommentSection
               slug={params.slug}
               episodeNumber={Number(params.episode)}
+              session={session}
             />
           </Suspense>
         </div>
@@ -213,12 +197,17 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   );
 }
 
-interface CommentsProps {
+interface CommentSectionProps {
   episodeNumber: number;
   slug: string;
+  session: Session;
 }
 
-async function Comments({ episodeNumber, slug }: CommentsProps) {
+async function CommentSection({
+  episodeNumber,
+  slug,
+  session,
+}: CommentSectionProps) {
   const comments = await db.query.comments.findMany({
     where: and(
       eq(comment.episodeNumber, episodeNumber),
@@ -229,28 +218,13 @@ async function Comments({ episodeNumber, slug }: CommentsProps) {
     },
   });
   return (
-    <div className="flex flex-col gap-2">
-      {comments.map((comment) => (
-        <>
-          <div className="flex flex-row gap-4">
-            <Avatar className="h-10 w-10">
-              <AvatarImage
-                src={comment.user?.image!}
-                alt={comment.user?.name!}
-              />
-              <AvatarFallback>G</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <div>{comment.user?.name}</div>
-              <div className="text-muted-foreground">
-                {getRelativeTime(comment.createdAt?.toString())}
-              </div>
-              <div className="mt-2">{comment.text}</div>
-            </div>
-          </div>
-          <Separator orientation="horizontal" />
-        </>
-      ))}
-    </div>
+    <>
+      <CommentFormWithList
+        session={session}
+        slug={slug}
+        episodeNumber={episodeNumber}
+        comments={comments}
+      />
+    </>
   );
 }

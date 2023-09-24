@@ -1,4 +1,8 @@
-import { relations, type InferInsertModel } from "drizzle-orm";
+import {
+  relations,
+  type InferInsertModel,
+  InferSelectModel,
+} from "drizzle-orm";
 import {
   float,
   index,
@@ -51,6 +55,11 @@ export const comments = mySqlTable(
     };
   }
 );
+
+export type Comments = InferSelectModel<typeof comments>;
+export type CommentsWithUser = Comments & {
+  user: InferSelectModel<typeof users> | null
+};
 
 export type InsertComments = InferInsertModel<typeof comments>;
 
