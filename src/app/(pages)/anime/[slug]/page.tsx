@@ -36,17 +36,17 @@ export async function handleSlug(slug: string) {
   return { consumet: data, anilist: anilist?.Media };
 }
 
-export async function generateStaticParams(): Promise<
-  SlugPageProps["params"][]
-> {
-  const recentEpisodes = await recent();
-  const popular = await topAiring();
-  const paths = [
-    ...popular.results.map((anime) => ({ slug: String(anime.id) })),
-    ...recentEpisodes.results.map((anime) => ({ slug: String(anime.id) })),
-  ];
-  return paths;
-}
+// export async function generateStaticParams(): Promise<
+//   SlugPageProps["params"][]
+// > {
+//   const recentEpisodes = await recent();
+//   const popular = await topAiring();
+//   const paths = [
+//     ...popular.results.map((anime) => ({ slug: String(anime.id) })),
+//     ...recentEpisodes.results.map((anime) => ({ slug: String(anime.id) })),
+//   ];
+//   return paths;
+// }
 
 export async function generateMetadata({ params }: SlugPageProps) {
   const { consumet, anilist } = await handleSlug(params.slug);
