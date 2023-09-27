@@ -1,5 +1,6 @@
 import "./src/env.mjs";
 import nextPwa from "next-pwa";
+import toolbar from "@vercel/toolbar/plugins/next"
 
 const withPWA = nextPwa({
   dest: "public",
@@ -28,5 +29,6 @@ const config = {
     serverActions: true,
   },
 };
+const withVercelToolbar = toolbar();
  
-export default process.env.NODE_ENV === "development" ? config : withPWA(config);
+export default process.env.NODE_ENV === "development" ? withVercelToolbar(config) : withVercelToolbar(withPWA(config));

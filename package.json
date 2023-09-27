@@ -32,6 +32,7 @@
     "@tremor/react": "^3.6.6",
     "@upstash/ratelimit": "^0.4.4",
     "@vercel/kv": "^0.2.2",
+    "@vercel/toolbar": "^0.1.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",

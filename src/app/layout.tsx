@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { inter } from "@/lib/fonts";
 import GridPattern from "@/components/magicui/grid-pattern";
+import { StaffToolbar } from "@/components/staff-toolbar";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -76,6 +78,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <TailwindIndicator />
           </ThemeProvider>
           <Toaster />
+          <Suspense>
+            <StaffToolbar />
+          </Suspense>
           <GridPattern
             width={40}
             height={40}
