@@ -3,7 +3,6 @@ import ShimmerButton from "@/components/magicui/shimmer-button";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
-import Balance from "react-wrap-balancer";
 
 // export const runtime = "edge"
 
@@ -12,13 +11,13 @@ export default function IndexPage() {
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1]">
+          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] [text-wrap:balance]">
             An anime streaming app built using Nextjs 13 Server Components.
           </h1>
-          <Balance className="max-w-[46rem] text-lg text-muted-foreground sm:text-xl">
+          <div className="max-w-[46rem] text-lg text-muted-foreground sm:text-xl [text-wrap:balance]">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
             maxime consectetur ab. Dicta magnam quas saepe.
-          </Balance>
+          </div>
           <div className="space-x-4">
             <Link href="/home">
               <ShimmerButton>
@@ -38,16 +37,16 @@ export default function IndexPage() {
           <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
             Features
           </h2>
-          <Balance className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+          <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
             Just like any anime streaming site, this app includes videos,
             watchlist and comments.
-          </Balance>
+          </div>
         </div>
         <div className="mx-auto text-center md:max-w-[58rem]">
-          <Balance className="leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+          <div className="leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
             Velit sit laborum laboris officia. Commodo ad in ut aliqua tempor
             nisi Lorem ullamco.
-          </Balance>
+          </div>
         </div>
       </section>
       <section id="open-source" className="container py-8 md:py-12 lg:py-24">
