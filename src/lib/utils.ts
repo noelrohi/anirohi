@@ -54,3 +54,9 @@ export function getRelativeTime(date: string | undefined) {
   if (typeof date === "undefined") return "";
   return dayjs(date).fromNow();
 }
+
+export function isMacOs() {
+  if (typeof window === "undefined") return false;
+
+  return window.navigator.userAgent.includes("Mac");
+}

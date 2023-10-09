@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+import { cn, isMacOs } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -77,7 +77,7 @@ export function Combobox() {
         <span className="hidden xl:inline-flex">Search anime...</span>
         <span className="sr-only">Search anime</span>
         <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 xl:flex">
-          <span className="text-xs">Ctrl</span>K
+          <span className="text-xs">{isMacOs() ? "⌘" : "Ctrl"}</span>K
         </kbd>
       </Button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
