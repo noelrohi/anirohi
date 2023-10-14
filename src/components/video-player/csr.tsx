@@ -77,13 +77,16 @@ export default function VideoPlayerCSR({
         if (hasNextEp) {
           const url = `/anime/${episode.anime.id}/${episode.number + 1}`;
           router.prefetch(url);
-          toast("Go to next episode?", {
+          toast(`Go to episode ${episode.number}?`, {
             duration: 60 * 5 * 1000,
+            dismissible: true,
+            id: "next-episode",
             action: {
               label: "Yes",
               onClick: () => {
                 toast.loading(`Going to episode ${episode.number + 1}`);
                 router.push(url);
+                toast.dismiss("next-episode");
               },
             },
           });
