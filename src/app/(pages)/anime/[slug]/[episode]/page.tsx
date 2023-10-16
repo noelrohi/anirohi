@@ -1,30 +1,27 @@
-import { SignIn } from "@/components/auth";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
-import { comments as comment, comments } from "@/db/schema/main";
-import { checkIsWatched, getMediaIdByTitle } from "@/lib/anilist";
-import { Session, auth } from "@/lib/nextauth";
+import { comments as comment } from "@/db/schema/main";
+import { checkIsWatched } from "@/lib/anilist";
+import { auth } from "@/lib/nextauth";
 import {
   absoluteUrl,
   cn,
-  getRelativeTime,
   nextEpisode,
-  prevEpisode,
+  prevEpisode
 } from "@/lib/utils";
-import { and, eq, param } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { handleSlug } from "../page";
+import { CommentFormWithList } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import { CommentFormWithList } from "./comment-form";
 
 interface EpisodePageProps {
   params: {

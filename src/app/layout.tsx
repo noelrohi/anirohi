@@ -10,6 +10,7 @@ import { inter } from "@/lib/fonts";
 import GridPattern from "@/components/magicui/grid-pattern";
 import { StaffToolbar } from "@/components/staff-toolbar";
 import { Suspense } from "react";
+import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -74,10 +75,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body className="min-h-screen bg-background font-sans antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
+            <PHProvider>{children}</PHProvider>
             <TailwindIndicator />
           </ThemeProvider>
           <Toaster />
+          <Suspense>
+            <PostHogPageview />
+          </Suspense>
           <Suspense>
             <StaffToolbar />
           </Suspense>
