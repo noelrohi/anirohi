@@ -11,6 +11,8 @@ export const env = createEnv({
     KV_REST_API_TOKEN: z.string()
   },
   client: {
+    NEXT_PUBLIC_POSTHOG_KEY: z.string(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
   },
   runtimeEnv: {
@@ -20,6 +22,8 @@ export const env = createEnv({
     ANILIST_SECRET: process.env.ANILIST_SECRET,
     NEXT_AUTH_SECRET: process.env.NEXT_AUTH_SECRET,
     KV_REST_API_URL: process.env.KV_REST_API_URL,
-    KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN
+    KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   },
 });
