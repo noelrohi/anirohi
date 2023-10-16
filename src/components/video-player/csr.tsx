@@ -10,35 +10,35 @@ import { OnProgressProps } from "react-player/base";
 import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
 import { toast } from "sonner";
 
-export default function VideoPlayerCSR({
-  url,
-  playIcon,
-  user,
-  episode,
-  seekSecond,
-}: ReactPlayerProps & {
+interface VideoPlayerProps extends ReactPlayerProps {
   user: string | undefined | null;
   episode: AnimeInfo["episodes"][0] & { anime: AnimeInfo };
   seekSecond: number | undefined;
-}) {
+}
+
+export default function VideoPlayerCSR(props: VideoPlayerProps) {
+  const { url, playIcon, user, episode, seekSecond } = props;
   const pathname = usePathname();
+  const storageName = {
+    media: `media-${user ? user : "?"}-${pathname}`,
+    playbackrate: `playbackrate-${user ? user : "X"}`,
+  };
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [localStorageMedia, setLocalStorageMedia, deleteLocalStorageMedia] =
-    useLocalStorage(`media-${user ? user : "?"}-${pathname}`, "");
+    useLocalStorage(storageName.media, "");
   const parsedStoredItem: OnProgressProps = localStorageMedia
     ? JSON.parse(localStorageMedia)
     : { loadedSeconds: 0, playedSeconds: 0, loaded: 0, played: 0 };
-
   const [isSeeking, setIsSeeking] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
   const [playbackRate, setPlaybackRate] = useLocalStorage(
-    `playbackrate-${user ? user : "X"}`,
+    storageName.playbackrate,
     "1"
   );
   const seekToValue = seekSecond && user ? seekSecond : state.playedSeconds;
-
+  
   const handlePause = () => {
     startTransition(async () => {
       console.log(`Played ${(state.played * 100).toFixed(2)}%`);
