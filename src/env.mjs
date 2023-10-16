@@ -11,8 +11,8 @@ export const env = createEnv({
     KV_REST_API_TOKEN: z.string()
   },
   client: {
-    NEXT_PUBLIC_POSTHOG_KEY: z.string(),
-    NEXT_PUBLIC_POSTHOG_HOST: z.string(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().startsWith("phc_"),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
   },
   runtimeEnv: {
