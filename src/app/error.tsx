@@ -20,7 +20,7 @@ export default function Error({
 
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-8">
-      <h2 className="font-bold leading-tight text-3xl">
+      <h2 className="font-bold leading-tight text-3xl text-center">
         Oops! Something went wrong!
       </h2>
       <div className="flex flex-row gap-4">
