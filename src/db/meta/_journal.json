@@ -22,6 +22,13 @@
       "when": 1695104915293,
       "tag": "0002_kind_oracle",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1697776249031,
+      "tag": "0003_empty_swordsman",
+      "breakpoints": true
     }
   ]
 }
