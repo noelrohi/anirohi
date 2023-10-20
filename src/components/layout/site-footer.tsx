@@ -36,9 +36,8 @@ export function SiteFooter() {
             rel="noreferrer"
             className="underline text-primary underline-offset-[5px]"
           >
-            Consumet API
-          </Link>{" "}
-          <i>for video sources</i>.
+            Consumet
+          </Link>
         </div>
         <div className="flex space-x-1">
           <Link
