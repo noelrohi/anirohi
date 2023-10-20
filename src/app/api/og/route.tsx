@@ -26,6 +26,12 @@ export async function GET(request: Request) {
       ? removeHtmlTags(parsedValues.description)
       : env.NEXT_PUBLIC_APP_URL;
 
+    const [inter] = await Promise.all([
+      fetch(
+        "https://github.com/rsms/inter/raw/master/docs/font-files/Inter-Regular.woff"
+      ).then((res) => res.arrayBuffer()),
+    ]);
+
     return new ImageResponse(
       (
         <div
@@ -127,6 +133,15 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
+        fonts: [
+          {
+            name: "Inter",
+            data: inter,
+          },
+        ],
+        headers: {
+          "cache-control": "public, max-age=60, stale-while-revalidate=86400",
+        },
       }
     );
   } catch (error) {
