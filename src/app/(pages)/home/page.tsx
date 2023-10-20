@@ -157,6 +157,7 @@ async function HistoryList() {
       eq(histories.userId, session.user.id),
       ne(histories.progress, 100)
     ),
+    orderBy: (history, { desc }) => [desc(history.updatedAt)],
   });
   return (
     <>
