@@ -27,7 +27,7 @@ export const histories = mySqlTable(
     progress: float("progress").notNull(),
     duration: float("duration").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    updatedAt: timestamp("updated_at").onUpdateNow(),
   },
   (table) => {
     return {
@@ -43,10 +43,10 @@ export const comments = mySqlTable(
     id: serial("id").primaryKey(),
     slug: varchar("slug", { length: 255 }).notNull(),
     episodeNumber: int("episode_number").notNull(),
-    text: varchar("image", { length: 255 }).notNull(),
+    text: varchar("text", { length: 255 }).notNull(),
     userId: varchar("userId", { length: 255 }),
     createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    updatedAt: timestamp("updated_at").onUpdateNow(),
   },
   (table) => {
     return {
