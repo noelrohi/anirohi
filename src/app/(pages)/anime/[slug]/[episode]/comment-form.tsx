@@ -68,7 +68,8 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
   const isOld = searchParams.get("isOld") === "true";
   const [optimisticComments, addOptimisticComment] = useOptimistic(
     props.comments,
-    (state, newComment: CommentsWithUser) => !isOld ? [newComment, ...state] : [...state, newComment]
+    (state, newComment: CommentsWithUser) =>
+      !isOld ? [newComment, ...state] : [...state, newComment]
   );
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -97,11 +98,14 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
     });
     form.reset();
     try {
-      await addComment({
-        text: values.text,
-        slug: props.slug,
-        episodeNumber: props.episodeNumber,
-      }, pathname);
+      await addComment(
+        {
+          text: values.text,
+          slug: props.slug,
+          episodeNumber: props.episodeNumber,
+        },
+        pathname
+      );
     } catch (error) {
       toast.error("Uh-oh! Something went wrong.");
     }
@@ -113,23 +117,25 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
         <h2 className="text-2xl font-semibold tracking-tight">
           Comment Section
         </h2>
-        <Button
-          disabled={isPending}
-          onClick={() =>
-            startTransition(() => {
-              router.replace(
-                `${pathname}?${createQueryString({
-                  isOld: isOld ? "false" : "true",
-                })}`,
-                { scroll: false }
-              );
-            })
-          }
-          variant={"secondary"}
-        >
-          <Icons.arrow className={cn("mr-2", isOld ? "rotate-180" : "")} />
-          {!isOld ? "Show older" : "Show newer"}
-        </Button>
+        {optimisticComments.length > 1 && (
+          <Button
+            disabled={isPending}
+            onClick={() =>
+              startTransition(() => {
+                router.replace(
+                  `${pathname}?${createQueryString({
+                    isOld: isOld ? "false" : "true",
+                  })}`,
+                  { scroll: false }
+                );
+              })
+            }
+            variant={"secondary"}
+          >
+            <Icons.arrow className={cn("mr-2", isOld ? "rotate-180" : "")} />
+            {!isOld ? "Show older" : "Show newer"}
+          </Button>
+        )}
       </div>
       {props.session?.user ? (
         <>
