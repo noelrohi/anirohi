@@ -39,6 +39,7 @@ export async function Charts({ username }: Props) {
       })),
     releaseYear: anilistData?.User.statistics.anime.releaseYears
       .reverse()
+      .sort((a, b) => a.releaseYear - b.releaseYear)
       .map(({ releaseYear, count, meanScore, minutesWatched }) => ({
         year: releaseYear,
         "Hours Watched": minutesWatched / 60,
@@ -155,14 +156,11 @@ export async function GeneralStats({ username }: Props) {
   ];
 
   return (
-    <>
-      <h2 className="text-2xl font-semibold tracking-tight">General Stats</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {stats.map((stat, index) => (
-          <StatCard {...stat} key={index} />
-        ))}
-      </div>
-    </>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {stats.map((stat, index) => (
+        <StatCard {...stat} key={index} />
+      ))}
+    </div>
   );
 }
 

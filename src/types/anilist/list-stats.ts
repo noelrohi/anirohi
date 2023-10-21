@@ -35,7 +35,7 @@ interface Country {
   mediaIds: number[];
   format: string;
   length?: string;
-  releaseYear?: number;
+  releaseYear: number;
   score?: number;
   startYear: number;
   status: string;
