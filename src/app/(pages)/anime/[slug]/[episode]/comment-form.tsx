@@ -10,18 +10,25 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  // useOptimistic,
+  Fragment,
   useCallback,
-  experimental_useOptimistic as useOptimistic,
-  useState,
-  useTransition,
+  useTransition
 } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { addComment } from "@/_actions";
+import { addComment, deleteComment } from "@/_actions";
 import { SignIn } from "@/components/auth";
 import { Icons } from "@/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { CommentsWithUser } from "@/db/schema/main";
@@ -44,8 +51,8 @@ interface CommentFormWithListProps {
 }
 
 export function CommentFormWithList(props: CommentFormWithListProps) {
-  const [sending, setIsSending] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isCommenting, startComment] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -66,11 +73,10 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
     [searchParams]
   );
   const isOld = searchParams.get("isOld") === "true";
-  const [optimisticComments, addOptimisticComment] = useOptimistic(
-    props.comments,
-    (state, newComment: CommentsWithUser) =>
-      !isOld ? [newComment, ...state] : [...state, newComment]
-  );
+  // const [optimisticComments, addOptimisticComment] = useOptimistic(
+  //   props.comments
+  // );
+  const optimisticComments = props.comments;
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -79,33 +85,38 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
   });
 
   async function onSubmit(values: Inputs) {
-    addOptimisticComment({
-      episodeNumber: props.episodeNumber,
-      id: Math.random(),
-      slug: props.slug,
-      text: values.text,
-      updatedAt: new Date(),
-      userId: props.session.user.id,
-      createdAt: new Date(),
-      user:
-        {
-          id: props.session?.user?.id,
-          email: props.session?.user?.email ?? "",
-          emailVerified: new Date(),
-          image: props.session?.user?.image || null,
-          name: props.session?.user?.name || null,
-        } || null,
-    });
+    // setIsSending(true);
+    // const newComment: CommentsWithUser = {
+    //   episodeNumber: props.episodeNumber,
+    //   id: Math.random(),
+    //   slug: props.slug,
+    //   text: values.text,
+    //   updatedAt: new Date(),
+    //   userId: props.session.user.id,
+    //   createdAt: new Date(),
+    //   user:
+    //     {
+    //       id: props.session?.user?.id,
+    //       email: props.session?.user?.email ?? "",
+    //       emailVerified: new Date(),
+    //       image: props.session?.user?.image || null,
+    //       name: props.session?.user?.name || null,
+    //     } || null,
+    // };
+
+    // addOptimisticComment((comments) => [...comments, newComment]);
     form.reset();
     try {
-      await addComment(
-        {
-          text: values.text,
-          slug: props.slug,
-          episodeNumber: props.episodeNumber,
-        },
-        pathname
-      );
+      startComment(async () => {
+        await addComment(
+          {
+            text: values.text,
+            slug: props.slug,
+            episodeNumber: props.episodeNumber,
+          },
+          pathname
+        );
+      });
     } catch (error) {
       toast.error("Uh-oh! Something went wrong.");
     }
@@ -159,9 +170,10 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
               <Button
                 type="submit"
                 className="inline-flex gap-2 absolute top-2 right-2"
-                disabled={sending}
+                aria-disabled={isCommenting}
+                disabled={isCommenting}
               >
-                {sending ? (
+                {isCommenting ? (
                   <>
                     Adding comment <Icons.loader className="animate-spin" />
                   </>
@@ -189,27 +201,69 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
       )}
       <>
         {optimisticComments.map((comment) => (
-          <>
-            <div className="flex flex-row gap-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src={comment.user?.image!}
-                  alt={comment.user?.name!}
-                />
-                <AvatarFallback>G</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <div>{comment.user?.name}</div>
-                <div className="text-muted-foreground">
-                  {getRelativeTime(comment.createdAt?.toString())}
+          <Fragment key={comment.id}>
+            <div className="flex justify-between items-start">
+              <div className="flex flex-row gap-4">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage
+                    src={comment.user?.image!}
+                    alt={comment.user?.name!}
+                  />
+                  <AvatarFallback>G</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <div>{comment.user?.name}</div>
+                  <div className="text-muted-foreground">
+                    {getRelativeTime(comment.createdAt?.toString())}
+                  </div>
+                  <div className="mt-2">{comment.text}</div>
                 </div>
-                <div className="mt-2">{comment.text}</div>
               </div>
+              {props.session?.user.id === comment.userId && (
+                <CommentActions commentId={comment.id} />
+              )}
             </div>
             <Separator orientation="horizontal" />
-          </>
+          </Fragment>
         ))}
       </>
     </div>
+  );
+}
+
+function CommentActions({ commentId }: { commentId: number }) {
+  const [isDeleting, startDeleting] = useTransition();
+  const pathname = usePathname();
+  console.log(pathname);
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant={"ghost"} size={"icon"}>
+          {isDeleting ? (
+            <Icons.loader className="w-4 h-4 animate-spin" />
+          ) : (
+            "..."
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="text-red-500" asChild>
+            <button
+              className="w-full"
+              aria-disabled={isDeleting}
+              onClick={() =>
+                startDeleting(async () => {
+                  await deleteComment({ commentId, pathname });
+                })
+              }
+            >
+              <Icons.trash className="mr-2 w-4 h-4" aria-hidden="true" />
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

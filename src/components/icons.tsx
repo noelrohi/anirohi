@@ -11,6 +11,7 @@ import {
   PaperPlaneIcon,
   PlayIcon,
   SunIcon,
+  TrashIcon,
 } from "@radix-ui/react-icons";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
 
@@ -265,5 +266,6 @@ export const Icons = {
     );
   },
   send: PaperPlaneIcon,
-  arrow: ArrowDownIcon
+  arrow: ArrowDownIcon,
+  trash: TrashIcon
 };

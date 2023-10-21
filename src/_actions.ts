@@ -141,3 +141,16 @@ export async function signIn() {
 export async function signOut() {
   await logout();
 }
+
+export async function deleteComment({
+  pathname,
+  commentId,
+}: {
+  pathname: string;
+  commentId: number;
+}) {
+  const rows = (await db.delete(comments).where(eq(comments.id, commentId)))
+    .fields;
+  if (pathname) revalidatePath(pathname);
+  return rows;
+}
