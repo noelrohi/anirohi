@@ -79,7 +79,7 @@ export async function SiteHeader({
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild disabled>
                       <Link href="/dashboard/account">
                         <Icons.user
                           className="mr-2 h-4 w-4"
