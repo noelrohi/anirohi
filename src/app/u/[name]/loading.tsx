@@ -1,11 +1,10 @@
+import { Icons } from "@/components/icons";
 import React from "react";
 
-export default function LoadingDashboard() {
+export default function DashboardLoading() {
   return (
-    <div className="container">
-      <div className="flex h-[calc(100vh-40vh)] justify-center items-center">
-        Loading ...
-      </div>
+    <div className="flex justify-center items-center min-h-[calc(100vh-104px-64px)]">
+      <Icons.loader className="h-10 w-10 animate-spin" />
     </div>
   );
 }
