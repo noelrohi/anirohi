@@ -22,9 +22,11 @@ export async function updateAnimeProgress(
 ) {
   try {
     const session = await auth();
+    const userId = session?.user.id;
+    if (!userId) throw new Error("User must be logged in!");
     const account = await db.query.accounts.findFirst({
       where: and(
-        eq(accounts.userId, session?.user.id),
+        eq(accounts.userId, userId),
         eq(accounts.token_type, "bearer")
       ),
     });
@@ -128,5 +130,5 @@ export async function addComment(input: InsertComments, pathname?: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated!");
   await db.insert(comments).values({ ...input, userId: session.user.id });
-  if(pathname) revalidatePath(pathname);
+  if (pathname) revalidatePath(pathname);
 }
