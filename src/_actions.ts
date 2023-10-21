@@ -3,6 +3,7 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
+import { signIn as login, signOut as logout } from "@/lib/nextauth";
 import { accounts } from "@/db/schema/auth";
 import {
   InsertComments,
@@ -131,4 +132,12 @@ export async function addComment(input: InsertComments, pathname?: string) {
   if (!session?.user) throw new Error("Not authenticated!");
   await db.insert(comments).values({ ...input, userId: session.user.id });
   if (pathname) revalidatePath(pathname);
+}
+
+export async function signIn() {
+  await login("anilist");
+}
+
+export async function signOut() {
+  await logout();
 }

@@ -1,43 +1,48 @@
 "use client";
-import { OAuthProviders } from "@/lib/nextauth";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut } from "@/_actions";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 interface AuthButtonProps {
-  provider?: OAuthProviders;
   children: React.ReactNode;
   className?: string;
 }
 
-export function SignIn({ provider, children, className }: AuthButtonProps) {
+export function SignIn({ children, className }: AuthButtonProps) {
+  const [isPending, startTransition] = useTransition();
   return (
     <button
       onClick={() => {
         toast.loading("Signing in...");
-        signIn(provider).then(() => {
-          toast.dismiss();
+        startTransition(async () => {
+          await signIn().then(() => toast.dismiss());
         });
       }}
       className={className}
+      aria-disabled={isPending}
     >
-      {children}
+      {isPending ? "Signing in..." : children}
     </button>
   );
 }
 
 export function SignOut({ children, className }: AuthButtonProps) {
+  const [isPending, startTransition] = useTransition();
   return (
     <button
       onClick={() => {
         toast.loading("Signing out...");
-        signOut().then(() => {
-          toast.dismiss();
-          toast.success("Signed out successfully");
+        startTransition(async () => {
+          await signOut().then(() => {
+            toast.dismiss();
+            toast.success("Signed out successfully");
+          });
         });
       }}
       className={className}
+      aria-disabled={isPending}
     >
-      {children}
+      {isPending ? "Logging out..." : children}
     </button>
   );
 }

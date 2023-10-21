@@ -8,12 +8,7 @@ import { db } from "@/db";
 import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
-import {
-  absoluteUrl,
-  cn,
-  nextEpisode,
-  prevEpisode
-} from "@/lib/utils";
+import { absoluteUrl, cn, nextEpisode, prevEpisode } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -121,7 +116,7 @@ export default async function EpisodePage({
     with: {
       user: true,
     },
-    orderBy: (comments, {desc}) => [desc(comments.createdAt)],
+    orderBy: (comments, { desc }) => [desc(comments.createdAt)],
   });
   return (
     <main className="p-4 lg:container">
@@ -186,12 +181,18 @@ export default async function EpisodePage({
         {/* <p className="text-md lg:text-lg">{episodeData.description}</p> */}
         <Separator className="my-2" />
 
-        <CommentFormWithList
-          session={session}
-          slug={params.slug}
-          episodeNumber={Number(params.episode)}
-          comments={searchParams?.isOld !== 'true' ? commentItems : commentItems.reverse()}
-        />
+        {!!session && (
+          <CommentFormWithList
+            session={session}
+            slug={params.slug}
+            episodeNumber={Number(params.episode)}
+            comments={
+              searchParams?.isOld !== "true"
+                ? commentItems
+                : commentItems.reverse()
+            }
+          />
+        )}
 
         <div className="block lg:hidden">
           <Separator className="my-2" />

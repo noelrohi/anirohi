@@ -128,7 +128,6 @@ export async function SiteHeader({
                 className={buttonVariants({
                   size: "sm",
                 })}
-                provider="anilist"
               >
                 Sign In
                 <span className="sr-only">Sign In</span>

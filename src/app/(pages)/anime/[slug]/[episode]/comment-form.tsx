@@ -181,7 +181,6 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
             className={buttonVariants({
               size: "sm",
             })}
-            provider="anilist"
           >
             Sign In to Leave Comment
             <span className="sr-only">Sign In</span>
