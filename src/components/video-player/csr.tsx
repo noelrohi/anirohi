@@ -41,7 +41,7 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
   
   const handlePause = () => {
     startTransition(async () => {
-      console.log(`Played ${(state.played * 100).toFixed(2)}%`);
+      // console.log(`Played ${(state.played * 100).toFixed(2)}%`);
       if (user) {
         await addToHistory({
           slug: String(episode.anime.id),

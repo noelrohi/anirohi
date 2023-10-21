@@ -234,7 +234,7 @@ export function CommentFormWithList(props: CommentFormWithListProps) {
 function CommentActions({ commentId }: { commentId: number }) {
   const [isDeleting, startDeleting] = useTransition();
   const pathname = usePathname();
-  console.log(pathname);
+  // console.log(pathname);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
