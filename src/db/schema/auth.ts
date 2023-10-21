@@ -14,7 +14,7 @@ import { comments, histories } from "./main";
 
 export const users = mySqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",

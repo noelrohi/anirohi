@@ -1,0 +1,1 @@
+ALTER TABLE `rohi_user` MODIFY COLUMN `name` varchar(255) NOT NULL;

@@ -29,6 +29,13 @@
       "when": 1697776249031,
       "tag": "0003_empty_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1697865711337,
+      "tag": "0004_little_tombstone",
+      "breakpoints": true
     }
   ]
 }
