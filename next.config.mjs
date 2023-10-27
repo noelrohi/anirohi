@@ -25,9 +25,6 @@ const config = {
     ],
     unoptimized: true,
   },
-  experimental: {
-    serverActions: true,
-  },
 };
 const withVercelToolbar = toolbar();
  
