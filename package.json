@@ -14,7 +14,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@auth/core": "^0.17.0",
+    "@auth/core": "^0.18.0",
     "@auth/drizzle-adapter": "^0.3.4",
     "@hookform/resolvers": "^3.3.1",
     "@planetscale/database": "^1.11.0",
@@ -59,14 +59,14 @@
   "devDependencies": {
     "@headlessui/tailwindcss": "^0.2.0",
     "@types/node": "20.4.9",
-    "@types/react": "18.2.31",
+    "@types/react": "18.2.32",
     "@types/react-dom": "18.2.14",
     "autoprefixer": "10.4.16",
     "drizzle-kit": "^0.19.12",
     "html-react-parser": "^4.2.2",
     "postcss": "8.4.31",
     "prettier": "^3.0.3",
-    "tailwindcss": "3.3.3",
+    "tailwindcss": "3.3.4",
     "typescript": "5.2.2"
   }
 }
