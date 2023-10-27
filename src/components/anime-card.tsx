@@ -39,7 +39,7 @@ export function AnimeCard({
             alt={anime.title}
             width={width}
             height={height}
-            blurDataURL="/images/placeholder.png"
+            blurDataURL="/images/placeholder-image.png"
             priority
             className={cn(
               "h-full w-full object-cover transition-all hover:scale-105",
