@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -11,6 +11,13 @@ import GridPattern from "@/components/magicui/grid-pattern";
 import { StaffToolbar } from "@/components/staff-toolbar";
 import { Suspense } from "react";
 import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -39,10 +46,6 @@ export const metadata: Metadata = {
     },
   ],
   creator: "gneiru",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
   openGraph: {
     type: "website",
     locale: "en_US",
