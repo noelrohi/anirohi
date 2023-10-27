@@ -176,7 +176,7 @@ async function HistoryList() {
                   anime={{
                     title: anime.title,
                     image:
-                      anime.image || absoluteUrl("/images/placeholder.png"),
+                      anime.image || absoluteUrl("/images/placeholder-image.png"),
                     description: `Episode ${anime.episodeNumber}`,
                     slug: `${anime.slug}/${anime.episodeNumber}`,
                   }}
@@ -252,7 +252,7 @@ async function CarouselItem({
         </div>
       </div>
       <Image
-        src={anime.bannerImage || absoluteUrl("/images/placeholder.png")}
+        src={anime.bannerImage || absoluteUrl("/images/placeholder-image.png")}
         alt={title}
         fill
         className="absolute inset-0 object-cover"
