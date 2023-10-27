@@ -13,12 +13,12 @@ import { getMediaDataByTitle } from "@/lib/anilist";
 import { recent, topAiring } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
-import { and, eq, ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import htmlParse from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import htmlParse from "html-react-parser";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -153,10 +153,7 @@ async function HistoryList() {
   const session = await auth();
   if (!session?.user) return null;
   const history = await db.query.histories.findMany({
-    where: and(
-      eq(histories.userId, session.user.id),
-      ne(histories.progress, 100)
-    ),
+    where: eq(histories.userId, session.user.id),
     orderBy: (history, { desc }) => [desc(history.updatedAt)],
   });
   return (
