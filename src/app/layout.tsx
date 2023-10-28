@@ -2,15 +2,15 @@ import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
 
+import GridPattern from "@/components/magicui/grid-pattern";
+import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
+import { StaffToolbar } from "@/components/staff-toolbar";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
-import { inter } from "@/lib/fonts";
-import GridPattern from "@/components/magicui/grid-pattern";
-import { StaffToolbar } from "@/components/staff-toolbar";
+import { geistVariable } from "@/lib/fonts";
 import { Suspense } from "react";
-import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -74,7 +74,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
-      <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <html lang="en" className={geistVariable} suppressHydrationWarning>
         <head />
         <body className="min-h-screen bg-background font-sans antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
