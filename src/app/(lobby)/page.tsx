@@ -39,7 +39,7 @@ export default function IndexPage() {
           <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
             Tracking progress, history, comments section for enhanced
             interaction and detailed statistics to keep users informed about
-            their anime-watching habits. Check author's stats{" "}
+            their anime-watching habits. Check author&apos;s stats{" "}
             <Link href={`/u/nrohi`} className="underline underline-offset-4">
               here.
             </Link>
