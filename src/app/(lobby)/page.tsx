@@ -10,23 +10,22 @@ export default function IndexPage() {
   return (
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-        <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+        <div className="container flex flex-col items-center gap-4 text-center max-w-5xl">
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] [text-wrap:balance]">
-            An anime streaming app built using Nextjs 13 Server Components.
+            An anime streaming app built using Nextjs Server Components.
           </h1>
-          <div className="max-w-[46rem] text-lg text-muted-foreground sm:text-xl [text-wrap:balance]">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
-            maxime consectetur ab. Dicta magnam quas saepe.
+          <div className="text-lg text-muted-foreground sm:text-xl [text-wrap:balance]">
+            This ad-free app aims to provide a seamless experience for users who
+            want to utilize Anilist without the need for additional browser
+            extensions.
           </div>
-          <div className="space-x-4">
-            <Link href="/home">
-              <ShimmerButton>
-                <span className="whitespace-pre bg-gradient-to-b from-black from-30% to-gray-300/80 bg-clip-text text-center text-sm lg:text-2xl font-semibold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 dark:text-transparent z-10">
-                  Start Watching
-                </span>
-              </ShimmerButton>
-            </Link>
-          </div>
+          <Link href="/home">
+            <ShimmerButton>
+              <span className="whitespace-pre bg-gradient-to-b from-black from-30% to-gray-300/80 bg-clip-text text-center text-sm lg:text-2xl font-semibold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 dark:text-transparent z-10">
+                Start Watching
+              </span>
+            </ShimmerButton>
+          </Link>
         </div>
       </section>
       <section
@@ -38,14 +37,18 @@ export default function IndexPage() {
             Features
           </h2>
           <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
-            Just like any anime streaming site, this app includes videos,
-            watchlist and comments.
+            Tracking progress, history, comments section for enhanced
+            interaction and detailed statistics to keep users informed about
+            their anime-watching habits. Check author's stats{" "}
+            <Link href={`/u/nrohi`} className="underline underline-offset-4">
+              here.
+            </Link>
           </div>
         </div>
         <div className="mx-auto text-center md:max-w-[58rem]">
           <div className="leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
-            Velit sit laborum laboris officia. Commodo ad in ut aliqua tempor
-            nisi Lorem ullamco.
+            Experience all these superb functionalities in one convenient
+            application.
           </div>
         </div>
       </section>
