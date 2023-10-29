@@ -1,10 +1,10 @@
 <a href="https://ani.rohi.dev">
-  <img alt="Anirohi – an open-source streaming site built with Nextjs 13 app router" src="https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/landing.png">
+  <img alt="Anirohi – an open-source streaming site built with Nextjs 14 app router" src="https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/landing.png">
   <h1 align="center">Anirohi</h1>
 </a>
 
 <p align="center">
-  An open-source anime streaming site built with Nextjs 13 app router.
+  An open-source anime streaming site built with Nextjs 14 app router.
 </p>
 
 <p align="center">
