@@ -13,9 +13,8 @@ export function SiteFooter() {
         <div className="break-normal text-base text-muted-foreground">
           Made by{" "}
           <Link
-            href={siteConfig.links.github}
+            href={siteConfig.links.site + "?ref=anirohi"}
             target="_blank"
-            rel="noreferrer"
             className="underline text-primary underline-offset-[5px]"
           >
             Rohi

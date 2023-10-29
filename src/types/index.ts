@@ -13,6 +13,8 @@ export type SiteConfig = {
   links: {
     twitter: string;
     github: string;
+    // personal site
+    site: string
   };
   mainNav: {
     title: string;

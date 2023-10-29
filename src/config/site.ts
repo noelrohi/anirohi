@@ -8,6 +8,7 @@ export const siteConfig: SiteConfig = {
   links: {
     twitter: "https://twitter.com/gneiru",
     github: "https://github.com/gneiru/anirohi",
+    site: "https://rohi.dev"
   },
   mainNav: [
     {
