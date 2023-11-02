@@ -257,3 +257,36 @@ export const animeInfo = `query ($query: String) {
       }
     }
   }`;
+
+export const notifications = `query ($page: Int, $types: [NotificationType]) {
+    Page(page: $page, perPage: 15) {
+      pageInfo {
+        total
+        perPage
+        currentPage
+        lastPage
+        hasNextPage
+      }
+      notifications(type_in: $types, resetNotificationCount: true) {
+        ... on AiringNotification {
+          id
+          type
+          episode
+          contexts
+          media {
+            id
+            type
+            bannerImage
+            title {
+              userPreferred
+              english
+            }
+            coverImage {
+              large
+            }
+          }
+          createdAt
+        }
+      }
+    }
+  }`;

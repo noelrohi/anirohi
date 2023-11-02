@@ -2,6 +2,7 @@ import {
   ArrowDownIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
+  BellIcon,
   CalendarIcon,
   CheckIcon,
   GearIcon,
@@ -267,5 +268,6 @@ export const Icons = {
   },
   send: PaperPlaneIcon,
   arrow: ArrowDownIcon,
-  trash: TrashIcon
+  trash: TrashIcon,
+  bell: BellIcon
 };

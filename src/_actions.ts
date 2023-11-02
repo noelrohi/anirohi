@@ -1,10 +1,6 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { signIn as login, signOut as logout } from "@/lib/nextauth";
-import { accounts } from "@/db/schema/auth";
 import {
   InsertComments,
   InsertHistory,
@@ -12,9 +8,12 @@ import {
   histories,
 } from "@/db/schema/main";
 import { mutateAnilist } from "@/lib/anilist";
-import { auth } from "@/lib/nextauth";
-import { headers } from "next/headers";
+import { auth, signIn as login, signOut as logout } from "@/lib/nextauth";
 import { ratelimit } from "@/lib/utils";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { getAccessToken } from "./db/query";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -25,14 +24,8 @@ export async function updateAnimeProgress(
     const session = await auth();
     const userId = session?.user.id;
     if (!userId) throw new Error("User must be logged in!");
-    const account = await db.query.accounts.findFirst({
-      where: and(
-        eq(accounts.userId, userId),
-        eq(accounts.token_type, "bearer")
-      ),
-    });
+    const accessToken = await getAccessToken(userId);
 
-    const accessToken = account?.access_token;
     if (!accessToken) return { ok: false, message: "No access token found" };
     const query = `mutation($id: Int, $progress: Int){
                     SaveMediaListEntry(mediaId: $id, progress: $progress ) {
