@@ -11,6 +11,13 @@ export default function IndexPage() {
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="container flex flex-col items-center gap-4 text-center max-w-5xl">
+          <Link
+            className="bg-blue-200 transition-colors hover:bg-blue-300 rounded-2xl text-[#6B4636] font-semibold text-sm px-4 py-2"
+            href={"/notifications"}
+            title="Sign in to access it"
+          >
+            🎉 Added Notifications
+          </Link>
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] [text-wrap:balance]">
             An anime streaming app built using Nextjs Server Components.
           </h1>

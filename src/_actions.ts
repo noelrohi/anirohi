@@ -14,6 +14,8 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { getAccessToken } from "./db/query";
+import { notifications } from "./lib/gql-queries";
+import { Notifications } from "./types/anilist/notifications";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -146,4 +148,26 @@ export async function deleteComment({
     .fields;
   if (pathname) revalidatePath(pathname);
   return rows;
+}
+
+export async function moreNotifs(page: number) {
+  try {
+    const session = await auth();
+    const query = notifications;
+    const accessToken = await getAccessToken(session!.user.id);
+    if (!accessToken) throw new Error("No token found! Please try again.");
+    const variables = {
+      page,
+      feed: "all",
+    };
+    // console.log(page);
+    const data: Notifications = await mutateAnilist(
+      query,
+      accessToken,
+      variables
+    );
+    return data.data.Page.notifications;
+  } catch (error) {
+    return [];
+  }
 }

@@ -60,3 +60,24 @@ export function isMacOs() {
 
   return window.navigator.userAgent.includes("Mac");
 }
+
+// using this for now since dayjs isn't accurate with days/weeks in my case, prolly timezone related
+export function convertUnixTimestamp(unixTimestamp: number): string {
+  const currentTime = new Date().getTime() / 1000; // Current Unix timestamp
+  const diffInSeconds = Math.floor(currentTime - unixTimestamp);
+
+  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+  if (diffInSeconds < 60) {
+    return formatter.format(-diffInSeconds, "second");
+  } else if (diffInSeconds < 3600) {
+    return formatter.format(-Math.floor(diffInSeconds / 60), "minute");
+  } else if (diffInSeconds < 86400) {
+    return formatter.format(-Math.floor(diffInSeconds / 3600), "hour");
+  } else if (diffInSeconds < 86400 * 7) {
+    return formatter.format(-Math.floor(diffInSeconds / 86400), "day");
+  } else {
+    const dateObj = new Date(unixTimestamp * 1000);
+    return getRelativeTime(dateObj.toISOString());
+  }
+}
