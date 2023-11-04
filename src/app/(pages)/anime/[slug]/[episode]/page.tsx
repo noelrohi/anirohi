@@ -1,23 +1,31 @@
+import { SignIn } from "@/components/auth";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
-import { anime, comments as comment } from "@/db/schema/main";
+import { insertAnime } from "@/db/query";
+import { comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, cn, nextEpisode, prevEpisode } from "@/lib/utils";
+import {
+  absoluteUrl,
+  cn,
+  getRelativeTime,
+  nextEpisode,
+  prevEpisode,
+} from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { handleSlug } from "../page";
-import { CommentFormWithList } from "./comment-form";
+import { CommentActions, CommentForm, SortCommentButton } from "./comment";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
-import { insertAnime } from "@/db/query";
 
 interface EpisodePageProps {
   params: {
@@ -28,25 +36,6 @@ interface EpisodePageProps {
     [key: string]: string | string[] | undefined;
   };
 }
-
-// export async function generateStaticParams(): Promise<
-//   EpisodePageProps["params"][]
-// > {
-//   const popular = await getPopular();
-//   const recent = await getRecent();
-//   const popularPaths = popular.data.map((anime) => {
-//     const currentEpisode = anime.currentEpisode;
-//     // loop from 1 to currentEpsode e.g 1073
-//     return Array.from({ length: currentEpisode }, (_, i) => {
-//       return { episode: String(i + 1), slug: anime.slug };
-//     });
-//   });
-//   const recentPaths = recent.data.map((ep) => ({
-//     slug: ep.anime.slug,
-//     episode: String(ep.number),
-//   }));
-//   return [...popularPaths, ...recentPaths].flat();
-// }
 
 export async function generateMetadata({ params }: EpisodePageProps) {
   const { consumet, anilist } = await handleSlug(params.slug);
@@ -92,7 +81,6 @@ export default async function EpisodePage({
   searchParams,
 }: EpisodePageProps) {
   const { consumet: slugData, anilist } = await handleSlug(params.slug);
-
   // insert to db
   if (anilist?.id)
     insertAnime({
@@ -120,7 +108,7 @@ export default async function EpisodePage({
     mediaId: anilist?.id,
   });
   const videoData = { ...episodeData, anime: slugData };
-  const commentItems = await db.query.comments.findMany({
+  const commentFromDb = await db.query.comments.findMany({
     where: and(
       eq(comment.episodeNumber, Number(params.episode)),
       eq(comment.slug, params.slug)
@@ -130,6 +118,8 @@ export default async function EpisodePage({
     },
     orderBy: (comments, { desc }) => [desc(comments.createdAt)],
   });
+  const isOld = searchParams.isOld === "true" ?? false;
+  const commentItems = !isOld ? commentFromDb : commentFromDb.reverse();
   return (
     <main className="p-4 lg:container">
       <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
@@ -192,19 +182,45 @@ export default async function EpisodePage({
         </h1>
         {/* <p className="text-md lg:text-lg">{episodeData.description}</p> */}
         <Separator className="my-2" />
+        <div className="space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Comment Section
+          </h2>
+          <div className="flex gap-2">
+            {!session && (
+              <SignIn className={buttonVariants()}>Sign In To Comment</SignIn>
+            )}
+            {commentItems.length > 1 && <SortCommentButton />}
+          </div>
+        </div>
 
-        {!!session && (
-          <CommentFormWithList
-            session={session}
-            slug={params.slug}
-            episodeNumber={Number(params.episode)}
-            comments={
-              searchParams?.isOld !== "true"
-                ? commentItems
-                : commentItems.reverse()
-            }
-          />
-        )}
+        {!!session && !!session.user && <CommentForm />}
+        {commentItems.map((comment) => (
+          <Fragment key={comment.id}>
+            <div className="flex justify-between items-start">
+              <div className="flex flex-row gap-4">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage
+                    src={comment.user?.image!}
+                    alt={comment.user?.name!}
+                  />
+                  <AvatarFallback>G</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <div>{comment.user?.name}</div>
+                  <div className="text-muted-foreground">
+                    {getRelativeTime(comment.createdAt?.toString())}
+                  </div>
+                  <div className="mt-2">{comment.text}</div>
+                </div>
+              </div>
+              {session?.user.id === comment.userId && (
+                <CommentActions commentId={comment.id} />
+              )}
+            </div>
+            <Separator orientation="horizontal" />
+          </Fragment>
+        ))}
 
         <div className="block lg:hidden">
           <Separator className="my-2" />
