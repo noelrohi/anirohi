@@ -36,6 +36,20 @@
       "when": 1697865711337,
       "tag": "0004_little_tombstone",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1699069140072,
+      "tag": "0005_chief_mandarin",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1699069297630,
+      "tag": "0006_right_zemo",
+      "breakpoints": true
     }
   ]
 }

@@ -37,6 +37,26 @@ export const histories = mySqlTable(
   }
 );
 
+export const anime = mySqlTable(
+  "anime",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    image: varchar("image", { length: 255 }),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").onUpdateNow(),
+    episodes: int("episodes").notNull(),
+    anilistId: int("anilist_id").notNull().unique(),
+  },
+  (table) => {
+    return {
+      slugIdx: index("slug_idx").on(table.slug),
+      anilistIdx: index("anilist_idx").on(table.anilistId),
+    };
+  }
+);
+
 export const comments = mySqlTable(
   "comments",
   {
@@ -58,7 +78,7 @@ export const comments = mySqlTable(
 
 export type Comments = InferSelectModel<typeof comments>;
 export type CommentsWithUser = Comments & {
-  user: InferSelectModel<typeof users> | null
+  user: InferSelectModel<typeof users> | null;
 };
 
 export type InsertComments = InferInsertModel<typeof comments>;

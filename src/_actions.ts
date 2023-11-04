@@ -4,6 +4,7 @@ import { db } from "@/db";
 import {
   InsertComments,
   InsertHistory,
+  anime,
   comments,
   histories,
 } from "@/db/schema/main";
@@ -170,4 +171,13 @@ export async function moreNotifs(page: number) {
   } catch (error) {
     return [];
   }
+}
+
+export async function checkAnimeFromDB(anilistId: number) {
+  // console.log(anilistId)
+  const data = await db.query.anime.findFirst({
+    where: eq(anime.anilistId, anilistId),
+  });
+  if (!data) return { exist: false, data: null };
+  return { exist: true, data };
 }

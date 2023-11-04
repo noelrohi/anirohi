@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayerSSR from "@/components/video-player/ssr";
 import { db } from "@/db";
-import { comments as comment } from "@/db/schema/main";
+import { anime, comments as comment } from "@/db/schema/main";
 import { checkIsWatched } from "@/lib/anilist";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn, nextEpisode, prevEpisode } from "@/lib/utils";
@@ -17,6 +17,7 @@ import { handleSlug } from "../page";
 import { CommentFormWithList } from "./comment-form";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { insertAnime } from "@/db/query";
 
 interface EpisodePageProps {
   params: {
@@ -91,6 +92,17 @@ export default async function EpisodePage({
   searchParams,
 }: EpisodePageProps) {
   const { consumet: slugData, anilist } = await handleSlug(params.slug);
+
+  // insert to db
+  if (anilist?.id)
+    insertAnime({
+      anilistId: anilist.id,
+      episodes: slugData.totalEpisodes,
+      image: slugData.image,
+      slug: params.slug,
+      title: slugData.title,
+    });
+
   const episodes = slugData.episodes;
   const episodeData = episodes.find((e) => e.number === Number(params.episode));
   const episodeId = episodeData?.id;

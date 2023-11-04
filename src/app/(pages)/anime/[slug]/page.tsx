@@ -7,10 +7,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
+import { insertAnime } from "@/db/query";
 import { histories } from "@/db/schema/main";
-import { animeInfo, recent, search, topAiring } from "@/lib/consumet";
+import { getMediaDataByTitle } from "@/lib/anilist";
+import { animeInfo } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl } from "@/lib/utils";
+import { MediaQuery } from "@/types/anilist/media";
 import { AnimeInfo } from "@/types/consumet";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
@@ -18,8 +21,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getMediaDataByTitle } from "@/lib/anilist";
-import { MediaQuery } from "@/types/anilist/media";
 
 interface SlugPageProps {
   params: {
@@ -88,6 +89,17 @@ export async function generateMetadata({ params }: SlugPageProps) {
 
 export default async function SlugPage({ params }: SlugPageProps) {
   const { consumet: data, anilist } = await handleSlug(params.slug);
+
+  // insert to db
+  if (anilist?.id)
+    insertAnime({
+      anilistId: anilist.id,
+      episodes: data.totalEpisodes,
+      image: data.image,
+      slug: params.slug,
+      title: data.title,
+    });
+
   return (
     <main className="px-4 lg:container space-y-2">
       <AspectRatio ratio={16 / 5} className="relative min-h-[125px]">

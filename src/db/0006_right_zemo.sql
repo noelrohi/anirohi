@@ -1,0 +1,1 @@
+ALTER TABLE `rohi_anime` ADD CONSTRAINT `rohi_anime_anilist_id_unique` UNIQUE(`anilist_id`);
