@@ -1,22 +1,17 @@
 import { Icons } from "@/components/icons";
 import ShimmerButton from "@/components/magicui/shimmer-button";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
-
-// export const runtime = "edge"
 
 export default function IndexPage() {
   return (
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
         <div className="container flex flex-col items-center gap-4 text-center max-w-5xl">
-          <Link
-            className="bg-blue-200 transition-colors hover:bg-blue-300 rounded-2xl text-[#6B4636] font-semibold text-sm px-4 py-2"
-            href={"/notifications"}
-            title="Sign in to access it"
-          >
-            🎉 Added Notifications
+          <Link href={"/notifications"}>
+            <Badge variant={"pill"}>We added anilist notifications 🎉</Badge>
           </Link>
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] [text-wrap:balance]">
             An anime streaming app built using Nextjs Server Components.
@@ -37,7 +32,7 @@ export default function IndexPage() {
       </section>
       <section
         id="features"
-        className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24"
+        className="space-y-6 bg-slate-50 py-8 dark:bg-slate-950 md:py-12 lg:py-24"
       >
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
