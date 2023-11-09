@@ -63,7 +63,7 @@
     "@types/react": "18.2.34",
     "@types/react-dom": "18.2.14",
     "autoprefixer": "10.4.16",
-    "drizzle-kit": "^0.19.12",
+    "drizzle-kit": "^0.20.0",
     "html-react-parser": "^5.0.0",
     "postcss": "8.4.31",
     "prettier": "^3.0.3",
