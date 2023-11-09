@@ -31,7 +31,7 @@
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tremor/react": "^3.9.2",
     "@upstash/ratelimit": "^0.4.4",
-    "@vercel/kv": "^0.2.3",
+    "@vercel/kv": "^1.0.0",
     "@vercel/toolbar": "^0.1.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
