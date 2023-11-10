@@ -12,7 +12,7 @@ import { histories } from "@/db/schema/main";
 import { getMediaDataByTitle } from "@/lib/anilist";
 import { animeInfo } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl } from "@/lib/utils";
+import { absoluteUrl, handleSlug } from "@/lib/utils";
 import { MediaQuery } from "@/types/anilist/media";
 import { AnimeInfo } from "@/types/consumet";
 import { and, eq } from "drizzle-orm";
@@ -26,15 +26,6 @@ interface SlugPageProps {
   params: {
     slug: string;
   };
-}
-
-export async function handleSlug(slug: string) {
-  const [settleSlug] = await Promise.allSettled([animeInfo(slug)]);
-  const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
-  if (!data) notFound();
-  const anilist = await getMediaDataByTitle({ title: data.title });
-
-  return { consumet: data, anilist: anilist?.Media };
 }
 
 // export async function generateStaticParams(): Promise<

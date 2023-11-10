@@ -17,12 +17,12 @@ import {
   getRelativeTime,
   nextEpisode,
   prevEpisode,
+  handleSlug,
 } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Fragment, Suspense } from "react";
-import { handleSlug } from "../page";
 import { CommentActions, CommentForm, SortCommentButton } from "./comment";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";

@@ -6,6 +6,9 @@ import { clsx, type ClassValue } from "clsx";
 import dayjs from "dayjs";
 import relativetime from "dayjs/plugin/relativeTime";
 import { twMerge } from "tailwind-merge";
+import { animeInfo } from "./consumet";
+import { notFound } from "next/navigation";
+import { getMediaDataByTitle } from "./anilist";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,6 +44,15 @@ export async function prevEpisode(
   episodes: AnimeInfo["episodes"]
 ) {
   return episodes ? episodes[currentEpisodeIndex - 1]?.number : null;
+}
+
+export async function handleSlug(slug: string) {
+  const [settleSlug] = await Promise.allSettled([animeInfo(slug)]);
+  const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
+  if (!data) notFound();
+  const anilist = await getMediaDataByTitle({ title: data.title });
+
+  return { consumet: data, anilist: anilist?.Media };
 }
 
 export const ratelimit = new Ratelimit({
