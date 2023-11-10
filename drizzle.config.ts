@@ -1,14 +1,13 @@
-import * as dotenv from "dotenv";
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
-dotenv.config();
-
-export default {
+export default defineConfig({
   schema: "./src/db/schema",
   driver: "mysql2",
   out: "./src/db",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL || "",
+    uri: process.env.DATABASE_URL || "",
   },
   tablesFilter: ["rohi_*"],
-} satisfies Config;
+  verbose: true,
+  strict: true,
+});
