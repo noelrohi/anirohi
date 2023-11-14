@@ -1,5 +1,5 @@
 export type ConsumetResponse<T> = {
-  currentPage: number;
+  currentPage: string;
   hasNextPage: boolean;
   results: T[];
 };

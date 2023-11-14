@@ -14,12 +14,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn, isMacOs } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 import * as React from "react";
+import { searchAnime } from "@/_actions";
 
 interface Data {
   title: string;
   slug: string;
-  year: number;
+  year: string;
   image: string;
 }
 
@@ -28,21 +30,42 @@ export function Combobox() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const debouncedQuery = useDebounce(query, 300);
-  const [data, setData] = React.useState<Data[] | null>(null);
+  const [data, setData] = React.useState<Data[]>([]);
   const [isPending, startTransition] = React.useTransition();
+  const [hasMore, setHasMore] = React.useState(false);
+  const [isLoadingMore, startLoadingMore] = React.useTransition();
+  const [page, setPage] = React.useState(1);
+
+  const { ref, inView } = useInView();
 
   React.useEffect(() => {
-    if (debouncedQuery.length === 0) setData(null);
+    if (debouncedQuery.length === 0) {
+      setData([]);
+      setPage(1);
+    }
 
     if (debouncedQuery.length > 0) {
       startTransition(async () => {
-        const res = await fetch(`/api/search?q=${debouncedQuery}`);
-        if (!res.ok) setData(null);
-        const data: Data[] = await res.json();
-        setData(data);
+        const searchedData = await searchAnime({ q: debouncedQuery, page: 1 });
+        setData(searchedData.results);
+        setHasMore(searchedData.hasNextPage);
+        setPage(Number(searchedData.currentPage) + 1);
       });
     }
   }, [debouncedQuery]);
+
+  React.useEffect(() => {
+    if (inView && hasMore) {
+      startLoadingMore(async () => {
+        const moreData = await searchAnime({
+          q: debouncedQuery,
+          page,
+        });
+        setData([...data, ...moreData.results]);
+        setPage(Number(moreData.currentPage) + 1);
+      });
+    }
+  }, [inView, hasMore]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -94,31 +117,16 @@ export function Combobox() {
           </CommandEmpty>
           {isPending ? (
             <div className="space-y-1 overflow-hidden px-1 py-2">
-              <div className="flex flex-row">
-                <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
-                <div className="flex flex-col gap-2 justify-center h-15">
-                  <Skeleton className="w-40 h-3" />
-                  <Skeleton className="w-20 h-3" />
-                </div>
-
-                <Skeleton className="h-8 rounded-sm" />
-              </div>
-              <div className="flex flex-row">
-                <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
-                <div className="flex flex-col gap-2 justify-center h-15">
-                  <Skeleton className="w-40 h-3" />
-                  <Skeleton className="w-20 h-3" />
-                </div>
-
-                <Skeleton className="h-8 rounded-sm" />
-              </div>
+              <LoadingFragment />
+              <LoadingFragment />
             </div>
           ) : data ? (
             <CommandGroup>
-              {data?.map(({ slug, title, image, year }) => (
+              {data?.map(({ slug, title, image, year }, index) => (
                 <CommandItem
-                  key={slug}
+                  key={index}
                   value={title}
+                  ref={index === data.length - 1 ? ref : undefined}
                   onSelect={() =>
                     handleSelect(() => {
                       startTransition(() => {
@@ -143,10 +151,25 @@ export function Combobox() {
                   </div>
                 </CommandItem>
               ))}
+              {isLoadingMore && <LoadingFragment />}
             </CommandGroup>
           ) : null}
         </CommandList>
       </CommandDialog>
     </>
+  );
+}
+
+function LoadingFragment() {
+  return (
+    <div className="flex flex-row">
+      <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
+      <div className="flex flex-col gap-2 justify-center h-15">
+        <Skeleton className="w-40 h-3" />
+        <Skeleton className="w-20 h-3" />
+      </div>
+
+      <Skeleton className="h-8 rounded-sm" />
+    </div>
   );
 }

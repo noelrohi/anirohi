@@ -18,7 +18,7 @@ export default function PostHogPageview(): JSX.Element {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (pathname) {
+    if (pathname && process.env.NODE_ENV === "production") {
       let url = window.origin + pathname;
       if (searchParams && searchParams.toString()) {
         url = url + `?${searchParams.toString()}`;

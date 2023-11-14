@@ -4,8 +4,9 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q");
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
   if (!query) return NextResponse.json("Query is required!", { status: 400 });
-  const [settled] = await Promise.allSettled([search({ query })]);
+  const [settled] = await Promise.allSettled([search({ query, page })]);
   if (settled.status === "rejected")
     return NextResponse.json([], { status: 200 });
   return NextResponse.json(

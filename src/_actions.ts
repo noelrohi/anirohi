@@ -17,6 +17,7 @@ import { headers } from "next/headers";
 import { getAccessToken } from "./db/query";
 import { notifications } from "./lib/gql-queries";
 import { Notifications } from "./types/anilist/notifications";
+import { search } from "./lib/consumet";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -180,4 +181,31 @@ export async function checkAnimeFromDB(anilistId: number) {
   });
   if (!data) return { exist: false, data: null };
   return { exist: true, data };
+}
+
+function convertReleaseYearToNumber(str_year: string) {
+  const num = Number(str_year.replace("Released: ", ""));
+  return num;
+}
+
+export async function searchAnime({ q, page }: { q: string; page: number }) {
+  const data = await search({ query: q, page });
+  const results = data.results.map(({ title, id, releaseDate, image }) => {
+    const data = {
+      title: title,
+      slug: id,
+      year: releaseDate,
+      image,
+    };
+    return data;
+  });
+  const filteredData = results.sort(
+    (a, b) =>
+      convertReleaseYearToNumber(a.year) - convertReleaseYearToNumber(b.year)
+  );
+  // console.log(results, "=> filtered");
+  return {
+    ...data,
+    results: filteredData,
+  };
 }
