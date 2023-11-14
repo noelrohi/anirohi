@@ -63,6 +63,7 @@ export function Combobox() {
         });
         setData([...data, ...moreData.results]);
         setPage(Number(moreData.currentPage) + 1);
+        setHasMore(moreData.hasNextPage);
       });
     }
   }, [inView, hasMore]);
