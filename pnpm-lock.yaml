@@ -99,8 +99,8 @@ dependencies:
     specifier: ^0.2.1
     version: 0.2.1(next@14.0.2)(react-dom@18.2.0)(react@18.2.0)
   nuka-carousel:
-    specifier: ^6.0.3
-    version: 6.0.3(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^7.0.0
+    version: 7.0.0(react-dom@18.2.0)(react@18.2.0)
   posthog-js:
     specifier: ^1.88.4
     version: 1.88.4
@@ -6498,8 +6498,8 @@ packages:
       path-key: 4.0.0
     dev: false
 
-  /nuka-carousel@6.0.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-DYxCTp4xIv9/vfrfOr9FAmYizMr7AefL7mbqsBaBTwdrZ77mAsR/SNZtk+/KHJSuH+9gZLrugj/RC6qM8MJr+Q==}
+  /nuka-carousel@7.0.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-KE0WV1MuE4Gq6ynL8P3qJH2rGq/DkJ0ej+ezo0IuZp4oklV8WNqu6P6O1utJqihHLGoEuFppq5wlHSHfhdCHXA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       react: '>=18.0.0'
