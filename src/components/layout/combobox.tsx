@@ -1,5 +1,6 @@
 "use client";
 
+import { searchAnime } from "@/_actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +15,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn, isMacOs } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useInView } from "react-intersection-observer";
 import * as React from "react";
-import { searchAnime } from "@/_actions";
+import { useInView } from "react-intersection-observer";
 
 interface Data {
   title: string;
@@ -35,7 +35,6 @@ export function Combobox() {
   const [hasMore, setHasMore] = React.useState(false);
   const [isLoadingMore, startLoadingMore] = React.useTransition();
   const [page, setPage] = React.useState(1);
-
   const { ref, inView } = useInView();
 
   React.useEffect(() => {
