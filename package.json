@@ -30,7 +30,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tremor/react": "^3.11.1",
-    "@upstash/ratelimit": "^0.4.4",
+    "@upstash/ratelimit": "^1.0.0",
     "@vercel/kv": "^1.0.0",
     "@vercel/toolbar": "^0.1.5",
     "class-variance-authority": "^0.7.0",
