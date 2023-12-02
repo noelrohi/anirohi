@@ -9,6 +9,11 @@ const withPWA = nextPwa({
 /** @type {import("next").NextConfig} */
 const config = {
   /** ... */
+  logging: {
+    fetches: {
+      fullUrl: true,
+    }
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
