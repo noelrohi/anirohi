@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import {
   AnimeInfo,
   ConsumetResponse,
@@ -7,16 +8,21 @@ import {
   Watch,
 } from "@/types/consumet";
 
-const url = "https://api.consumet.org/anime/gogoanime";
+// const url = "https://api.consumet.org/anime/gogoanime";
+const url = "https://api-ani.rohi.dev/api/gogoanime";
 
-export async function recent() {
-  const response = await fetch(`${url}/recent-episodes`, { cache: "no-cache" });
+export async function recent(page: number = 1) {
+  const response = await fetch(`${url}/recent?page=${page}`, {
+    cache: "no-cache",
+  });
   if (!response.ok) throw new Error("Failed to fetch recent episodes.");
   const data: ConsumetResponse<Recent> = await response.json();
   return data;
 }
-export async function topAiring() {
-  const response = await fetch(`${url}/top-airing`, { cache: "no-cache" });
+export async function topAiring(page: number = 1) {
+  const response = await fetch(`${url}/trending?page=${page}`, {
+    cache: "no-cache",
+  });
   if (!response.ok) throw new Error("Failed to fetch top airing.");
   const data: ConsumetResponse<TopAiring> = await response.json();
   return data;
@@ -28,7 +34,7 @@ type SearchProps = {
 };
 
 export async function search({ query, page = 1 }: SearchProps) {
-  const response = await fetch(`${url}/${query}?page=${page}`);
+  const response = await fetch(`${url}/search?q=${query}&page=${page}`);
   if (!response.ok) throw new Error("Failed to fetch search.");
   const data: ConsumetResponse<Search> = await response.json();
   return data;
@@ -43,11 +49,10 @@ export async function animeInfo(animeId: string) {
 
 interface WatchProps {
   episodeId: string;
-  server?: string;
 }
 
-export async function watch({ episodeId, server = "gogocdn" }: WatchProps) {
-  const response = await fetch(`${url}/watch/${episodeId}?server=${server}`);
+export async function watch({ episodeId }: WatchProps) {
+  const response = await fetch(`${url}/episode-source/${episodeId}`);
   if (!response.ok) throw new Error("Failed to fetch watch.");
   const data: Watch = await response.json();
   return data;
