@@ -38,7 +38,7 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
     "1"
   );
   const seekToValue = seekSecond && user ? seekSecond : state.playedSeconds;
-  
+
   const handlePause = () => {
     startTransition(async () => {
       // console.log(`Played ${(state.played * 100).toFixed(2)}%`);
@@ -77,7 +77,7 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
         if (hasNextEp) {
           const url = `/anime/${episode.anime.id}/${episode.number + 1}`;
           router.prefetch(url);
-          toast(`Go to episode ${episode.number}?`, {
+          toast(`Go to episode ${episode.number + 1}?`, {
             duration: 60 * 5 * 1000,
             dismissible: true,
             id: "next-episode",
