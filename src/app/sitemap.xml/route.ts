@@ -82,8 +82,7 @@ async function generateSiteMap() {
    </urlset>`;
 }
 
-// We shouldn't need this but for some reason Next isn't revalidating this route with `revalidatePath`
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const GET = async () => {
   const sitemap = await generateSiteMap();
