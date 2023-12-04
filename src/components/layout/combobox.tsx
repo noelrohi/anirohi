@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn, isMacOs } from "@/lib/utils";
+import { isMacOs } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useInView } from "react-intersection-observer";
@@ -35,7 +35,7 @@ export function Combobox() {
   const [hasMore, setHasMore] = React.useState(false);
   const [isLoadingMore, startLoadingMore] = React.useTransition();
   const [page, setPage] = React.useState(1);
-  const { ref, inView } = useInView();
+  const { ref, inView, entry } = useInView();
 
   React.useEffect(() => {
     if (debouncedQuery.length === 0) {
@@ -63,6 +63,7 @@ export function Combobox() {
         setData([...data, ...moreData.results]);
         setPage(Number(moreData.currentPage) + 1);
         setHasMore(moreData.hasNextPage);
+        entry?.target.scrollIntoView({ behavior: "instant" });
       });
     }
   }, [inView, hasMore]);
@@ -110,17 +111,18 @@ export function Combobox() {
           onValueChange={setQuery}
         />
         <CommandList>
-          <CommandEmpty
-            className={cn(isPending ? "hidden" : "py-6 text-center text-sm")}
-          >
-            No anime found.
-          </CommandEmpty>
-          {isPending ? (
+          {!isPending && (
+            <CommandEmpty className={"py-6 text-center text-sm"}>
+              No anime found.
+            </CommandEmpty>
+          )}
+          {isPending && (
             <div className="space-y-1 overflow-hidden px-1 py-2">
               <LoadingFragment />
               <LoadingFragment />
             </div>
-          ) : data ? (
+          )}
+          {data && (
             <CommandGroup>
               {data?.map(({ slug, title, image, year }, index) => (
                 <CommandItem
@@ -153,7 +155,12 @@ export function Combobox() {
               ))}
               {isLoadingMore && <LoadingFragment />}
             </CommandGroup>
-          ) : null}
+          )}
+          {!debouncedQuery.length && (
+            <div className="text-center text-sm p-4">
+              Start typing to see results..
+            </div>
+          )}
         </CommandList>
       </CommandDialog>
     </>
