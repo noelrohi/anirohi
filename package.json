@@ -38,7 +38,7 @@
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.29.0",
-    "eslint": "8.54.0",
+    "eslint": "8.56.0",
     "eslint-config-next": "14.0.4",
     "geist": "^1.1.0",
     "next": "14.0.4",
