@@ -82,7 +82,7 @@ export async function SiteHeader({
                     <DropdownMenuItem asChild disabled>
                       <Link href="/dashboard/account">
                         <Icons.user
-                          className="mr-2 h-4 w-4"
+                          className="mr-2 size-4"
                           aria-hidden="true"
                         />
                         Account
@@ -92,7 +92,7 @@ export async function SiteHeader({
                     <DropdownMenuItem asChild disabled={!user.name}>
                       <Link href={`/u/${user.name}`}>
                         <Icons.dashboard
-                          className="mr-2 h-4 w-4"
+                          className="mr-2 size-4"
                           aria-hidden="true"
                         />
                         Dashboard
@@ -102,7 +102,7 @@ export async function SiteHeader({
                     <DropdownMenuItem asChild>
                       <Link href="/notifications">
                         <Icons.bell
-                          className="mr-2 h-4 w-4"
+                          className="mr-2 size-4"
                           aria-hidden="true"
                         />
                         Notifications
@@ -112,7 +112,7 @@ export async function SiteHeader({
                     <DropdownMenuItem asChild disabled>
                       <Link href="/dashboard/settings">
                         <Icons.settings
-                          className="mr-2 h-4 w-4"
+                          className="mr-2 size-4"
                           aria-hidden="true"
                         />
                         Settings
@@ -124,7 +124,7 @@ export async function SiteHeader({
                   <DropdownMenuItem asChild>
                     <div>
                       <Icons.logout
-                        className="mr-2 h-4 w-4"
+                        className="mr-2 size-4"
                         aria-hidden="true"
                       />
                       <SignOut>Log out</SignOut>

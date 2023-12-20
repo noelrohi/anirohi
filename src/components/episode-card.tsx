@@ -45,7 +45,7 @@ export function EpisodeCard({
             )}
           />
           <div className="absolute top-2 right-2">
-            <span className="rounded-full h-4 w-4 bg-blue-500"></span>
+            <span className="rounded-full size-4 bg-blue-500"></span>
           </div>
         </Link>
       </div>

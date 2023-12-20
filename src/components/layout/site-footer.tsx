@@ -45,7 +45,7 @@ export function SiteFooter() {
             rel="noreferrer"
             className={buttonVariants({ size: "icon", variant: "ghost" })}
           >
-            <Icons.gitHub className="h-4 w-4" aria-hidden="true" />
+            <Icons.gitHub className="size-4" aria-hidden="true" />
             <span className="sr-only">GitHub</span>
           </Link>
           <ThemeToggle />

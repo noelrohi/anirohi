@@ -199,7 +199,7 @@ export default async function EpisodePage({
           <Fragment key={comment.id}>
             <div className="flex justify-between items-start">
               <div className="flex flex-row gap-4">
-                <Avatar className="h-10 w-10">
+                <Avatar className="size-10">
                   <AvatarImage
                     src={comment.user?.image!}
                     alt={comment.user?.name!}
