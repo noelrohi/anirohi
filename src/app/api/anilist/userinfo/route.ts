@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 function getAnilistQuery() {
   return `query {
             Viewer {
@@ -20,7 +18,7 @@ export async function GET(req: Request) {
   try {
     const authorization = req.headers.get("Authorization");
     if (!authorization)
-      return NextResponse.json("Token is required!", { status: 401 });
+      return Response.json("Token is required!", { status: 401 });
     const res = await fetch("https://graphql.anilist.co", {
       method: "POST",
       headers: {
@@ -35,17 +33,17 @@ export async function GET(req: Request) {
     const data = await res.json();
     const { id, name, avatar } = data.data.Viewer;
 
-    return NextResponse.json(
+    return Response.json(
       {
         id: String(id),
         username: name,
         image_url: avatar.large,
-        email: `${name}.anym8@gmail.com`,
+        email: `${name}.anirohi@gmail.com`,
       },
       { status: 200 }
     );
   } catch (error) {
     console.error(error);
-    return NextResponse.json(error, { status: 500 });
+    return Response.json(error, { status: 500 });
   }
 }

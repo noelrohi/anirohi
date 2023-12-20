@@ -4,7 +4,7 @@ import React from "react";
 export default function HomeLoading() {
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-104px-64px)]">
-      <Icons.loader className="h-10 w-10 animate-spin" />
+      <Icons.loader className="size-10 animate-spin" />
     </div>
   );
 }

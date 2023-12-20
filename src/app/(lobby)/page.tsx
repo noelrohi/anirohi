@@ -13,10 +13,10 @@ export default function IndexPage() {
           {/* <Link href={"/notifications"}>
             <Badge variant={"pill"}>We added anilist notifications 🎉</Badge>
           </Link> */}
-          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] [text-wrap:balance]">
+          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] text-balance">
             An anime streaming app built using Nextjs Server Components.
           </h1>
-          <div className="text-lg text-muted-foreground sm:text-xl [text-wrap:balance]">
+          <div className="text-lg text-muted-foreground sm:text-xl text-balance">
             This ad-free app aims to provide a seamless experience for users who
             want to utilize Anilist without the need for additional browser
             extensions.
@@ -38,7 +38,7 @@ export default function IndexPage() {
           <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
             Features
           </h2>
-          <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
+          <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 text-balance">
             Tracking progress, history, comments section for enhanced
             interaction and detailed statistics to keep users informed about
             their anime-watching habits. Check author&apos;s stats{" "}
@@ -48,7 +48,7 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="mx-auto text-center md:max-w-[58rem]">
-          <div className="leading-normal text-muted-foreground sm:text-lg sm:leading-7 [text-wrap:balance]">
+          <div className="leading-normal text-muted-foreground sm:text-lg sm:leading-7 text-balance">
             Experience all these superb functionalities in one convenient
             application.
           </div>
@@ -75,7 +75,7 @@ export default function IndexPage() {
 
           <Button asChild>
             <Link href={siteConfig.links.github}>
-              <Icons.gitHub className="mr-2 h-4 w-4" />
+              <Icons.gitHub className="mr-2 size-4" />
               Star on Github
             </Link>
           </Button>

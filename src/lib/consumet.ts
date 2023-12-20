@@ -1,4 +1,4 @@
-import { env } from "@/env.mjs";
+import "server-only";
 import {
   AnimeInfo,
   ConsumetResponse,
@@ -7,6 +7,8 @@ import {
   TopAiring,
   Watch,
 } from "@/types/consumet";
+import { notFound } from "next/navigation";
+import { getMediaDataByTitle } from "./anilist";
 
 // const url = "https://api.consumet.org/anime/gogoanime";
 const url = "https://api-ani.rohi.dev/api/gogoanime";
@@ -56,4 +58,13 @@ export async function watch({ episodeId }: WatchProps) {
   if (!response.ok) throw new Error("Failed to fetch watch.");
   const data: Watch = await response.json();
   return data;
+}
+
+export async function handleSlug(slug: string) {
+  const [settleSlug] = await Promise.allSettled([animeInfo(slug)]);
+  const data = settleSlug.status === "fulfilled" ? settleSlug.value : null;
+  if (!data) notFound();
+  const anilist = await getMediaDataByTitle({ title: data.title });
+
+  return { consumet: data, anilist: anilist?.Media };
 }

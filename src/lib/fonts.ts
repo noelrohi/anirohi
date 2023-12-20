@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
-import { GeistSans, GeistMono } from "geist/font";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -7,4 +8,4 @@ export const inter = Inter({
   variable: "--font-inter",
 });
 
-export const geistVariable = GeistMono.variable + " " + GeistSans.variable;
+export const geistVariable = `${GeistMono.variable} ${GeistSans.variable}`;

@@ -82,7 +82,7 @@ export default function NotificationList({ list }: NotificationListProps) {
         })}
       <Button onClick={loadMore}>
         {isLoading && (
-          <Icons.loader className="animate-spin w-4 h-4 mr-2 inline-flex" />
+          <Icons.loader className="animate-spin size-4 mr-2 inline-flex" />
         )}
         {isLoading ? "Loading" : "Load More"}
       </Button>

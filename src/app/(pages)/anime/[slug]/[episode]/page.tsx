@@ -17,7 +17,6 @@ import {
   getRelativeTime,
   nextEpisode,
   prevEpisode,
-  handleSlug,
 } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
@@ -26,6 +25,7 @@ import { Fragment, Suspense } from "react";
 import { CommentActions, CommentForm, SortCommentButton } from "./comment";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { handleSlug } from "@/lib/consumet";
 
 interface EpisodePageProps {
   params: {
@@ -199,7 +199,7 @@ export default async function EpisodePage({
           <Fragment key={comment.id}>
             <div className="flex justify-between items-start">
               <div className="flex flex-row gap-4">
-                <Avatar className="h-10 w-10">
+                <Avatar className="size-10">
                   <AvatarImage
                     src={comment.user?.image!}
                     alt={comment.user?.name!}

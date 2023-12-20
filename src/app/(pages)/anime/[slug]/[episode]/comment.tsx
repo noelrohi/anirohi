@@ -157,7 +157,7 @@ export function CommentActions({ commentId }: { commentId: number }) {
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"} size={"icon"}>
           {isDeleting ? (
-            <Icons.loader className="w-4 h-4 animate-spin" />
+            <Icons.loader className="size-4 animate-spin" />
           ) : (
             "..."
           )}
@@ -175,7 +175,7 @@ export function CommentActions({ commentId }: { commentId: number }) {
                 })
               }
             >
-              <Icons.trash className="mr-2 w-4 h-4" aria-hidden="true" />
+              <Icons.trash className="mr-2 size-4" aria-hidden="true" />
               {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </DropdownMenuItem>
