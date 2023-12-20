@@ -17,7 +17,6 @@ import {
   getRelativeTime,
   nextEpisode,
   prevEpisode,
-  handleSlug,
 } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
@@ -26,6 +25,7 @@ import { Fragment, Suspense } from "react";
 import { CommentActions, CommentForm, SortCommentButton } from "./comment";
 import { EpisodeScrollArea } from "./episodes-scroll-area";
 import UpdateProgressButton from "./update-progress";
+import { handleSlug } from "@/lib/consumet";
 
 interface EpisodePageProps {
   params: {

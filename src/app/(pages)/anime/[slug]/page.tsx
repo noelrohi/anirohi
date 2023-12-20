@@ -8,18 +8,16 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { db } from "@/db";
 import { insertAnime } from "@/db/query";
-import { histories } from "@/db/schema/main";
-import { getMediaDataByTitle } from "@/lib/anilist";
-import { animeInfo } from "@/lib/consumet";
+import { NewAnime, histories } from "@/db/schema/main";
+import { handleSlug } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { absoluteUrl, handleSlug } from "@/lib/utils";
+import { absoluteUrl } from "@/lib/utils";
 import { MediaQuery } from "@/types/anilist/media";
 import { AnimeInfo } from "@/types/consumet";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 interface SlugPageProps {
@@ -28,29 +26,14 @@ interface SlugPageProps {
   };
 }
 
-// export async function generateStaticParams(): Promise<
-//   SlugPageProps["params"][]
-// > {
-//   const recentEpisodes = await recent();
-//   const popular = await topAiring();
-//   const paths = [
-//     ...popular.results.map((anime) => ({ slug: String(anime.id) })),
-//     ...recentEpisodes.results.map((anime) => ({ slug: String(anime.id) })),
-//   ];
-//   return paths;
-// }
-
 export async function generateMetadata({ params }: SlugPageProps) {
   const { consumet, anilist } = await handleSlug(params.slug);
   const title = anilist?.title.english ?? consumet.title;
   const description = anilist?.description ?? consumet.description;
-  const cover = anilist?.coverImage.large ?? consumet.image;
-  const banner = anilist?.bannerImage ?? absoluteUrl("/opengraph-image.png");
-  const ogUrl = new URL(absoluteUrl("/api/og"));
+  const ogUrl = new URL("https://og.rohi.dev");
   ogUrl.searchParams.set("title", title);
-  ogUrl.searchParams.set("description", description);
-  ogUrl.searchParams.set("cover", cover);
-  ogUrl.searchParams.set("banner", banner);
+  ogUrl.searchParams.set("textColor", "fff");
+  ogUrl.searchParams.set("backgroundColorHex", "000");
   const metadata: Metadata = {
     title,
     description,
@@ -81,18 +64,19 @@ export async function generateMetadata({ params }: SlugPageProps) {
 export default async function SlugPage({ params }: SlugPageProps) {
   const { consumet: data, anilist } = await handleSlug(params.slug);
 
-  // insert to db
-  if (anilist?.id)
-    insertAnime({
-      anilistId: anilist.id,
-      episodes: data.totalEpisodes,
-      image: data.image,
-      slug: params.slug,
-      title: data.title,
-    });
-
   return (
     <main className="px-4 lg:container space-y-2">
+      {anilist?.id && (
+        <InsertAnimeStreamed
+          value={{
+            anilistId: anilist.id,
+            episodes: data.totalEpisodes,
+            image: data.image,
+            slug: params.slug,
+            title: data.title,
+          }}
+        />
+      )}
       <AspectRatio ratio={16 / 5} className="relative min-h-[125px]">
         <Image
           src={anilist?.bannerImage || "/images/placeholder-image.png"}
@@ -147,6 +131,11 @@ export default async function SlugPage({ params }: SlugPageProps) {
 
 interface Props {
   anime: AnimeInfo;
+}
+
+async function InsertAnimeStreamed({ value }: { value: NewAnime }) {
+  await insertAnime(value);
+  return <></>;
 }
 
 async function AnimeEpisodes({ anime }: Props) {
