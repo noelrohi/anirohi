@@ -57,6 +57,8 @@ export const anime = mySqlTable(
   }
 );
 
+export type NewAnime = typeof anime.$inferInsert;
+
 export const comments = mySqlTable(
   "comments",
   {

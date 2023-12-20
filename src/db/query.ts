@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from ".";
 import { accounts } from "./schema/auth";
-import { anime } from "./schema/main";
+import { NewAnime, anime } from "./schema/main";
 
 export async function getAccessToken(userId: string) {
   const account = await db.query.accounts.findFirst({
@@ -10,13 +10,7 @@ export async function getAccessToken(userId: string) {
   return account?.access_token;
 }
 
-export async function insertAnime(values: {
-  slug: string;
-  anilistId: number;
-  episodes: number;
-  image: string | null;
-  title: string;
-}) {
+export async function insertAnime(values: NewAnime) {
   await db
     .insert(anime)
     .values(values)
