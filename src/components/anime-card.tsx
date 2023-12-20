@@ -1,8 +1,7 @@
-import Image from "next/image";
-
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
+import { WithErrorImage } from "./error-image";
 
 interface AnimeCardProps extends React.HTMLAttributes<HTMLDivElement> {
   anime: Anime;
@@ -34,12 +33,11 @@ export function AnimeCard({
     <div className={cn("space-y-3", className)} {...props}>
       <div className="overflow-hidden rounded-md relative">
         <Link href={href}>
-          <Image
+        <WithErrorImage
             src={anime.image}
             alt={anime.title}
             width={width}
             height={height}
-            blurDataURL="/images/placeholder-image.png"
             priority
             className={cn(
               "h-full w-full object-cover transition-all hover:scale-105",
