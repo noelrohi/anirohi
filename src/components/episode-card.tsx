@@ -1,7 +1,6 @@
-import Image from "next/image";
-
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { WithErrorImage } from "./error-image";
 
 interface EpisodeCardProps extends React.HTMLAttributes<HTMLDivElement> {
   episode: Episode;
@@ -32,13 +31,12 @@ export function EpisodeCard({
           href={`/anime/${episode.slug}/${episode.number}`}
           className="relative"
         >
-          <Image
+          <WithErrorImage
             src={episode.image}
             alt={episode.title}
             width={width}
             height={height}
             priority
-            blurDataURL="/images/placeholder-image.png"
             className={cn(
               "h-auto w-auto object-cover transition-all hover:scale-105",
               aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
