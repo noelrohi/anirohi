@@ -1,9 +1,15 @@
 import { AnimeCard } from "@/components/anime-card";
-import CarouselSlider from "@/components/carousel";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselNext,
+  CarouselPrevious,
+  CarouselItem as CaruoselItem,
+} from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,27 +64,23 @@ export default async function HomePage() {
   return (
     <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
-        <CarouselSlider>
-          {popularAnime?.results.map((anime) => (
-            <AspectRatio ratio={16 / 7} key={anime.id}>
-              <Suspense
-                fallback={
-                  <>
-                    <AspectRatio ratio={16 / 7} key={anime.id}>
-                      <Skeleton className="h-full w-full" />
-                    </AspectRatio>
-                  </>
-                }
-              >
-                <CarouselItem
-                  key={anime.id}
-                  slug={anime.id}
-                  title={anime.title}
-                />
-              </Suspense>
-            </AspectRatio>
-          ))}
-        </CarouselSlider>
+        <Carousel>
+          <CarouselContent>
+            {popularAnime?.results.map((anime) => (
+              <CaruoselItem className="basis-full" key={anime.id}>
+                <Suspense fallback={<Skeleton className="h-full w-full" />}>
+                  <CarouselItem
+                    key={anime.id}
+                    slug={anime.id}
+                    title={anime.title}
+                  />
+                </Suspense>
+              </CaruoselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
         <Separator className="my-2" />
         <Suspense fallback={<div>Loading history ...</div>}>
           <HistoryList />
@@ -176,7 +178,8 @@ async function HistoryList() {
                   anime={{
                     title: anime.title,
                     image:
-                      anime.image || absoluteUrl("/images/placeholder-image.png"),
+                      anime.image ||
+                      absoluteUrl("/images/placeholder-image.png"),
                     description: `Episode ${anime.episodeNumber}`,
                     slug: `${anime.slug}/${anime.episodeNumber}`,
                   }}
