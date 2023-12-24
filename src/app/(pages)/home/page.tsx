@@ -64,7 +64,7 @@ export default async function HomePage() {
   return (
     <div className="mx-auto px-4 lg:container">
       <div className="flex flex-col gap-2">
-        <Carousel>
+        <Carousel className="overflow-hidden">
           <CarouselContent>
             {popularAnime?.results.map((anime) => (
               <CaruoselItem className="basis-full" key={anime.id}>
