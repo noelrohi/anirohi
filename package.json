@@ -39,7 +39,7 @@
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.29.1",
     "embla-carousel-autoplay": "8.0.0-rc17",
-    "embla-carousel-react": "8.0.0-rc17",
+    "embla-carousel-react": "8.0.0-rc19",
     "eslint": "8.56.0",
     "eslint-config-next": "14.0.4",
     "geist": "^1.2.0",
