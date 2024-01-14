@@ -7,6 +7,7 @@ interface EpisodeCardProps extends React.HTMLAttributes<HTMLDivElement> {
   aspectRatio?: "portrait" | "square";
   width?: number;
   height?: number;
+  prefetch?: boolean;
 }
 
 type Episode = {
@@ -19,6 +20,7 @@ type Episode = {
 export function EpisodeCard({
   episode,
   aspectRatio = "square",
+  prefetch = false,
   width,
   height,
   className,
@@ -30,6 +32,7 @@ export function EpisodeCard({
         <Link
           href={`/anime/${episode.slug}/${episode.number}`}
           className="relative"
+          prefetch={prefetch}
         >
           <WithErrorImage
             src={episode.image}
