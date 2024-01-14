@@ -37,6 +37,8 @@ interface EpisodePageProps {
   };
 }
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: EpisodePageProps) {
   const { consumet, anilist } = await handleSlug(params.slug);
   const title =
