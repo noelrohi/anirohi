@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: SlugPageProps) {
   const { consumet, anilist } = await handleSlug(params.slug);
   const title = anilist?.title.english ?? consumet.title;
   const description = anilist?.description ?? consumet.description;
-  const ogUrl = new URL("https://og.rohi.dev");
+  const ogUrl = new URL("https://og.rohi.dev/general");
   ogUrl.searchParams.set("title", title);
   ogUrl.searchParams.set("textColor", "fff");
   ogUrl.searchParams.set("backgroundColorHex", "000");
