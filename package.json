@@ -64,7 +64,7 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
-    "autoprefixer": "10.4.16",
+    "autoprefixer": "10.4.17",
     "drizzle-kit": "^0.20.7",
     "embla-carousel": "8.0.0-rc19",
     "html-react-parser": "^5.0.10",
