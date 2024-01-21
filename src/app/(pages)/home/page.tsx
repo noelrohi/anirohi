@@ -20,7 +20,6 @@ import { recent, topAiring } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
-import htmlParse from "html-react-parser";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -233,9 +232,10 @@ async function CarouselItem({
               {title}
             </h1>
           </div>
-          <div className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm">
-            {anime.description ? htmlParse(anime.description) : ""}
-          </div>
+          <div
+            className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm"
+            dangerouslySetInnerHTML={{ __html: anime.description }}
+          />
           <div className="hidden md:block">
             <div className="flex flex-shrink-0 gap-1 flex-wrap ">
               {anime.genres.map((genre, index) => (
