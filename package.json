@@ -14,7 +14,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@auth/core": "^0.22.0",
+    "@auth/core": "^0.24.0",
     "@auth/drizzle-adapter": "^0.3.16",
     "@hookform/resolvers": "^3.3.4",
     "@planetscale/database": "^1.14.0",
