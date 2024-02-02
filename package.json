@@ -40,8 +40,6 @@
     "drizzle-orm": "^0.29.3",
     "embla-carousel-autoplay": "8.0.0-rc20",
     "embla-carousel-react": "8.0.0-rc20",
-    "eslint": "8.56.0",
-    "eslint-config-next": "14.1.0",
     "geist": "^1.2.1",
     "next": "14.1.0",
     "next-auth": "5.0.0-beta.4",
@@ -60,6 +58,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.5.3-nightly.6cbf1c7",
     "@headlessui/tailwindcss": "^0.2.0",
     "@types/node": "20.11.14",
     "@types/react": "18.2.48",
@@ -68,7 +67,6 @@
     "drizzle-kit": "0.20.13",
     "embla-carousel": "8.0.0-rc20",
     "postcss": "8.4.33",
-    "prettier": "^3.2.4",
     "tailwindcss": "3.4.1",
     "typescript": "5.3.3"
   }
