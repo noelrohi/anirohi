@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useTransition } from "react";
 
-export default function Error({
+export default function ErrorPage({
   error,
   reset,
 }: {
@@ -19,8 +19,8 @@ export default function Error({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen gap-8">
-      <h2 className="font-bold leading-tight text-3xl text-center">
+    <div className="flex h-screen flex-col items-center justify-center gap-8">
+      <h2 className="text-center font-bold text-3xl leading-tight">
         Oops! Something went wrong!
       </h2>
       <div className="flex flex-row gap-4">

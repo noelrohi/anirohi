@@ -49,7 +49,7 @@ export const accounts = mySqlTable(
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -67,7 +67,7 @@ export const sessions = mySqlTable(
   },
   (session) => ({
     userIdIdx: index("userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -83,5 +83,5 @@ export const verificationTokens = mySqlTable(
   },
   (vt) => ({
     compoundKey: primaryKey(vt.identifier, vt.token),
-  })
+  }),
 );

@@ -11,7 +11,8 @@
     "postinstall": "drizzle-kit generate:mysql",
     "db:push": "drizzle-kit push:mysql",
     "db:introspect": "drizzle-kit introspect:mysql",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "fmt": "pnpm biome format ./src --write && pnpm biome check ./src --apply-unsafe"
   },
   "dependencies": {
     "@auth/core": "^0.24.0",

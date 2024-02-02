@@ -2,7 +2,7 @@ import { env } from "@/env.mjs";
 import { AnimeInfo } from "@/types/consumet";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
 import relativetime from "dayjs/plugin/relativeTime";
 import { twMerge } from "tailwind-merge";
@@ -31,14 +31,14 @@ export function toTitleCase(str: string): string {
 
 export async function nextEpisode(
   currentEpisodeIndex: number,
-  episodes: AnimeInfo["episodes"]
+  episodes: AnimeInfo["episodes"],
 ) {
   return episodes ? episodes[currentEpisodeIndex + 1]?.number : null;
 }
 
 export async function prevEpisode(
   currentEpisodeIndex: number,
-  episodes: AnimeInfo["episodes"]
+  episodes: AnimeInfo["episodes"],
 ) {
   return episodes ? episodes[currentEpisodeIndex - 1]?.number : null;
 }
@@ -70,20 +70,22 @@ export function convertUnixTimestamp(unixTimestamp: number): string {
 
   if (diffInSeconds < 60) {
     return formatter.format(-diffInSeconds, "second");
-  } else if (diffInSeconds < 3600) {
-    return formatter.format(-Math.floor(diffInSeconds / 60), "minute");
-  } else if (diffInSeconds < 86400) {
-    return formatter.format(-Math.floor(diffInSeconds / 3600), "hour");
-  } else if (diffInSeconds < 86400 * 7) {
-    return formatter.format(-Math.floor(diffInSeconds / 86400), "day");
-  } else {
-    const dateObj = new Date(unixTimestamp * 1000);
-    return getRelativeTime(dateObj.toISOString());
   }
+  if (diffInSeconds < 3600) {
+    return formatter.format(-Math.floor(diffInSeconds / 60), "minute");
+  }
+  if (diffInSeconds < 86400) {
+    return formatter.format(-Math.floor(diffInSeconds / 3600), "hour");
+  }
+  if (diffInSeconds < 86400 * 7) {
+    return formatter.format(-Math.floor(diffInSeconds / 86400), "day");
+  }
+  const dateObj = new Date(unixTimestamp * 1000);
+  return getRelativeTime(dateObj.toISOString());
 }
 
 export const placeholderImage = (str: string) => {
   return `https://placehold.co/400x600/EEE/31343C?font=montserrat&text=${encodeURI(
-    str
+    str,
   )}`;
 };

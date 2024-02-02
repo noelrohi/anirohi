@@ -18,7 +18,7 @@ export function WithErrorImage({ className, errorText, src, ...props }: Props) {
         className,
         isLoading
           ? "scale-110 blur-2xl grayscale"
-          : "scale-100 blur-0 grayscale-0"
+          : "scale-100 blur-0 grayscale-0",
       )}
       src={newSrc}
       onError={() => setSrc(placeholderImage(errorText ?? props.alt))}

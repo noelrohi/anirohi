@@ -1,16 +1,16 @@
-import "server-only";
 import { MediaQuery } from "@/types/anilist/media";
-import { statisticQueries, animeInfo } from "./gql-queries";
+import "server-only";
+import { animeInfo, statisticQueries } from "./gql-queries";
 
 export async function queryAnilist(
   query: string,
   token: string,
-  variables?: Record<string, any>
+  variables?: Record<string, string | number>,
 ) {
   const res = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       Accept: "application/json",
     },
@@ -26,12 +26,12 @@ export async function queryAnilist(
 export async function mutateAnilist(
   mutation: string,
   token: string,
-  variables?: Record<string, any>
+  variables?: Record<string, string | number>,
 ) {
   const res = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       Accept: "application/json",
     },
@@ -132,7 +132,7 @@ export async function checkIsWatched(Props: {
 
 export async function getStats(
   userName: string,
-  queryType: keyof typeof statisticQueries
+  queryType: keyof typeof statisticQueries,
 ) {
   const query = statisticQueries[queryType];
   const res = await fetch("https://graphql.anilist.co", {

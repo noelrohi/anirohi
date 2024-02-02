@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Icons } from "@/components/icons";
 import { Combobox } from "@/components/layout/combobox";
 import { MainNav } from "@/components/layout/main-nav";
@@ -16,8 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { siteConfig } from "@/config/site";
 import { auth } from "@/lib/nextauth";
-import { SignIn, SignOut } from "./auth";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { SignIn, SignOut } from "./auth";
 
 interface User {
   imageUrl: string;
@@ -40,14 +40,14 @@ export async function SiteHeader({
     <header
       className={cn(
         "w-full bg-background",
-        sticky && "sticky top-0 z-40 ",
-        className
+        sticky && "sticky top-0 z-40",
+        className,
       )}
     >
       <div className="container flex h-16 items-center">
         <MainNav items={siteConfig.mainNav} />
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex-1 flex items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
             <Combobox />
             {user ? (
@@ -69,10 +69,10 @@ export async function SiteHeader({
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
+                      <p className="font-medium text-sm leading-none">
                         {user.name}
                       </p>
-                      <p className="text-xs leading-none text-muted-foreground">
+                      <p className="text-muted-foreground text-xs leading-none">
                         {user.email}
                       </p>
                     </div>

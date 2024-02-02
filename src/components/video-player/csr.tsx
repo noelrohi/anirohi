@@ -35,7 +35,7 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
   const [state, setState] = useState<OnProgressProps>(parsedStoredItem);
   const [playbackRate, setPlaybackRate] = useLocalStorage(
     storageName.playbackrate,
-    "1"
+    "1",
   );
   const seekToValue = seekSecond && user ? seekSecond : state.playedSeconds;
 
@@ -103,7 +103,7 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       <ReactPlayer
         url={url}
         width="100%"

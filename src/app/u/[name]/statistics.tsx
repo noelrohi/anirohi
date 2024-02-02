@@ -1,6 +1,6 @@
 import { Icons } from "@/components/icons";
 import { getStats } from "@/lib/anilist";
-import { GeneralStats } from "@/types/anilist/general-stats";
+import type { GeneralStats as Stats } from "@/types/anilist/general-stats";
 import { ListStats } from "@/types/anilist/list-stats";
 import {
   AreaChart,
@@ -59,7 +59,7 @@ export async function Charts({ username }: Props) {
   };
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {yearData.watchYear && (
           <Card>
             <Title>Watch Year</Title>
@@ -87,7 +87,7 @@ export async function Charts({ username }: Props) {
           </Card>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <Title>Format Distribution</Title>
           <DonutChart
@@ -124,7 +124,7 @@ interface CardProps {
 }
 
 export async function GeneralStats({ username }: Props) {
-  const data: GeneralStats = await getStats(username, "general");
+  const data: Stats = await getStats(username, "general");
   const animeStat = data.data.User.statistics.anime;
 
   const stats: CardProps[] = [
@@ -156,7 +156,7 @@ export async function GeneralStats({ username }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 md:grid-cols-3">
       {stats.map((stat, index) => (
         <StatCard {...stat} key={index} />
       ))}
@@ -169,7 +169,7 @@ function StatCard({ title, value, icon }: CardProps) {
   return (
     <Card className="max-w-lg">
       <div className="flex items-center justify-around">
-        <IconComponent className="w-6 h-6 mr-2" />
+        <IconComponent className="mr-2 h-6 w-6" />
         <div className="flex flex-col">
           <Title>{title}</Title>
           <Subtitle>{value}</Subtitle>

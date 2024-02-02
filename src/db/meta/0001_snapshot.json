@@ -88,9 +88,7 @@
       "indexes": {
         "userId_idx": {
           "name": "userId_idx",
-          "columns": [
-            "userId"
-          ],
+          "columns": ["userId"],
           "isUnique": false
         }
       },
@@ -98,10 +96,7 @@
       "compositePrimaryKeys": {
         "rohi_account_provider_providerAccountId": {
           "name": "rohi_account_provider_providerAccountId",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+          "columns": ["provider", "providerAccountId"]
         }
       },
       "uniqueConstraints": {}
@@ -134,9 +129,7 @@
       "indexes": {
         "userId_idx": {
           "name": "userId_idx",
-          "columns": [
-            "userId"
-          ],
+          "columns": ["userId"],
           "isUnique": false
         }
       },
@@ -144,9 +137,7 @@
       "compositePrimaryKeys": {
         "rohi_session_sessionToken": {
           "name": "rohi_session_sessionToken",
-          "columns": [
-            "sessionToken"
-          ]
+          "columns": ["sessionToken"]
         }
       },
       "uniqueConstraints": {}
@@ -196,9 +187,7 @@
       "compositePrimaryKeys": {
         "rohi_user_id": {
           "name": "rohi_user_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -233,10 +222,7 @@
       "compositePrimaryKeys": {
         "rohi_verificationToken_identifier_token": {
           "name": "rohi_verificationToken_identifier_token",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {}
@@ -327,16 +313,12 @@
       "indexes": {
         "path_idx": {
           "name": "path_idx",
-          "columns": [
-            "pathname"
-          ],
+          "columns": ["pathname"],
           "isUnique": false
         },
         "slug_idx": {
           "name": "slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": false
         }
       },
@@ -344,9 +326,7 @@
       "compositePrimaryKeys": {
         "rohi_history_id": {
           "name": "rohi_history_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}

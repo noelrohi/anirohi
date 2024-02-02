@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import {z} from "zod" 
+import { z } from "zod";
 
 export const env = createEnv({
   server: {
@@ -8,7 +8,7 @@ export const env = createEnv({
     ANILIST_SECRET: z.string(),
     NEXT_AUTH_SECRET: z.string(),
     KV_REST_API_URL: z.string().url(),
-    KV_REST_API_TOKEN: z.string()
+    KV_REST_API_TOKEN: z.string(),
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().startsWith("phc_"),

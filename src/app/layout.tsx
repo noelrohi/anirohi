@@ -95,7 +95,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             x={-1}
             y={-1}
             className={
-              "-z-10 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom_left,white,transparent,transparent)] "
+              "-z-10 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom_left,white,transparent,transparent)]"
             }
           />
         </body>

@@ -1,4 +1,3 @@
-import "server-only";
 import {
   AnimeInfo,
   ConsumetResponse,
@@ -8,12 +7,13 @@ import {
   Watch,
 } from "@/types/consumet";
 import { notFound } from "next/navigation";
+import "server-only";
 import { getMediaDataByTitle } from "./anilist";
 
 // const url = "https://api.consumet.org/anime/gogoanime";
 const url = "https://api-ani.rohi.dev/api/gogoanime";
 
-export async function recent(page: number = 1) {
+export async function recent(page = 1) {
   const response = await fetch(`${url}/recent?page=${page}`, {
     cache: "no-cache",
   });
@@ -21,7 +21,7 @@ export async function recent(page: number = 1) {
   const data: ConsumetResponse<Recent> = await response.json();
   return data;
 }
-export async function topAiring(page: number = 1) {
+export async function topAiring(page = 1) {
   const response = await fetch(`${url}/trending?page=${page}`, {
     cache: "no-cache",
   });

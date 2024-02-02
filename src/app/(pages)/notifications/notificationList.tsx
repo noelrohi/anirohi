@@ -43,7 +43,7 @@ export default function NotificationList({ list }: NotificationListProps) {
       <p>
         <strong>{title}</strong> is not yet registered in database! Go to its
         series page and try again later.
-      </p>
+      </p>,
     );
   }
   return (
@@ -59,7 +59,7 @@ export default function NotificationList({ list }: NotificationListProps) {
               key={notif.id}
               decoration="right"
               decorationColor="indigo"
-              className="flex justify-between cursor-pointer"
+              className="flex cursor-pointer justify-between"
               onClick={() => {
                 notif.media?.id &&
                   title &&
@@ -70,7 +70,7 @@ export default function NotificationList({ list }: NotificationListProps) {
                   });
               }}
             >
-              <div className="text-lg max-w-[200px] lg:max-w-fit">
+              <div className="max-w-[200px] text-lg lg:max-w-fit">
                 Episode {notif.episode} of
                 <strong> {title}</strong> aired.
               </div>
@@ -82,7 +82,7 @@ export default function NotificationList({ list }: NotificationListProps) {
         })}
       <Button onClick={loadMore}>
         {isLoading && (
-          <Icons.loader className="animate-spin size-4 mr-2 inline-flex" />
+          <Icons.loader className="mr-2 inline-flex size-4 animate-spin" />
         )}
         {isLoading ? "Loading" : "Load More"}
       </Button>

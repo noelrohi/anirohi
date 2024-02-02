@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useTheme } from "next-themes"
+import { useTheme } from "next-themes";
 
-import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme();
 
   return (
     <Button
@@ -15,7 +15,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       <Icons.sun
-        className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+        className="dark:-rotate-90 h-5 w-5 rotate-0 scale-100 transition-all dark:scale-0"
         aria-hidden="true"
       />
       <Icons.moon
@@ -24,5 +24,5 @@ export function ThemeToggle() {
       />
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }

@@ -30,8 +30,8 @@ export function EpisodeScrollArea({
   };
   return (
     <>
-      <div className="flex gap-4 items-center mb-4">
-        <h4 className="text-sm font-medium leading-none">Episodes</h4>
+      <div className="mb-4 flex items-center gap-4">
+        <h4 className="font-medium text-sm leading-none">Episodes</h4>
         <Button
           onClick={scrollToCurrentEpisode}
           size={"sm"}
@@ -40,7 +40,7 @@ export function EpisodeScrollArea({
           <Icons.view className="mr-2" /> Scroll to current
         </Button>
       </div>
-      <ScrollArea className="h-[10rem] lg:h-[32rem] xl:h-[33rem] w-full rounded-md border">
+      <ScrollArea className="h-[10rem] w-full rounded-md border lg:h-[32rem] xl:h-[33rem]">
         <ScrollViewport className="p-4" ref={scrollableRef}>
           {episodes?.map((ep) => (
             <div
@@ -49,14 +49,14 @@ export function EpisodeScrollArea({
             >
               <Link
                 href={`/anime/${slug}/${ep.number}`}
-                className="flex flex-row justify-between items-center"
+                className="flex flex-row items-center justify-between"
               >
                 <div className="flex flex-row items-center">
                   <Badge
                     className={cn(
-                      "px-1 py-0 rounded-full mr-2",
+                      "mr-2 rounded-full px-1 py-0",
                       ep.number === currentEpisode &&
-                        "bg-blue-700 dark:bg-blue-400"
+                        "bg-blue-700 dark:bg-blue-400",
                     )}
                     variant={"destructive"}
                   >
@@ -64,8 +64,8 @@ export function EpisodeScrollArea({
                   </Badge>
                   <span
                     className={cn(
-                      "inline-flex gap-2 items-center justify-between",
-                      ep.number === currentEpisode && "font-bold"
+                      "inline-flex items-center justify-between gap-2",
+                      ep.number === currentEpisode && "font-bold",
                     )}
                   >
                     {`Episode ${ep.number}`}

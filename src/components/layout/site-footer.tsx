@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 export function SiteFooter() {
   return (
@@ -13,9 +13,9 @@ export function SiteFooter() {
         <div className="break-normal text-base text-muted-foreground">
           Made by{" "}
           <Link
-            href={siteConfig.links.site + "?ref=anirohi"}
+            href={`${siteConfig.links.site}?ref=anirohi`}
             target="_blank"
-            className="underline text-primary underline-offset-[5px]"
+            className="text-primary underline underline-offset-[5px]"
           >
             Rohi
           </Link>
@@ -24,7 +24,7 @@ export function SiteFooter() {
             href="https://anilist.co/graphiql"
             target="_blank"
             rel="noreferrer"
-            className="underline text-primary underline-offset-[5px]"
+            className="text-primary underline underline-offset-[5px]"
           >
             Anilist
           </Link>{" "}
@@ -33,7 +33,7 @@ export function SiteFooter() {
             href="https://docs.consumet.org"
             target="_blank"
             rel="noreferrer"
-            className="underline text-primary underline-offset-[5px]"
+            className="text-primary underline underline-offset-[5px]"
           >
             Consumet
           </Link>
