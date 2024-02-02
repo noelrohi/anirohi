@@ -2,14 +2,13 @@ import { cn } from "@/lib/utils";
 import { useId } from "react";
 
 interface GridPatternProps {
-  width?: any;
-  height?: any;
-  x?: any;
-  y?: any;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
   squares?: Array<[x: number, y: number]>;
-  strokeDasharray?: any;
+  strokeDasharray?: string | number;
   className?: string;
-  [key: string]: any;
 }
 
 export function GridPattern({
@@ -29,7 +28,7 @@ export function GridPattern({
       aria-hidden="true"
       className={cn(
         "pointer-events-none absolute inset-0 h-full w-full fill-gray-400/30 stroke-gray-400/30",
-        className
+        className,
       )}
       {...props}
     >

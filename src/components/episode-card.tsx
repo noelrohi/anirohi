@@ -42,17 +42,17 @@ export function EpisodeCard({
             priority
             className={cn(
               "h-auto w-auto object-cover transition-all hover:scale-105",
-              aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
+              aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
             )}
           />
           <div className="absolute top-2 right-2">
-            <span className="rounded-full size-4 bg-blue-500"></span>
+            <span className="size-4 rounded-full bg-blue-500" />
           </div>
         </Link>
       </div>
       <div className="space-y-1 text-sm">
         <h3 className="font-medium leading-none">{episode.title}</h3>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Episode {episode.number}
         </p>
       </div>

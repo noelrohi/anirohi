@@ -66,7 +66,7 @@ export function Combobox() {
         entry?.target.scrollIntoView({ behavior: "instant" });
       });
     }
-  }, [inView, hasMore]);
+  }, [inView, hasMore, data, entry, debouncedQuery, page]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -100,7 +100,7 @@ export function Combobox() {
         <Icons.search className="size-4 xl:mr-2" aria-hidden="true" />
         <span className="hidden xl:inline-flex">Search anime...</span>
         <span className="sr-only">Search anime</span>
-        <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 xl:flex">
+        <kbd className="pointer-events-none absolute top-2 right-1.5 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium font-mono text-[10px] opacity-100 xl:flex">
           <span className="text-xs">{isMacOs() ? "⌘" : "Ctrl"}</span>K
         </kbd>
       </Button>
@@ -141,13 +141,13 @@ export function Combobox() {
                   <img
                     src={image}
                     alt={title}
-                    className="w-10 h-14 mr-4 rounded-sm"
+                    className="mr-4 h-14 w-10 rounded-sm"
                   />
                   <div className="flex flex-col justify-center">
-                    <h3 className="text-sm font-medium leading-none">
+                    <h3 className="font-medium text-sm leading-none">
                       {title}
                     </h3>
-                    <p className="text-xs leading-none text-muted-foreground">
+                    <p className="text-muted-foreground text-xs leading-none">
                       {year}
                     </p>
                   </div>
@@ -157,7 +157,7 @@ export function Combobox() {
             </CommandGroup>
           )}
           {!debouncedQuery.length && (
-            <div className="text-center text-sm p-4">
+            <div className="p-4 text-center text-sm">
               Start typing to see results..
             </div>
           )}
@@ -170,10 +170,10 @@ export function Combobox() {
 function LoadingFragment() {
   return (
     <div className="flex flex-row">
-      <Skeleton className="w-10 h-16 mr-4 rounded-sm" />
-      <div className="flex flex-col gap-2 justify-center h-15">
-        <Skeleton className="w-40 h-3" />
-        <Skeleton className="w-20 h-3" />
+      <Skeleton className="mr-4 h-16 w-10 rounded-sm" />
+      <div className="flex h-15 flex-col justify-center gap-2">
+        <Skeleton className="h-3 w-40" />
+        <Skeleton className="h-3 w-20" />
       </div>
 
       <Skeleton className="h-8 rounded-sm" />

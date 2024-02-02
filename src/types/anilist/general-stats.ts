@@ -9,7 +9,6 @@ interface Data {
 interface User {
   id: number;
   name: string;
-  previousNames: any[];
   avatar: Avatar;
   bannerImage: null;
   about: null;
@@ -20,7 +19,6 @@ interface User {
   createdAt: number;
   moderatorRoles: null;
   isBlocked: boolean;
-  bans: any[];
   options: Options;
   mediaListOptions: MediaListOptions;
   statistics: Statistics;

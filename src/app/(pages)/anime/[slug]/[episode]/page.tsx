@@ -109,7 +109,7 @@ export default async function EpisodePage({
   const commentFromDb = await db.query.comments.findMany({
     where: and(
       eq(comment.episodeNumber, Number(params.episode)),
-      eq(comment.slug, params.slug)
+      eq(comment.slug, params.slug),
     ),
     with: {
       user: true,
@@ -120,7 +120,7 @@ export default async function EpisodePage({
   const commentItems = !isOld ? commentFromDb : commentFromDb.reverse();
   return (
     <main className="p-4 lg:container">
-      <div className="flex flex-col flex-end gap-4 justify-center min-h-[50vh]">
+      <div className="flex-end flex min-h-[50vh] flex-col justify-center gap-4">
         <Link
           href={`/anime/${params.slug}`}
           className={cn("w-fit", buttonVariants({ variant: "outline" }))}
@@ -130,13 +130,13 @@ export default async function EpisodePage({
         <div className="grid grid-cols-5">
           <section className="col-span-5 lg:col-span-4">
             <AspectRatio ratio={16 / 9}>
-              <Suspense fallback={<Skeleton className="w-full h-full" />}>
+              <Suspense fallback={<Skeleton className="h-full w-full" />}>
                 <VideoPlayerSSR episode={videoData} />
               </Suspense>
             </AspectRatio>
           </section>
           <aside className="lg:col-span-1">
-            <div className="hidden lg:block ml-4">
+            <div className="ml-4 hidden lg:block">
               <EpisodeScrollArea
                 episodes={episodes}
                 slug={params.slug}
@@ -145,7 +145,7 @@ export default async function EpisodePage({
             </div>
           </aside>
         </div>
-        <div className="flex flex-row gap-1 justify-end w-fit">
+        <div className="flex w-fit flex-row justify-end gap-1">
           {prevEp && (
             <Link
               className={buttonVariants({ variant: "secondary" })}
@@ -175,13 +175,13 @@ export default async function EpisodePage({
             </Link>
           )}
         </div>
-        <h1 className="text-lg lg:text-2xl font-bold">
+        <h1 className="font-bold text-lg lg:text-2xl">
           Episode {params.episode} - {slugData.title}
         </h1>
         {/* <p className="text-md lg:text-lg">{episodeData.description}</p> */}
         <Separator className="my-2" />
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
+          <h2 className="font-semibold text-2xl tracking-tight">
             Comment Section
           </h2>
           <div className="flex gap-2">
@@ -195,14 +195,16 @@ export default async function EpisodePage({
         {!!session && !!session.user && <CommentForm />}
         {commentItems.map((comment) => (
           <Fragment key={comment.id}>
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div className="flex flex-row gap-4">
                 <Avatar className="size-10">
                   <AvatarImage
-                    src={comment.user?.image!}
-                    alt={comment.user?.name!}
+                    src={comment.user?.image || ""}
+                    alt={comment.user?.name || ""}
                   />
-                  <AvatarFallback>G</AvatarFallback>
+                  <AvatarFallback>
+                    {comment.user?.name.at(0) || "G"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <div>{comment.user?.name}</div>

@@ -31,9 +31,9 @@ export function AnimeCard({
   const href = anime.slug ? `/anime/${anime.slug}` : anime.link ?? "#";
   return (
     <div className={cn("space-y-3", className)} {...props}>
-      <div className="overflow-hidden rounded-md relative">
+      <div className="relative overflow-hidden rounded-md">
         <Link href={href}>
-        <WithErrorImage
+          <WithErrorImage
             src={anime.image}
             alt={anime.title}
             width={width}
@@ -41,19 +41,19 @@ export function AnimeCard({
             priority
             className={cn(
               "h-full w-full object-cover transition-all hover:scale-105",
-              aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
+              aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
             )}
           />
         </Link>
         {progress ? (
-          <Progress value={progress} className="absolute -bottom-0 left-0" />
+          <Progress value={progress} className="-bottom-0 absolute left-0" />
         ) : null}
       </div>
       <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none line-clamp-5 lg:line-clamp-none">
+        <h3 className="line-clamp-5 font-medium leading-none lg:line-clamp-none">
           {anime.title}
         </h3>
-        <p className="text-xs text-muted-foreground">{anime.description}</p>
+        <p className="text-muted-foreground text-xs">{anime.description}</p>
       </div>
     </div>
   );

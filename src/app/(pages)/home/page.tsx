@@ -6,9 +6,9 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
+  CarouselItem as CaruoselItem,
   CarouselNext,
   CarouselPrevious,
-  CarouselItem as CaruoselItem,
 } from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Home",
     description: "Explore popular and airing anime series",
     type: "website",
-    url: absoluteUrl(`/home`),
+    url: absoluteUrl("/home"),
     images: [
       {
         url: absoluteUrl("/opengraph-image.png"),
@@ -86,8 +86,8 @@ export default async function HomePage() {
         </Suspense>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Recent</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="font-semibold text-2xl tracking-tight">Recent</h2>
+            <p className="text-muted-foreground text-sm">
               Freshly aired episodes of anime that have been recently released.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default async function HomePage() {
                     description: `Episode ${ep.episodeNumber}`,
                     slug: `${ep.id}/${ep.episodeNumber}`,
                   }}
-                  className="lg:w-[250px] w-28"
+                  className="w-28 lg:w-[250px]"
                   aspectRatio="portrait"
                   width={250}
                   height={330}
@@ -117,8 +117,8 @@ export default async function HomePage() {
         <Separator className="my-2" />
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Popular</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="font-semibold text-2xl tracking-tight">Popular</h2>
+            <p className="text-muted-foreground text-sm">
               Current anime series in high demand.
             </p>
           </div>
@@ -135,7 +135,7 @@ export default async function HomePage() {
                     description: "",
                     slug: anime.id,
                   }}
-                  className="lg:w-[250px] w-28"
+                  className="w-28 lg:w-[250px]"
                   aspectRatio="portrait"
                   width={250}
                   height={330}
@@ -161,8 +161,8 @@ async function HistoryList() {
     <>
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">History</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-2xl tracking-tight">History</h2>
+          <p className="text-muted-foreground text-sm">
             Pick up where you left off in your video watching progress.
           </p>
         </div>
@@ -183,7 +183,7 @@ async function HistoryList() {
                     slug: `${anime.slug}/${anime.episodeNumber}`,
                   }}
                   progress={anime.progress * 100}
-                  className="lg:w-[250px] w-28"
+                  className="w-28 lg:w-[250px]"
                   aspectRatio="portrait"
                   width={250}
                   height={330}
@@ -215,8 +215,8 @@ async function CarouselItem({
   if (!data)
     return (
       <div className="relative">
-        <Skeleton className="w-full h-full" />
-        <div className="absolute flex justify-center items-center">
+        <Skeleton className="h-full w-full" />
+        <div className="absolute flex items-center justify-center">
           Failed to load!
         </div>
       </div>
@@ -225,19 +225,20 @@ async function CarouselItem({
   const title = anime.title?.english || anime.title?.userPreferred;
   return (
     <AspectRatio ratio={16 / 7} className="relative">
-      <div className="absolute top-5 md:top-10 left-10 w-1/2 z-10">
-        <div className="flex flex-col gap-4 max-w-xl">
+      <div className="absolute top-5 left-10 z-10 w-1/2 md:top-10">
+        <div className="flex max-w-xl flex-col gap-4">
           <div className="flex gap-2">
-            <h1 className="line-clamp-1 md:line-clamp-2 2xl:line-clamp-0 text-md sm:text-lg md:text-2xl font-bold">
+            <h1 className="line-clamp-1 font-bold text-md 2xl:line-clamp-0 md:line-clamp-2 md:text-2xl sm:text-lg">
               {title}
             </h1>
           </div>
           <div
-            className="line-clamp-2 sm:line-clamp-4 2xl:line-clamp-0 text-xs md:text-sm"
+            className="line-clamp-2 text-xs 2xl:line-clamp-0 sm:line-clamp-4 md:text-sm"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
             dangerouslySetInnerHTML={{ __html: anime.description }}
           />
           <div className="hidden md:block">
-            <div className="flex flex-shrink-0 gap-1 flex-wrap ">
+            <div className="flex flex-shrink-0 flex-wrap gap-1">
               {anime.genres.map((genre, index) => (
                 <Badge variant={"secondary"} key={index}>
                   {genre}

@@ -38,9 +38,7 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-interface CommentFormProps {}
-
-export function CommentForm({}: CommentFormProps) {
+export function CommentForm() {
   const [isCommenting, startComment] = useTransition();
   const pathname = usePathname();
   const params = useParams();
@@ -70,7 +68,7 @@ export function CommentForm({}: CommentFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-1 relative h-full"
+        className="relative h-full space-y-1"
       >
         <FormField
           control={form.control}
@@ -86,7 +84,7 @@ export function CommentForm({}: CommentFormProps) {
         />
         <Button
           type="submit"
-          className="inline-flex gap-2 absolute top-2 right-2"
+          className="absolute top-2 right-2 inline-flex gap-2"
           aria-disabled={isCommenting}
           disabled={isCommenting}
         >
@@ -125,7 +123,7 @@ export function SortCommentButton() {
       }
       return newSearchParams.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   return (
@@ -137,7 +135,7 @@ export function SortCommentButton() {
             `${pathname}?${createQueryString({
               isOld: isOld ? "false" : "true",
             })}`,
-            { scroll: false }
+            { scroll: false },
           );
         })
       }

@@ -1,7 +1,7 @@
 import {
-  relations,
   type InferInsertModel,
   InferSelectModel,
+  relations,
 } from "drizzle-orm";
 import {
   float,
@@ -34,7 +34,7 @@ export const histories = mySqlTable(
       pathIdx: index("path_idx").on(table.pathname),
       slugIdx: index("slug_idx").on(table.slug),
     };
-  }
+  },
 );
 
 export const anime = mySqlTable(
@@ -54,7 +54,7 @@ export const anime = mySqlTable(
       slugIdx: index("slug_idx").on(table.slug),
       anilistIdx: index("anilist_idx").on(table.anilistId),
     };
-  }
+  },
 );
 
 export type NewAnime = typeof anime.$inferInsert;
@@ -75,7 +75,7 @@ export const comments = mySqlTable(
       slugIdx: index("slug_idx").on(table.slug),
       userIdx: index("user_idx").on(table.userId),
     };
-  }
+  },
 );
 
 export type Comments = InferSelectModel<typeof comments>;

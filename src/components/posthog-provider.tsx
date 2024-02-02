@@ -1,10 +1,10 @@
 // app/providers.tsx
 "use client";
+import { env } from "@/env.mjs";
+import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { env } from "@/env.mjs";
 
 if (typeof window !== "undefined") {
   posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
@@ -20,8 +20,8 @@ export default function PostHogPageview(): JSX.Element {
   useEffect(() => {
     if (pathname && process.env.NODE_ENV === "production") {
       let url = window.origin + pathname;
-      if (searchParams && searchParams.toString()) {
-        url = url + `?${searchParams.toString()}`;
+      if (searchParams?.toString()) {
+        url = `${url}?${searchParams.toString()}`;
       }
       posthog.capture("$pageview", {
         $current_url: url,

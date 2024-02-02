@@ -15,14 +15,14 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { getAccessToken } from "./db/query";
+import { search } from "./lib/consumet";
 import { notifications } from "./lib/gql-queries";
 import { Notifications } from "./types/anilist/notifications";
-import { search } from "./lib/consumet";
 
 export async function updateAnimeProgress(
   animeId: number,
   progress: number,
-  pathname: string
+  pathname: string,
 ) {
   try {
     const session = await auth();
@@ -41,7 +41,7 @@ export async function updateAnimeProgress(
       progress: progress,
     };
     const data = await mutateAnilist(query, accessToken, variables);
-    if (data.errors) return { ok: false, message: data.errors[0]["message"] };
+    if (data.errors) return { ok: false, message: data.errors[0].message };
     return { ok: true, message: data.data };
   } catch (e) {
     const error = e as Error;
@@ -54,13 +54,13 @@ export async function updateAnimeProgress(
 export async function deleteFromHistory(pathname: string) {
   const ip = headers().get("x-forwarded-for");
   const { success, limit, remaining, reset } = await ratelimit.limit(
-    ip ?? "anonymous" + "-deleteFromHistory"
+    ip ?? "anonymous" + "-deleteFromHistory",
   );
   if (!success) {
     console.log(
       `ratelimit hit for deleteFromHistory , reset in ${new Date(
-        reset
-      ).toUTCString()}`
+        reset,
+      ).toUTCString()}`,
     );
     return;
   }
@@ -71,8 +71,8 @@ export async function deleteFromHistory(pathname: string) {
     .where(
       and(
         eq(histories.userId, session.user.id),
-        eq(histories.pathname, pathname)
-      )
+        eq(histories.pathname, pathname),
+      ),
     );
   revalidatePath("/home");
 }
@@ -80,13 +80,13 @@ export async function deleteFromHistory(pathname: string) {
 export async function addToHistory(input: InsertHistory) {
   const ip = headers().get("x-forwarded-for");
   const { success, limit, remaining, reset } = await ratelimit.limit(
-    (ip ?? "anonymous") + "-addToHistory"
+    `${ip ?? "anonymous"}-addToHistory`,
   );
   if (!success) {
     console.log(
       `ratelimit hit for addToHistory , reset in ${new Date(
-        reset
-      ).toUTCString()}`
+        reset,
+      ).toUTCString()}`,
     );
     return;
   }
@@ -95,7 +95,7 @@ export async function addToHistory(input: InsertHistory) {
   const history = await db.query.histories.findFirst({
     where: and(
       eq(histories.userId, session.user.id),
-      eq(histories.title, input.title)
+      eq(histories.title, input.title),
     ),
   });
   if (history) {
@@ -105,8 +105,8 @@ export async function addToHistory(input: InsertHistory) {
       .where(
         and(
           eq(histories.userId, session.user.id),
-          eq(histories.title, input.title)
-        )
+          eq(histories.title, input.title),
+        ),
       );
   } else {
     await db.insert(histories).values({ ...input, userId: session.user.id });
@@ -117,11 +117,13 @@ export async function addToHistory(input: InsertHistory) {
 export async function addComment(input: InsertComments, pathname?: string) {
   const ip = headers().get("x-forwarded-for");
   const { success, limit, remaining, reset } = await ratelimit.limit(
-    (ip ?? "anonymous") + "-addComment"
+    `${ip ?? "anonymous"}-addComment`,
   );
   if (!success) {
     console.log(
-      `ratelimit hit for addComment , reset in ${new Date(reset).toUTCString()}`
+      `ratelimit hit for addComment , reset in ${new Date(
+        reset,
+      ).toUTCString()}`,
     );
     return;
   }
@@ -155,8 +157,9 @@ export async function deleteComment({
 export async function moreNotifs(page: number) {
   try {
     const session = await auth();
+    if (!session?.user) throw new Error("No user.");
     const query = notifications;
-    const accessToken = await getAccessToken(session!.user.id);
+    const accessToken = await getAccessToken(session.user.id);
     if (!accessToken) throw new Error("No token found! Please try again.");
     const variables = {
       page,
@@ -166,10 +169,11 @@ export async function moreNotifs(page: number) {
     const data: Notifications = await mutateAnilist(
       query,
       accessToken,
-      variables
+      variables,
     );
     return data.data.Page.notifications;
   } catch (error) {
+    console.error(error);
     return [];
   }
 }
@@ -201,7 +205,7 @@ export async function searchAnime({ q, page }: { q: string; page: number }) {
   });
   const filteredData = results.sort(
     (a, b) =>
-      convertReleaseYearToNumber(a.year) - convertReleaseYearToNumber(b.year)
+      convertReleaseYearToNumber(a.year) - convertReleaseYearToNumber(b.year),
   );
   // console.log(results, "=> filtered");
   return {

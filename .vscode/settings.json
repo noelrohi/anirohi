@@ -1,0 +1,6 @@
+{
+  "editor.defaultFormatter": "biomejs.biome-nightly",
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
+}

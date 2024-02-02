@@ -14,7 +14,7 @@ export type SiteConfig = {
     twitter: string;
     github: string;
     // personal site
-    site: string
+    site: string;
   };
   mainNav: {
     title: string;

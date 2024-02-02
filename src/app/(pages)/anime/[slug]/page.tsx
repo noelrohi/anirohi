@@ -65,7 +65,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
   const { consumet: data, anilist } = await handleSlug(params.slug);
 
   return (
-    <main className="px-4 lg:container space-y-2">
+    <main className="space-y-2 px-4 lg:container">
       {anilist?.id && (
         <InsertAnimeStreamed
           value={{
@@ -86,7 +86,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-background/10" />
-        <div className="absolute bottom-0 left-0 -mb-[62.5px] ml-4 max-w-2xl">
+        <div className="-mb-[62.5px] absolute bottom-0 left-0 ml-4 max-w-2xl">
           <div className="flex flex-row gap-4">
             <Image
               src={data.image}
@@ -94,12 +94,12 @@ export default async function SlugPage({ params }: SlugPageProps) {
               width={125}
               height={125}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover aspect-[7/8] rounded-md"
+              className="aspect-[7/8] rounded-md object-cover"
               priority
             />
           </div>
         </div>
-        <div className="absolute -bottom-4 left-40 space-y-2">
+        <div className="-bottom-4 absolute left-40 space-y-2">
           <p className="font-bold text-md md:text-2xl">{data.title}</p>
           <Suspense fallback={<Button>Loading ...</Button>}>
             <WatchButton slug={String(data.id)} />
@@ -107,7 +107,7 @@ export default async function SlugPage({ params }: SlugPageProps) {
         </div>
       </AspectRatio>
       <div className="h-[62.5px]" />
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {data.genres.map((genre, index) => (
           <Badge variant={"secondary"} key={index}>
             {genre}
@@ -143,7 +143,7 @@ async function AnimeEpisodes({ anime }: Props) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">Episodes</h2>
+        <h2 className="font-semibold text-2xl tracking-tight">Episodes</h2>
       </div>
       <div className="relative">
         <ScrollArea>
@@ -157,7 +157,7 @@ async function AnimeEpisodes({ anime }: Props) {
                   number,
                   image,
                 }}
-                className="lg:w-[200px] w-28"
+                className="w-28 lg:w-[200px]"
                 width={250}
                 height={330}
               />
@@ -178,7 +178,7 @@ function Relations({
   return (
     <>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">Relations</h2>
+        <h2 className="font-semibold text-2xl tracking-tight">Relations</h2>
       </div>
       <div className="relative">
         <ScrollArea>
@@ -192,7 +192,7 @@ function Relations({
                   description: `${relation.node.startDate.year} | ${relation.node.type}`,
                   link: relation.node.siteUrl,
                 }}
-                className="lg:w-[250px] w-28"
+                className="w-28 lg:w-[250px]"
                 aspectRatio="portrait"
                 width={250}
                 height={330}

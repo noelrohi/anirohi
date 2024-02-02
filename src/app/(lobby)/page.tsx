@@ -8,22 +8,22 @@ import Link from "next/link";
 export default function IndexPage() {
   return (
     <>
-      <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-        <div className="container flex flex-col items-center gap-4 text-center max-w-5xl">
+      <section className="space-y-6 pt-6 pb-8 lg:py-32 md:pt-10 md:pb-12">
+        <div className="container flex max-w-5xl flex-col items-center gap-4 text-center">
           {/* <Link href={"/notifications"}>
             <Badge variant={"pill"}>We added anilist notifications 🎉</Badge>
           </Link> */}
-          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-7xl lg:leading-[1.1] text-balance">
+          <h1 className="text-balance font-bold text-3xl leading-tight tracking-tighter lg:text-7xl md:text-5xl lg:leading-[1.1]">
             An anime streaming app built using Nextjs Server Components.
           </h1>
-          <div className="text-lg text-muted-foreground sm:text-xl text-balance">
+          <div className="text-balance text-lg text-muted-foreground sm:text-xl">
             This ad-free app aims to provide a seamless experience for users who
             want to utilize Anilist without the need for additional browser
             extensions.
           </div>
           <Link href="/home">
             <ShimmerButton>
-              <span className="whitespace-pre bg-gradient-to-b from-black from-30% to-gray-300/80 bg-clip-text text-center text-sm lg:text-2xl font-semibold leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 dark:text-transparent z-10">
+              <span className="z-10 whitespace-pre bg-gradient-to-b from-30% from-black to-gray-300/80 bg-clip-text text-center font-semibold text-sm text-white leading-none tracking-tight dark:from-white dark:to-slate-900/10 dark:text-transparent lg:text-2xl">
                 Start Watching
               </span>
             </ShimmerButton>
@@ -32,34 +32,34 @@ export default function IndexPage() {
       </section>
       <section
         id="features"
-        className="space-y-6 bg-slate-50 py-8 dark:bg-slate-950 md:py-12 lg:py-24"
+        className="space-y-6 bg-slate-50 py-8 dark:bg-slate-950 lg:py-24 md:py-12"
       >
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-          <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
+          <h2 className="font-bold text-3xl leading-[1.1] md:text-5xl sm:text-3xl">
             Features
           </h2>
-          <div className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7 text-balance">
+          <div className="max-w-[85%] text-balance text-muted-foreground leading-normal sm:text-lg sm:leading-7">
             Tracking progress, history, comments section for enhanced
             interaction and detailed statistics to keep users informed about
             their anime-watching habits. Check author&apos;s stats{" "}
-            <Link href={`/u/nrohi`} className="underline underline-offset-4">
+            <Link href={"/u/nrohi"} className="underline underline-offset-4">
               here.
             </Link>
           </div>
         </div>
         <div className="mx-auto text-center md:max-w-[58rem]">
-          <div className="leading-normal text-muted-foreground sm:text-lg sm:leading-7 text-balance">
+          <div className="text-balance text-muted-foreground leading-normal sm:text-lg sm:leading-7">
             Experience all these superb functionalities in one convenient
             application.
           </div>
         </div>
       </section>
-      <section id="open-source" className="container py-8 md:py-12 lg:py-24">
+      <section id="open-source" className="container py-8 lg:py-24 md:py-12">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
-          <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
+          <h2 className="font-bold text-3xl leading-[1.1] md:text-5xl sm:text-3xl">
             Proudly Open Source
           </h2>
-          <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+          <p className="max-w-[85%] text-muted-foreground leading-normal sm:text-lg sm:leading-7">
             {siteConfig.name} is open source and powered by open source
             software. <br /> The code is available on{" "}
             <Link

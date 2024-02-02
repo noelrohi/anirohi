@@ -70,7 +70,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   return (
     <main className="container">
       <div className="flex flex-col gap-8 py-8">
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <Avatar className="h-20 w-20">
             <AvatarImage
               src={user.image ?? ""}
@@ -81,15 +81,15 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               {user.name?.at(0) ?? "G"}
             </AvatarFallback>
           </Avatar>
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          <h1 className="scroll-m-20 font-extrabold text-4xl tracking-tight lg:text-5xl">
             {user.name}
           </h1>
         </div>
         <Suspense fallback={<div>Loading cards...</div>}>
-          <GeneralStats username={user.name!} />
+          <GeneralStats username={user.name} />
         </Suspense>
         <Suspense fallback={<div>Loading charts ...</div>}>
-          <Charts username={user.name!} />
+          <Charts username={user.name} />
         </Suspense>
       </div>
     </main>

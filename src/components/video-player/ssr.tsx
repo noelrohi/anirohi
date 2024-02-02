@@ -15,13 +15,14 @@ export default async function VideoPlayerSSR({
   episode: AnimeInfo["episodes"][0] & { anime: AnimeInfo };
 }) {
   const session = await auth();
-  let seekToValue, username;
+  let seekToValue: undefined | number = undefined;
+  let username: string | undefined | null = undefined;
   if (session?.user) {
     const history = await db.query.histories.findFirst({
       where: and(
         eq(histories.userId, session.user.id),
         eq(histories.slug, String(episode.anime.id)),
-        eq(histories.episodeNumber, episode.number)
+        eq(histories.episodeNumber, episode.number),
       ),
     });
     seekToValue = history?.duration;

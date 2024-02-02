@@ -6,9 +6,7 @@ import { Notifications } from "@/types/anilist/notifications";
 import { notFound, redirect } from "next/navigation";
 import NotificationList from "./notificationList";
 
-interface NotificationPageProps {}
-
-export default async function NotificationPage({}: NotificationPageProps) {
+export default async function NotificationPage() {
   const session = await auth();
   if (!session) redirect("/");
   const query = notifications;
@@ -22,12 +20,12 @@ export default async function NotificationPage({}: NotificationPageProps) {
   const data: Notifications = await mutateAnilist(
     query,
     accessToken,
-    variables
+    variables,
   );
   return (
-    <div className="mx-auto px-4 lg:container my-10">
+    <div className="mx-auto my-10 px-4 lg:container">
       <div className="flex flex-col gap-2">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        <h1 className="scroll-m-20 font-extrabold text-4xl tracking-tight lg:text-5xl">
           Notifications
         </h1>
         <NotificationList list={data.data.Page.notifications} />

@@ -40,7 +40,7 @@ export async function GET(req: Request) {
         image_url: avatar.large,
         email: `${name}.anirohi@gmail.com`,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
