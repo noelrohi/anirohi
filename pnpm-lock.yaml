@@ -9,8 +9,8 @@ dependencies:
     specifier: ^0.26.0
     version: 0.26.0
   '@auth/drizzle-adapter':
-    specifier: ^0.5.0
-    version: 0.5.0
+    specifier: ^0.6.0
+    version: 0.6.2
   '@hookform/resolvers':
     specifier: ^3.3.4
     version: 3.3.4(react-hook-form@7.50.0)
@@ -193,11 +193,14 @@ packages:
       leven: 3.1.0
     dev: false
 
-  /@auth/core@0.25.0:
-    resolution: {integrity: sha512-UxENsD+WNlY1NOFsr3Ygc7F1Ypbia8VCd9NU8cbAhSJ0Z8dtyZ0xmssRo1G3ZW50QnW0AaAMuYzY5oumnPMQzA==}
+  /@auth/core@0.26.0:
+    resolution: {integrity: sha512-AcuOQZHVUJDIbP6l98GttJNlobo3dxFfUiUEzzESapJ5BxJM+k/Cez3heDkQFhDBeati+FDZpZb4aPtH+odNwA==}
     peerDependencies:
+      '@simplewebauthn/server': ^9.0.1
       nodemailer: ^6.8.0
     peerDependenciesMeta:
+      '@simplewebauthn/server':
+        optional: true
       nodemailer:
         optional: true
     dependencies:
@@ -233,31 +236,13 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/core@0.26.0:
-    resolution: {integrity: sha512-AcuOQZHVUJDIbP6l98GttJNlobo3dxFfUiUEzzESapJ5BxJM+k/Cez3heDkQFhDBeati+FDZpZb4aPtH+odNwA==}
-    peerDependencies:
-      '@simplewebauthn/server': ^9.0.1
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
+  /@auth/drizzle-adapter@0.6.2:
+    resolution: {integrity: sha512-j3GEBgjIzVVoAG3JaH8mfbcQho4diAWlYUGkV7qTWe9jybdNzdj47oBrbdzrvG+seCR/sZCl6BszBVjweGNovg==}
     dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.2.0
-      oauth4webapi: 2.8.1
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-    dev: false
-
-  /@auth/drizzle-adapter@0.5.0:
-    resolution: {integrity: sha512-C02D7FGF7nI0snUjuKSLwMiinf5GX/maYFI79oaNWRx94ZzwtIWafnRi6Dr4ZV5rtk9fXvzDHw84+ZdwTjJE8w==}
-    dependencies:
-      '@auth/core': 0.25.0
+      '@auth/core': 0.26.2
     transitivePeerDependencies:
+      - '@simplewebauthn/browser'
+      - '@simplewebauthn/server'
       - nodemailer
     dev: false
 
