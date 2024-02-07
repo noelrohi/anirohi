@@ -63,7 +63,7 @@
     "@headlessui/tailwindcss": "^0.2.0",
     "@types/node": "20.11.16",
     "@types/react": "18.2.55",
-    "@types/react-dom": "18.2.18",
+    "@types/react-dom": "18.2.19",
     "autoprefixer": "10.4.17",
     "drizzle-kit": "0.20.14",
     "embla-carousel": "8.0.0-rc22",
