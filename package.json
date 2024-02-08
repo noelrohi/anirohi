@@ -29,7 +29,7 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
-    "@t3-oss/env-nextjs": "^0.8.0",
+    "@t3-oss/env-nextjs": "^0.9.0",
     "@tremor/react": "^3.13.4",
     "@upstash/ratelimit": "^1.0.0",
     "@vercel/kv": "^1.0.1",
