@@ -108,19 +108,19 @@ export function Combobox() {
         <CommandInput
           placeholder="Search anime..."
           value={query}
-          onValueChange={setQuery}
+          onChange={(e) => setQuery(e.currentTarget.value)}
         />
+        {isPending && (
+          <div className="space-y-1 overflow-hidden px-1 py-2">
+            <LoadingFragment />
+            <LoadingFragment />
+          </div>
+        )}
         <CommandList>
-          {!isPending && (
+          {!isPending && query.length > 0 && (
             <CommandEmpty className={"py-6 text-center text-sm"}>
               No anime found.
             </CommandEmpty>
-          )}
-          {isPending && (
-            <div className="space-y-1 overflow-hidden px-1 py-2">
-              <LoadingFragment />
-              <LoadingFragment />
-            </div>
           )}
           {data && (
             <CommandGroup>
@@ -156,7 +156,7 @@ export function Combobox() {
               {isLoadingMore && <LoadingFragment />}
             </CommandGroup>
           )}
-          {!debouncedQuery.length && (
+          {!debouncedQuery.length && !query && (
             <div className="p-4 text-center text-sm">
               Start typing to see results..
             </div>
