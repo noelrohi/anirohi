@@ -9,6 +9,7 @@ export const env = createEnv({
     NEXT_AUTH_SECRET: z.string(),
     KV_REST_API_URL: z.string().url(),
     KV_REST_API_TOKEN: z.string(),
+    ANIME_API_URL: z.string().url(),
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().startsWith("phc_"),
@@ -25,5 +26,6 @@ export const env = createEnv({
     KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    ANIME_API_URL: process.env.ANIME_API_URL,
   },
 });

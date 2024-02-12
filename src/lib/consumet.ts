@@ -9,9 +9,10 @@ import {
 import { notFound } from "next/navigation";
 import "server-only";
 import { getMediaDataByTitle } from "./anilist";
+import { env } from "@/env.mjs";
 
 // const url = "https://api.consumet.org/anime/gogoanime";
-const url = "https://api-ani.rohi.dev/api/gogoanime";
+const url = `${env.ANIME_API_URL}/api/gogoanime`;
 
 export async function recent(page = 1) {
   const response = await fetch(`${url}/recent?page=${page}`, {
