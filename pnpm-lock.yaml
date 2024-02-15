@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth/core':
-    specifier: ^0.26.0
-    version: 0.26.0
+    specifier: ^0.27.0
+    version: 0.27.0
   '@auth/drizzle-adapter':
     specifier: ^0.6.0
     version: 0.6.2
@@ -193,12 +193,15 @@ packages:
       leven: 3.1.0
     dev: false
 
-  /@auth/core@0.26.0:
-    resolution: {integrity: sha512-AcuOQZHVUJDIbP6l98GttJNlobo3dxFfUiUEzzESapJ5BxJM+k/Cez3heDkQFhDBeati+FDZpZb4aPtH+odNwA==}
+  /@auth/core@0.26.2:
+    resolution: {integrity: sha512-BK+NaUDLcX8AMW/O32wxzk+SE9lr/xvjO4PsTgla9ToHHanoPMl+6pYu2/WoNKnZomdHBWOl/00LFfajuulIVA==}
     peerDependencies:
+      '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.1
       nodemailer: ^6.8.0
     peerDependenciesMeta:
+      '@simplewebauthn/browser':
+        optional: true
       '@simplewebauthn/server':
         optional: true
       nodemailer:
@@ -213,11 +216,11 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/core@0.26.2:
-    resolution: {integrity: sha512-BK+NaUDLcX8AMW/O32wxzk+SE9lr/xvjO4PsTgla9ToHHanoPMl+6pYu2/WoNKnZomdHBWOl/00LFfajuulIVA==}
+  /@auth/core@0.27.0:
+    resolution: {integrity: sha512-3bydnRJIM/Al6mkYmb53MsC+6G8ojw3lLPzwgVnX4dCo6N2lrib6Wq6r0vxZIhuHGjLObqqtUfpeaEj5aeTHFg==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.1
+      '@simplewebauthn/server': ^9.0.2
       nodemailer: ^6.8.0
     peerDependenciesMeta:
       '@simplewebauthn/browser':
