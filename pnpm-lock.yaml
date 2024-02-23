@@ -90,8 +90,8 @@ dependencies:
     specifier: 14.1.0
     version: 14.1.0(@babel/core@7.23.9)(react-dom@18.2.0)(react@18.2.0)
   next-auth:
-    specifier: 5.0.0-beta.11
-    version: 5.0.0-beta.11(next@14.1.0)(react@18.2.0)
+    specifier: 5.0.0-beta.13
+    version: 5.0.0-beta.13(next@14.1.0)(react@18.2.0)
   next-pwa:
     specifier: 5.6.0
     version: 5.6.0(@babel/core@7.23.9)(esbuild@0.19.12)(next@14.1.0)(webpack@5.90.1)
@@ -5448,8 +5448,8 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
-  /next-auth@5.0.0-beta.11(next@14.1.0)(react@18.2.0):
-    resolution: {integrity: sha512-OrfOVyXBGC69O8lEe81ZwFzQuWnY3Bsqee7kawr1iBycgSD64oNCtoFvRXiOWe7R0jOaafqQQlpsOS0mARhT3Q==}
+  /next-auth@5.0.0-beta.13(next@14.1.0)(react@18.2.0):
+    resolution: {integrity: sha512-2m2Gq69WQ0YXcHCCpHn2y5z1bxSlqD/XOuAgrdtz49/VIAdTFFeYZz97RYqf6xMF8VGmoG32VUnJ6LzaHk6Fwg==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
