@@ -15,7 +15,7 @@ dependencies:
     specifier: ^3.3.4
     version: 3.3.4(react-hook-form@7.50.1)
   '@planetscale/database':
-    specifier: ^1.14.0
+    specifier: ^1.16.0
     version: 1.16.0
   '@radix-ui/react-aspect-ratio':
     specifier: ^1.0.3
@@ -75,8 +75,8 @@ dependencies:
     specifier: ^1.11.10
     version: 1.11.10
   drizzle-orm:
-    specifier: ^0.29.3
-    version: 0.29.3(@planetscale/database@1.16.0)(@types/react@18.2.61)(react@18.2.0)
+    specifier: ^0.29.4
+    version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.61)(react@18.2.0)
   embla-carousel-autoplay:
     specifier: 8.0.0
     version: 8.0.0(embla-carousel@8.0.0)
@@ -4248,8 +4248,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.29.3(@planetscale/database@1.16.0)(@types/react@18.2.61)(react@18.2.0):
-    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
+  /drizzle-orm@0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.61)(react@18.2.0):
+    resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
