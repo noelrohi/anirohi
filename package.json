@@ -15,7 +15,7 @@
     "fmt": "pnpm biome format ./src --write && pnpm biome check ./src --apply-unsafe"
   },
   "dependencies": {
-    "@auth/core": "^0.27.0",
+    "@auth/core": "^0.28.0",
     "@auth/drizzle-adapter": "^0.7.0",
     "@hookform/resolvers": "^3.3.4",
     "@planetscale/database": "^1.16.0",
