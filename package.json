@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.28.0",
-    "@auth/drizzle-adapter": "^0.7.0",
+    "@auth/drizzle-adapter": "^0.8.0",
     "@hookform/resolvers": "^3.3.4",
     "@planetscale/database": "^1.16.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
