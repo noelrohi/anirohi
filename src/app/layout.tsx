@@ -2,7 +2,6 @@ import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
 
-import GridPattern from "@/components/magicui/grid-pattern";
 import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
 import { StaffToolbar } from "@/components/staff-toolbar";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
@@ -77,7 +76,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <>
       <html lang="en" className={geistVariable} suppressHydrationWarning>
         <head />
-        <body className="min-h-screen bg-background font-sans antialiased">
+        <body className="min-h-screen bg-background bg-dot-black/[0.1] font-sans antialiased dark:bg-dot-white/[0.1]">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <PHProvider>{children}</PHProvider>
             <TailwindIndicator />
@@ -89,15 +88,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Suspense>
             <StaffToolbar />
           </Suspense>
-          <GridPattern
-            width={40}
-            height={40}
-            x={-1}
-            y={-1}
-            className={
-              "-z-10 stroke-gray-300/30 [mask-image:linear-gradient(to_bottom_left,white,transparent,transparent)]"
-            }
-          />
         </body>
       </html>
     </>

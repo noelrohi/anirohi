@@ -1,3 +1,4 @@
+import { Spotlight } from "@/components/aceternity/spotlight";
 import { Icons } from "@/components/icons";
 import ShimmerButton from "@/components/magicui/shimmer-button";
 // import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,11 @@ export default function IndexPage() {
   return (
     <>
       <section className="space-y-6 pt-6 pb-8 lg:py-32 md:pt-10 md:pb-12">
-        <div className="container flex max-w-5xl flex-col items-center gap-4 text-center">
+        <div className="container relative flex max-w-5xl flex-col items-center gap-4 text-center">
+          <Spotlight
+            className="-top-40 md:-top-20 left-0 md:left-60"
+            fill="white"
+          />
           {/* <Link href={"/notifications"}>
             <Badge variant={"pill"}>We added anilist notifications 🎉</Badge>
           </Link> */}
