@@ -10,7 +10,7 @@ import {
   DonutChartProps,
   Subtitle,
   Title,
-} from "@tremor/react";
+} from "@/lib/tremor";
 
 interface Props {
   username: string;
