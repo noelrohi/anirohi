@@ -36,7 +36,7 @@
     "@vercel/toolbar": "^0.1.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "cmdk": "^0.2.1",
+    "cmdk": "^1.0.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.29.4",
     "embla-carousel-autoplay": "8.0.0",
