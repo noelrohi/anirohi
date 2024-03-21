@@ -1,4 +1,5 @@
-import {
+import { env } from "@/env.mjs";
+import type {
   AnimeInfo,
   ConsumetResponse,
   Recent,
@@ -9,7 +10,6 @@ import {
 import { notFound } from "next/navigation";
 import "server-only";
 import { getMediaDataByTitle } from "./anilist";
-import { env } from "@/env.mjs";
 
 // const url = "https://api.consumet.org/anime/gogoanime";
 const url = `${env.ANIME_API_URL}/api/gogoanime`;

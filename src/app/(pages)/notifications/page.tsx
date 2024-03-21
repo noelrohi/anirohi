@@ -2,7 +2,7 @@ import { getAccessToken } from "@/db/query";
 import { mutateAnilist } from "@/lib/anilist";
 import { notifications } from "@/lib/gql-queries";
 import { auth } from "@/lib/nextauth";
-import { Notifications } from "@/types/anilist/notifications";
+import type { Notifications } from "@/types/anilist/notifications";
 import { notFound, redirect } from "next/navigation";
 import NotificationList from "./notificationList";
 

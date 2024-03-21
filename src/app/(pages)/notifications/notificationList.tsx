@@ -3,7 +3,7 @@
 import { checkAnimeFromDB, moreNotifs } from "@/_actions";
 import { Icons } from "@/components/icons";
 import { convertUnixTimestamp } from "@/lib/utils";
-import { Notifications } from "@/types/anilist/notifications";
+import type { Notifications } from "@/types/anilist/notifications";
 import { Button, Card } from "@tremor/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

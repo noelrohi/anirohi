@@ -1,6 +1,6 @@
 import {
   type InferInsertModel,
-  InferSelectModel,
+  type InferSelectModel,
   relations,
 } from "drizzle-orm";
 import {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollViewport } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { AnimeInfo } from "@/types/consumet";
+import type { AnimeInfo } from "@/types/consumet";
 import Link from "next/link";
 import { useRef } from "react";
 

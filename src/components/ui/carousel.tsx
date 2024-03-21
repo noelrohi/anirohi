@@ -1,10 +1,10 @@
 "use client";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
-import {
-  type EmblaCarouselType as CarouselApi,
-  type EmblaOptionsType as CarouselOptions,
-  type EmblaPluginType as CarouselPlugin,
+import type {
+  EmblaCarouselType as CarouselApi,
+  EmblaOptionsType as CarouselOptions,
+  EmblaPluginType as CarouselPlugin,
 } from "embla-carousel";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";

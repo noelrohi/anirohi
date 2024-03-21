@@ -3,11 +3,11 @@
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { absoluteUrl, nextEpisode as getNextEpisode } from "@/lib/utils";
-import { AnimeInfo } from "@/types/consumet";
+import type { AnimeInfo } from "@/types/consumet";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { OnProgressProps } from "react-player/base";
-import ReactPlayer, { ReactPlayerProps } from "react-player/lazy";
+import type { OnProgressProps } from "react-player/base";
+import ReactPlayer, { type ReactPlayerProps } from "react-player/lazy";
 import { toast } from "sonner";
 
 interface VideoPlayerProps extends ReactPlayerProps {

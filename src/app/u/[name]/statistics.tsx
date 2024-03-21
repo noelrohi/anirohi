@@ -1,16 +1,16 @@
 import { Icons } from "@/components/icons";
 import { getStats } from "@/lib/anilist";
-import type { GeneralStats as Stats } from "@/types/anilist/general-stats";
-import { ListStats } from "@/types/anilist/list-stats";
 import {
   AreaChart,
   BarList,
   Card,
   DonutChart,
-  DonutChartProps,
+  type DonutChartProps,
   Subtitle,
   Title,
 } from "@/lib/tremor";
+import type { GeneralStats as Stats } from "@/types/anilist/general-stats";
+import type { ListStats } from "@/types/anilist/list-stats";
 
 interface Props {
   username: string;

@@ -1,7 +1,7 @@
 "use client";
 import { placeholderImage } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import NextImage, { ImageProps } from "next/image";
+import NextImage, { type ImageProps } from "next/image";
 import { useState } from "react";
 
 type Props = ImageProps & {

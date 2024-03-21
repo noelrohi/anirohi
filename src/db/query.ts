@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from ".";
 import { accounts } from "./schema/auth";
-import { NewAnime, anime } from "./schema/main";
+import { type NewAnime, anime } from "./schema/main";
 
 export async function getAccessToken(userId: string) {
   const account = await db.query.accounts.findFirst({

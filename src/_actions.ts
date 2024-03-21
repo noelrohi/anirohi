@@ -1,23 +1,23 @@
 "use server";
 
 import { db } from "@/db";
+import { getAccessToken } from "@/db/query";
 import {
-  InsertComments,
-  InsertHistory,
+  type InsertComments,
+  type InsertHistory,
   anime,
   comments,
   histories,
 } from "@/db/schema/main";
 import { mutateAnilist } from "@/lib/anilist";
+import { search } from "@/lib/consumet";
+import { notifications } from "@/lib/gql-queries";
 import { auth, signIn as login, signOut as logout } from "@/lib/nextauth";
 import { ratelimit } from "@/lib/utils";
+import type { Notifications } from "@/types/anilist/notifications";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { getAccessToken } from "@/db/query";
-import { search } from "@/lib/consumet";
-import { notifications } from "@/lib/gql-queries";
-import { Notifications } from "@/types/anilist/notifications";
 
 export async function updateAnimeProgress(
   animeId: number,
