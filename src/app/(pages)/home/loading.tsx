@@ -1,5 +1,4 @@
 import { Icons } from "@/components/icons";
-import React from "react";
 
 export default function HomeLoading() {
   return (

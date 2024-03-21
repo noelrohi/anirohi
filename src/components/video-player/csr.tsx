@@ -2,7 +2,7 @@
 
 import { addToHistory } from "@/_actions";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { absoluteUrl, nextEpisode as getNextEpisode } from "@/lib/utils";
+import { absoluteUrl } from "@/lib/utils";
 import type { AnimeInfo } from "@/types/consumet";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

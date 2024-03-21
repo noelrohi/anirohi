@@ -3,7 +3,7 @@ import { mutateAnilist } from "@/lib/anilist";
 import { notifications } from "@/lib/gql-queries";
 import { auth } from "@/lib/nextauth";
 import type { Notifications } from "@/types/anilist/notifications";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import NotificationList from "./notificationList";
 
 export default async function NotificationPage() {
