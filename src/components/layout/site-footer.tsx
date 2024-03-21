@@ -4,7 +4,6 @@ import { Icons } from "@/components/icons";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
 
 export function SiteFooter() {
   return (
