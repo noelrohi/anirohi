@@ -14,10 +14,10 @@ import { ratelimit } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { getAccessToken } from "./db/query";
-import { search } from "./lib/consumet";
-import { notifications } from "./lib/gql-queries";
-import { Notifications } from "./types/anilist/notifications";
+import { getAccessToken } from "@/db/query";
+import { search } from "@/lib/consumet";
+import { notifications } from "@/lib/gql-queries";
+import { Notifications } from "@/types/anilist/notifications";
 
 export async function updateAnimeProgress(
   animeId: number,
@@ -78,40 +78,37 @@ export async function deleteFromHistory(pathname: string) {
 }
 
 export async function addToHistory(input: InsertHistory) {
-  const ip = headers().get("x-forwarded-for");
-  const { success, limit, remaining, reset } = await ratelimit.limit(
-    `${ip ?? "anonymous"}-addToHistory`,
-  );
-  if (!success) {
-    console.log(
-      `ratelimit hit for addToHistory , reset in ${new Date(
-        reset,
-      ).toUTCString()}`,
+  try {
+    const ip = headers().get("x-forwarded-for");
+    const { success, limit, remaining, reset } = await ratelimit.limit(
+      `${ip ?? "anonymous"}-addToHistory`,
     );
-    return;
+    if (!success) throw new Error("Ratelimit hit! Try again later.");
+    const session = await auth();
+    if (!session?.user) throw new Error("Not authenticated!");
+    const history = await db.query.histories.findFirst({
+      where: and(
+        eq(histories.userId, session.user.id),
+        eq(histories.title, input.title),
+      ),
+    });
+    if (history) {
+      await db
+        .update(histories)
+        .set({ ...input, userId: session.user.id })
+        .where(
+          and(
+            eq(histories.userId, session.user.id),
+            eq(histories.title, input.title),
+          ),
+        );
+    } else {
+      await db.insert(histories).values({ ...input, userId: session.user.id });
+    }
+    revalidatePath("/home");
+  } catch (error) {
+    console.error(error);
   }
-  const session = await auth();
-  if (!session?.user) throw new Error("Not authenticated!");
-  const history = await db.query.histories.findFirst({
-    where: and(
-      eq(histories.userId, session.user.id),
-      eq(histories.title, input.title),
-    ),
-  });
-  if (history) {
-    await db
-      .update(histories)
-      .set({ ...input, userId: session.user.id })
-      .where(
-        and(
-          eq(histories.userId, session.user.id),
-          eq(histories.title, input.title),
-        ),
-      );
-  } else {
-    await db.insert(histories).values({ ...input, userId: session.user.id });
-  }
-  revalidatePath("/home");
 }
 
 export async function addComment(input: InsertComments, pathname?: string) {
