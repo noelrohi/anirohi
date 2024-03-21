@@ -5,10 +5,10 @@ import type { Metadata, Viewport } from "next";
 import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
 import { StaffToolbar } from "@/components/staff-toolbar";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { geistVariable } from "@/lib/fonts";
+import { ThemeProvider } from "next-themes";
 import { Suspense } from "react";
 
 export const viewport: Viewport = {
