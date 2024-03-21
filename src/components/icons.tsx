@@ -14,7 +14,7 @@ import {
   SunIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import { IconProps } from "@radix-ui/react-icons/dist/types";
+import type { IconProps } from "@radix-ui/react-icons/dist/types";
 
 export const Icons = {
   gitHub: GitHubLogoIcon,

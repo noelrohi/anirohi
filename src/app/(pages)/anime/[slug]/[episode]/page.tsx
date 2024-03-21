@@ -20,7 +20,7 @@ import {
   prevEpisode,
 } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment, Suspense } from "react";
 import { CommentActions, CommentForm, SortCommentButton } from "./comment";
@@ -120,7 +120,7 @@ export default async function EpisodePage({
   const commentItems = !isOld ? commentFromDb : commentFromDb.reverse();
   return (
     <main className="p-4 lg:container">
-      <div className="flex-end flex min-h-[50vh] flex-col justify-center gap-4">
+      <div className="flex min-h-[50vh] flex-end flex-col justify-center gap-4">
         <Link
           href={`/anime/${params.slug}`}
           className={cn("w-fit", buttonVariants({ variant: "outline" }))}

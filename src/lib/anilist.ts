@@ -1,4 +1,4 @@
-import { MediaQuery } from "@/types/anilist/media";
+import type { MediaQuery } from "@/types/anilist/media";
 import "server-only";
 import { animeInfo, statisticQueries } from "./gql-queries";
 

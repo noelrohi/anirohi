@@ -6,9 +6,9 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem as CaruoselItem,
   CarouselNext,
   CarouselPrevious,
+  CarouselItem as CaruoselItem,
 } from "@/components/ui/carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -20,7 +20,7 @@ import { recent, topAiring } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import { absoluteUrl, cn } from "@/lib/utils";
 import { eq } from "drizzle-orm";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";

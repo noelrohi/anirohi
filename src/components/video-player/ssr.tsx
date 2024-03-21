@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { histories } from "@/db/schema/main";
 import { watch } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
-import { AnimeInfo } from "@/types/consumet";
+import type { AnimeInfo } from "@/types/consumet";
 import { and, eq } from "drizzle-orm";
 import dynamic from "next/dynamic";
 

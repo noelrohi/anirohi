@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { AnimeInfo } from "@/types/consumet";
+import type { AnimeInfo } from "@/types/consumet";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { type ClassValue, clsx } from "clsx";
