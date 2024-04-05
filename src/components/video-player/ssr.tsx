@@ -25,7 +25,7 @@ export default async function VideoPlayerSSR({
         eq(histories.episodeNumber, episode.number),
       ),
     });
-    seekToValue = history?.duration;
+    seekToValue = history?.duration ? Number(history.duration) : undefined;
     username = session.user?.name;
   }
   const data = await watch({ episodeId: episode.id });
