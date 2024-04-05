@@ -90,7 +90,7 @@ Anirohi is built as a standard Next.js application with [Consumet](https://docs.
 [Satori](https://og-playground.vercel.app/) is used for generating open-graph images based on Anime series and episode. <br>
 [Anilist](https://anilist.gitbook.io/) is used as the auth provider as well as for mutating user progress. <br>
 [React-player](https://www.npmjs.com/package/react-player) is used to play video sources to watch anime on. <br>
-[MySQL](https://www.mysql.com/) is used as the database for storing user data, history, and comments . You can refer to the Drizzle schema [here](/src/db/schema). <br>
+[PostgreSQL](https://www.postgresql.org/) is used as the database for storing user data, history, and comments . You can refer to the Drizzle schema [here](/src/db/schema). <br>
 
 ## Contributing
 
