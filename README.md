@@ -17,7 +17,7 @@
 
 ## Introduction
 
-Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Consumet](https://docs.consumet.org), [Anilist](https://anilist.gitbook.io/), and [PlanetScale MySQL](https://planetscale.com/).
+Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Consumet](https://docs.consumet.org), [Anilist](https://anilist.gitbook.io/), and [NeonDB](https://neon.tech/).
 
 Here are some of the features that Anirohi provides:
 
@@ -79,7 +79,7 @@ Start the server
 - [Typescript](https://www.typescriptlang.org/) – language
 - [Tailwind](https://tailwindcss.com/) – CSS
 - [Upstash](https://upstash.com/) – ratelimit
-- [PlanetScale](https://planetscale.com/) – database
+- [Neon](https://neon.tech/) – database
 - [Drizzle](https://orm.drizzle.team/) - ORM
 - [NextAuth.js](https://next-auth.js.org/) – auth
 - [Vercel](https://vercel.com/) – hosting & KV
