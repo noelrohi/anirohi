@@ -7,11 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "ui": "pnpm dlx shadcn-ui",
+    "ui": "bunx shadcn-ui",
     "db:push": "drizzle-kit push:pg",
     "db:introspect": "drizzle-kit introspect:pg",
     "db:studio": "drizzle-kit studio",
-    "fmt": "pnpm biome format ./src --write && pnpm biome check ./src --apply-unsafe"
+    "fmt": "bun biome format ./src --write && bun biome check ./src --apply-unsafe"
   },
   "dependencies": {
     "@auth/core": "^0.28.2",
