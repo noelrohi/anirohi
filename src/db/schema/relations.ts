@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
-import { comments, histories } from "./main";
 import { users } from "./auth";
+import { comments, histories } from "./main";
 
 export const watchListRelations = relations(histories, ({ one }) => ({
   user: one(users, { fields: [histories.userId], references: [users.id] }),

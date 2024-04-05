@@ -7,7 +7,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { projectTable } from "./_table";
-import { users } from "./auth";
+import type { users } from "./auth";
 
 export const histories = projectTable(
   "history",
