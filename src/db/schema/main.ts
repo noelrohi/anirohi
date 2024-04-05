@@ -1,43 +1,37 @@
 import {
-  type InferInsertModel,
-  type InferSelectModel,
-  relations,
-} from "drizzle-orm";
-import {
-  float,
+  decimal,
   index,
-  int,
+  integer,
   serial,
   timestamp,
   varchar,
-} from "drizzle-orm/mysql-core";
-import { mySqlTable } from "./_table";
-import { users } from "./auth";
+} from "drizzle-orm/pg-core";
+import { projectTable } from "./_table";
+import type { users } from "./auth";
 
-export const histories = mySqlTable(
+export const histories = projectTable(
   "history",
   {
     id: serial("id").primaryKey(),
     userId: varchar("userId", { length: 255 }),
     slug: varchar("slug", { length: 255 }).notNull(),
     pathname: varchar("pathname", { length: 255 }).notNull(),
-    episodeNumber: int("episode_number").notNull(),
+    episodeNumber: integer("episode_number").notNull(),
     title: varchar("title", { length: 255 }).notNull(),
     image: varchar("image", { length: 255 }),
-    progress: float("progress").notNull(),
-    duration: float("duration").notNull(),
+    progress: decimal("progress").notNull(),
+    duration: decimal("duration").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").onUpdateNow(),
+    updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
   },
   (table) => {
     return {
       pathIdx: index("path_idx").on(table.pathname),
-      slugIdx: index("slug_idx").on(table.slug),
     };
   },
 );
 
-export const anime = mySqlTable(
+export const anime = projectTable(
   "anime",
   {
     id: serial("id").primaryKey(),
@@ -45,9 +39,9 @@ export const anime = mySqlTable(
     title: varchar("title", { length: 255 }).notNull(),
     image: varchar("image", { length: 255 }),
     createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").onUpdateNow(),
-    episodes: int("episodes").notNull(),
-    anilistId: int("anilist_id").notNull().unique(),
+    updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
+    episodes: integer("episodes").notNull(),
+    anilistId: integer("anilist_id").notNull().unique(),
   },
   (table) => {
     return {
@@ -59,38 +53,29 @@ export const anime = mySqlTable(
 
 export type NewAnime = typeof anime.$inferInsert;
 
-export const comments = mySqlTable(
+export const comments = projectTable(
   "comments",
   {
     id: serial("id").primaryKey(),
     slug: varchar("slug", { length: 255 }).notNull(),
-    episodeNumber: int("episode_number").notNull(),
+    episodeNumber: integer("episode_number").notNull(),
     text: varchar("text", { length: 255 }).notNull(),
     userId: varchar("userId", { length: 255 }),
     createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").onUpdateNow(),
+    updatedAt: timestamp("updated_at").$onUpdateFn(() => new Date()),
   },
   (table) => {
     return {
-      slugIdx: index("slug_idx").on(table.slug),
       userIdx: index("user_idx").on(table.userId),
     };
   },
 );
 
-export type Comments = InferSelectModel<typeof comments>;
+export type Comments = typeof comments.$inferSelect;
 export type CommentsWithUser = Comments & {
-  user: InferSelectModel<typeof users> | null;
+  user: typeof users.$inferSelect | null;
 };
 
-export type InsertComments = InferInsertModel<typeof comments>;
+export type InsertComments = typeof comments.$inferInsert;
 
-export const commentRelations = relations(comments, ({ one }) => ({
-  user: one(users, { fields: [comments.userId], references: [users.id] }),
-}));
-
-export type InsertHistory = InferInsertModel<typeof histories>;
-
-export const watchListRelations = relations(histories, ({ one }) => ({
-  user: one(users, { fields: [histories.userId], references: [users.id] }),
-}));
+export type InsertHistory = typeof histories.$inferInsert;

@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from ".";
 import { accounts } from "./schema/auth";
 import { type NewAnime, anime } from "./schema/main";
@@ -14,5 +14,8 @@ export async function insertAnime(values: NewAnime) {
   await db
     .insert(anime)
     .values(values)
-    .onDuplicateKeyUpdate({ set: { id: sql`id` } });
+    .onConflictDoUpdate({
+      target: [anime.anilistId],
+      set: { episodes: values.episodes },
+    });
 }

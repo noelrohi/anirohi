@@ -48,9 +48,9 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
           title: episode.anime.title,
           image:
             episode.anime.image || absoluteUrl("/images/placeholder-image.png"),
-          progress: state.played,
+          progress: String(state.played),
           pathname,
-          duration: state.playedSeconds,
+          duration: String(state.playedSeconds),
           episodeNumber: episode.number,
         });
       }
@@ -68,9 +68,9 @@ export default function VideoPlayerCSR(props: VideoPlayerProps) {
           title: episode.anime.title,
           image:
             episode.anime.image || absoluteUrl("/images/placeholder-image.png"),
-          progress: 100,
+          progress: String(100),
           pathname,
-          duration: state.playedSeconds,
+          duration: String(state.playedSeconds),
           episodeNumber: episode.number,
         });
         const hasNextEp = episode.anime.totalEpisodes > episode.number;

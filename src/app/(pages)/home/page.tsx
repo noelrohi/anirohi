@@ -182,7 +182,7 @@ async function HistoryList() {
                     description: `Episode ${anime.episodeNumber}`,
                     slug: `${anime.slug}/${anime.episodeNumber}`,
                   }}
-                  progress={anime.progress * 100}
+                  progress={Number(anime.progress) * 100}
                   className="w-28 lg:w-[250px]"
                   aspectRatio="portrait"
                   width={250}

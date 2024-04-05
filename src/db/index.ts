@@ -1,16 +1,16 @@
 import { env } from "@/env.mjs";
-import { Client } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 
 import * as auth from "./schema/auth";
 import * as main from "./schema/main";
+import * as relations from "./schema/relations";
 
-export const schema = { ...auth, ...main };
+export const schema = { ...auth, ...main, ...relations };
 
-export { mySqlTable as tableCreator } from "./schema/_table";
+export { projectTable as tableCreator } from "./schema/_table";
 
-const client = new Client({
-  url: env.DATABASE_URL,
+const connection = new Pool({
+  connectionString: env.DATABASE_URL,
 });
-
-export const db = drizzle(client, { schema });
+export const db = drizzle(connection, { schema });
