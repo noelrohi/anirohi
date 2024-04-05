@@ -4,7 +4,7 @@ import { projectTable } from "./_table";
 
 export const users = projectTable("user", {
   id: text("id").notNull().primaryKey(),
-  name: text("name"),
+  name: text("name").notNull(),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
