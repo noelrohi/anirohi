@@ -64,13 +64,13 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  pnpm install
+  bun install
 ```
 
 Start the server
 
 ```bash
-  pnpm dev
+  bun dev
 ```
 
 ## Tech Stack
