@@ -160,10 +160,7 @@ export default async function EpisodePage({
               animeId={anilist.id}
               progress={Number(params.episode)}
               isWatched={isWatched}
-            >
-              <Icons.anilist className="mr-2" />
-              {isWatched ? "Mark as unwatched" : "Mark as watched"}
-            </UpdateProgressButton>
+            />
           ) : null}
 
           {nextEp && (
