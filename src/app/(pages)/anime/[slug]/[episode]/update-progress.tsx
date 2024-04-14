@@ -9,33 +9,33 @@ import { toast } from "sonner";
 interface Props {
   progress: number;
   animeId: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   isWatched?: boolean | null;
 }
 
-export default function UpdateProgressButton(props: Props) {
-  const { animeId, children, isWatched = false } = props;
-  const progress = isWatched ? props.progress - 1 : props.progress;
-  const [isPending, startTransition] = React.useTransition();
+export default function UpdateProgressButton({ animeId, ...props }: Props) {
+  const [isWatched, setIsWatched] = React.useState(props.isWatched || false);
+  const progress = React.useMemo(() => {
+    return isWatched ? props.progress - 1 : props.progress;
+  }, [isWatched, props.progress]);
+  const [_, startTransition] = React.useTransition();
   const pathname = usePathname();
   return (
     <Button
-      disabled={isPending}
       onClick={() => {
+        setIsWatched(!isWatched);
         startTransition(async () => {
           const res = await updateAnimeProgress(animeId, progress, pathname);
           if (!res.ok) {
             toast.error(res.message);
           } else if (res.message === null) {
             toast.error("Something went wrong!");
-          } else {
-            toast.success("Progress updated successfully!");
           }
         });
       }}
     >
-      {isPending ? <Icons.loader className="mr-2 animate-spin" /> : null}
-      {children}
+      <Icons.anilist className="mr-2" />
+      {isWatched ? "Mark as unwatched" : "Mark as watched"}
     </Button>
   );
 }
