@@ -78,8 +78,8 @@ importers:
         specifier: ^1.11.11
         version: 1.11.11
       drizzle-orm:
-        specifier: ^0.30.10
-        version: 0.30.10(@neondatabase/serverless@0.9.3)(@types/pg@8.11.6)(@types/react@18.3.3)(react@18.3.1)
+        specifier: ^0.35.0
+        version: 0.35.0(@neondatabase/serverless@0.9.3)(@types/pg@8.11.6)(@types/react@18.3.3)(react@18.3.1)
       embla-carousel-autoplay:
         specifier: 8.1.3
         version: 8.1.3(embla-carousel@8.1.3)
@@ -867,9 +867,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild/aix-ppc64@0.19.12':
     resolution: {integrity: sha512-bmoCYyWdEL3wDQIVbcyzRyeKLgk2WtWLTWz1ZIAZF/EGbNOwSA6ew3PftJ1PqMiOOGu0OyFMzG53L0zqIpPeNA==}
@@ -2322,17 +2324,19 @@ packages:
     resolution: {integrity: sha512-Nxcc1ONJLRgbhmR+azxjNF9Ly9privNLEIgW53c92whb4xp8jZLH1kMCh/54ci1mTMuYxPdOukqLwJ8wRudNwA==}
     hasBin: true
 
-  drizzle-orm@0.30.10:
-    resolution: {integrity: sha512-IRy/QmMWw9lAQHpwbUh1b8fcn27S/a9zMIzqea1WNOxK9/4EB8gIo+FZWLiPXzl2n9ixGSv8BhsLZiOppWEwBw==}
+  drizzle-orm@0.35.0:
+    resolution: {integrity: sha512-fyTKnQ6WZQqSUy6yM4Do2tJPBg1ALR0vJtO9xUTLLubD+0qS1PPuu8aVOeLZQo+g8RPJn+Vqoh30/3lSS8/a2w==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@electric-sql/pglite': '>=0.1.1'
-      '@libsql/client': '*'
+      '@libsql/client': '>=0.10.0'
       '@neondatabase/serverless': '>=0.1'
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
+      '@prisma/client': '*'
+      '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
       '@types/react': '>=18'
@@ -2347,6 +2351,7 @@ packages:
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
+      prisma: '*'
       react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
@@ -2366,6 +2371,10 @@ packages:
       '@opentelemetry/api':
         optional: true
       '@planetscale/database':
+        optional: true
+      '@prisma/client':
+        optional: true
+      '@tidbcloud/serverless':
         optional: true
       '@types/better-sqlite3':
         optional: true
@@ -2394,6 +2403,8 @@ packages:
       pg:
         optional: true
       postgres:
+        optional: true
+      prisma:
         optional: true
       react:
         optional: true
@@ -6241,7 +6252,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.30.10(@neondatabase/serverless@0.9.3)(@types/pg@8.11.6)(@types/react@18.3.3)(react@18.3.1):
+  drizzle-orm@0.35.0(@neondatabase/serverless@0.9.3)(@types/pg@8.11.6)(@types/react@18.3.3)(react@18.3.1):
     optionalDependencies:
       '@neondatabase/serverless': 0.9.3
       '@types/pg': 8.11.6
