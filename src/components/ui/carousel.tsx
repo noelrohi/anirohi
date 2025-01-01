@@ -1,21 +1,21 @@
 "use client";
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
-import type {
-  EmblaCarouselType as CarouselApi,
-  EmblaOptionsType as CarouselOptions,
-  EmblaPluginType as CarouselPlugin,
-} from "embla-carousel";
-import AutoplayPlugin from "embla-carousel-autoplay";
-import useEmblaCarousel from "embla-carousel-react";
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react";
+import * as React from "react";
+
+type CarouselApi = UseEmblaCarouselType[1];
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
+type CarouselOptions = UseCarouselParameters[0];
+type CarouselPlugin = UseCarouselParameters[1];
 
 type CarouselProps = {
   opts?: CarouselOptions;
-  plugins?: CarouselPlugin[];
+  plugins?: CarouselPlugin;
   orientation?: "horizontal" | "vertical";
   setApi?: (api: CarouselApi) => void;
 };
@@ -50,9 +50,9 @@ const Carousel = React.forwardRef<
       orientation = "horizontal",
       opts,
       setApi,
+      plugins,
       className,
       children,
-      plugins,
       ...props
     },
     ref,
@@ -62,7 +62,7 @@ const Carousel = React.forwardRef<
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
       },
-      plugins ? [...plugins, AutoplayPlugin()] : [AutoplayPlugin()],
+      plugins,
     );
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
@@ -137,7 +137,6 @@ const Carousel = React.forwardRef<
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
-          role="region"
           aria-roledescription="carousel"
           {...props}
         >

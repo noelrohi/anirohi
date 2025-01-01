@@ -156,7 +156,7 @@ export async function GeneralStats({ username }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 md:grid-cols-3">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
       {stats.map((stat, index) => (
         <StatCard {...stat} key={index} />
       ))}

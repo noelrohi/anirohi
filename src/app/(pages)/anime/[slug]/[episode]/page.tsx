@@ -116,7 +116,7 @@ export default async function EpisodePage({
     },
     orderBy: (comments, { desc }) => [desc(comments.createdAt)],
   });
-  const isOld = searchParams.isOld === "true" ?? false;
+  const isOld = searchParams.isOld === "true";
   const commentItems = !isOld ? commentFromDb : commentFromDb.reverse();
   return (
     <main className="p-4 lg:container">

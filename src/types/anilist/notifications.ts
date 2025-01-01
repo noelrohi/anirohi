@@ -2,16 +2,16 @@ export interface Notifications {
   data: Data;
 }
 
-export interface Data {
+interface Data {
   Page: Page;
 }
 
-export interface Page {
+interface Page {
   pageInfo: PageInfo;
   notifications: Notification[];
 }
 
-export interface Notification {
+interface Notification {
   id: number;
   type: string;
   episode: number;
@@ -20,7 +20,7 @@ export interface Notification {
   createdAt: number;
 }
 
-export interface Media {
+interface Media {
   id: number;
   type: "ANIME";
   bannerImage: string;
@@ -28,16 +28,16 @@ export interface Media {
   coverImage: CoverImage;
 }
 
-export interface CoverImage {
+interface CoverImage {
   large: string;
 }
 
-export interface Title {
+interface Title {
   english: string;
   userPreferred: string;
 }
 
-export interface PageInfo {
+interface PageInfo {
   total: number;
   perPage: number;
   currentPage: number;
