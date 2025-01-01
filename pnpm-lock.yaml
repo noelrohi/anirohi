@@ -145,8 +145,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.1(tailwindcss@3.4.3)
       '@types/node':
-        specifier: 20.12.12
-        version: 20.12.12
+        specifier: 20.17.11
+        version: 20.17.11
       '@types/react':
         specifier: ^18.2
         version: 18.3.3
@@ -282,9 +282,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild/aix-ppc64@0.19.12':
     resolution: {integrity: sha512-bmoCYyWdEL3wDQIVbcyzRyeKLgk2WtWLTWz1ZIAZF/EGbNOwSA6ew3PftJ1PqMiOOGu0OyFMzG53L0zqIpPeNA==}
@@ -1187,8 +1189,8 @@ packages:
   '@types/d3-timer@3.0.2':
     resolution: {integrity: sha512-Ps3T8E8dZDam6fUyNiMkekK3XUsaUEik+idO9/YjPtfj2qruF8tFBXS7XhtE4iIXBLxhmLjP3SXpLhVf21I9Lw==}
 
-  '@types/node@20.12.12':
-    resolution: {integrity: sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==}
+  '@types/node@20.17.11':
+    resolution: {integrity: sha512-Ept5glCK35R8yeyIeYlRIZtX6SLRyqMhOFTgj5SOkMpLTdw3SEHI9fHx60xaUZ+V1aJxQJODE+7/j5ocZydYTg==}
 
   '@types/pg@8.11.6':
     resolution: {integrity: sha512-/2WmmBXHLsfRqzfHW7BNZ8SbYzE8OSk7i3WjFYvfgRHj7S1xj+16Je5fUKv3lVdVzk/zn9TXOqf+avFCFIE0yQ==}
@@ -2398,8 +2400,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   update-browserslist-db@1.0.16:
     resolution: {integrity: sha512-KVbTxlBYlckhF5wgfyZXTWnMn7MMZjMu9XG8bPlliUOP9ThaF4QnhP8qrjrH7DRzHfSk0oQv1wToW+iA5GajEQ==}
@@ -3308,13 +3310,13 @@ snapshots:
 
   '@types/d3-timer@3.0.2': {}
 
-  '@types/node@20.12.12':
+  '@types/node@20.17.11':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.19.8
 
   '@types/pg@8.11.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.11
       pg-protocol: 1.6.1
       pg-types: 4.0.2
 
@@ -4425,7 +4427,7 @@ snapshots:
 
   typescript@5.4.5: {}
 
-  undici-types@5.26.5: {}
+  undici-types@6.19.8: {}
 
   update-browserslist-db@1.0.16(browserslist@4.23.0):
     dependencies:
