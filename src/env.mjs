@@ -15,6 +15,7 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_KEY: z.string().startsWith("phc_"),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().url(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_M3U8_PROXY_URL: z.string().url(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -27,5 +28,6 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     ANIME_API_URL: process.env.ANIME_API_URL,
+    NEXT_PUBLIC_M3U8_PROXY_URL: process.env.NEXT_PUBLIC_M3U8_PROXY_URL,
   },
 });

@@ -1,6 +1,7 @@
 import { Icons } from "@/components/icons";
 import { db } from "@/db";
 import { histories } from "@/db/schema/main";
+import { env } from "@/env.mjs";
 import { watch } from "@/lib/consumet";
 import { auth } from "@/lib/nextauth";
 import type { AnimeInfo } from "@/types/consumet";
@@ -29,13 +30,13 @@ export default async function VideoPlayerSSR({
     username = session.user?.name;
   }
   const data = await watch({ episodeId: episode.id });
+  const url =
+    data.sources.find((s) => s.quality === "720p")?.url || data.sources[0].url;
+  const urlWithProxy = `${env.NEXT_PUBLIC_M3U8_PROXY_URL}?url=${url}`;
   return (
     <VideoPlayerCSR
       user={username}
-      url={
-        data.sources.find((s) => s.quality === "720p")?.url ||
-        data.sources[0].url
-      }
+      url={urlWithProxy}
       episode={episode}
       playIcon={<Icons.play />}
       seekSecond={seekToValue}
