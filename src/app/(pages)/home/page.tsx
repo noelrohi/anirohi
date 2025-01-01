@@ -228,12 +228,12 @@ async function CarouselItem({
       <div className="absolute top-5 left-10 z-10 w-1/2 md:top-10">
         <div className="flex max-w-xl flex-col gap-4">
           <div className="flex gap-2">
-            <h1 className="line-clamp-1 font-bold text-md 2xl:line-clamp-0 md:line-clamp-2 md:text-2xl sm:text-lg">
+            <h1 className="line-clamp-1 font-bold text-md sm:text-lg md:line-clamp-2 md:text-2xl 2xl:line-clamp-0">
               {title}
             </h1>
           </div>
           <div
-            className="line-clamp-2 text-xs 2xl:line-clamp-0 sm:line-clamp-4 md:text-sm"
+            className="line-clamp-2 text-xs sm:line-clamp-4 md:text-sm 2xl:line-clamp-0"
             // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
             dangerouslySetInnerHTML={{ __html: anime.description }}
           />

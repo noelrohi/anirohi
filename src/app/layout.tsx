@@ -3,7 +3,6 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
-import { StaffToolbar } from "@/components/staff-toolbar";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
@@ -84,9 +83,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Toaster />
           <Suspense>
             <PostHogPageview />
-          </Suspense>
-          <Suspense>
-            <StaffToolbar />
           </Suspense>
         </body>
       </html>

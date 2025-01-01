@@ -28,7 +28,7 @@ export function AnimeCard({
   className,
   ...props
 }: AnimeCardProps) {
-  const href = anime.slug ? `/anime/${anime.slug}` : anime.link ?? "#";
+  const href = anime.slug ? `/anime/${anime.slug}` : (anime.link ?? "#");
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <div className="relative overflow-hidden rounded-md">
