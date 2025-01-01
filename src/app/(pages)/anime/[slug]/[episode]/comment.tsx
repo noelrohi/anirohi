@@ -109,7 +109,7 @@ export function SortCommentButton() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isOld = searchParams.get("isOld") === "true" ?? false;
+  const isOld = searchParams.get("isOld") === "true";
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
