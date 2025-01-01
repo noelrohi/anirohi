@@ -1,5 +1,5 @@
-// app/providers.tsx
 "use client";
+
 import { env } from "@/env.mjs";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
   });
 }
 
-export default function PostHogPageview(): JSX.Element {
+export default function PostHogPageview() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
