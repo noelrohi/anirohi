@@ -57,7 +57,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@headlessui/tailwindcss": "^0.2.1",
-    "@types/node": "22.10.3",
+    "@types/node": "22.15.14",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "10.4.20",
