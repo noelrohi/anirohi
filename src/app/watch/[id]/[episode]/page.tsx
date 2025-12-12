@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, use } from "react";
+import { parseAsInteger, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,7 +29,10 @@ export default function WatchPage({ params }: PageProps) {
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("sub");
   const [userSelectedServer, setUserSelectedServer] = useState<AnimeServer | null>(null);
-  const [selectedRange, setSelectedRange] = useState<number>(0);
+  const [selectedRange, setSelectedRange] = useQueryState(
+    "range",
+    parseAsInteger.withDefault(0)
+  );
 
   const { data: animeData, isLoading: infoLoading } = useQuery(
     orpc.anime.getAboutInfo.queryOptions({ input: { id } })
@@ -271,7 +275,7 @@ export default function WatchPage({ params }: PageProps) {
               <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                 {prevEpisode ? (
                   <Link
-                    href={`/watch/${id}/${prevEpisode}`}
+                    href={`/watch/${id}/${prevEpisode}?range=${selectedRange}`}
                     className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -287,7 +291,7 @@ export default function WatchPage({ params }: PageProps) {
                 )}
                 {nextEpisode ? (
                   <Link
-                    href={`/watch/${id}/${nextEpisode}`}
+                    href={`/watch/${id}/${nextEpisode}?range=${selectedRange}`}
                     className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
                   >
                     <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -429,16 +433,16 @@ export default function WatchPage({ params }: PageProps) {
                 <Spinner className="size-6 text-foreground/20" />
               </div>
             ) : (
-              <div className="p-3 md:p-4">
-                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 xl:grid-cols-8 gap-1.5">
+              <div className="p-2 md:p-4">
+                <div className="grid grid-cols-10 sm:grid-cols-10 md:grid-cols-10 xl:grid-cols-8 gap-1">
                   {filteredEpisodes.map((ep) => {
                     const isActive = ep.number === currentEpisode;
                     return (
                       <Link
                         key={ep.episodeId}
-                        href={`/watch/${id}/${ep.number}`}
+                        href={`/watch/${id}/${ep.number}?range=${selectedRange}`}
                         title={ep.title || `Episode ${ep.number}`}
-                        className={`aspect-square rounded flex items-center justify-center text-xs font-medium transition-all ${
+                        className={`aspect-square rounded flex items-center justify-center text-[11px] md:text-xs font-medium transition-all ${
                           isActive
                             ? "bg-foreground text-background ring-2 ring-foreground ring-offset-1 ring-offset-background"
                             : ep.isFiller
