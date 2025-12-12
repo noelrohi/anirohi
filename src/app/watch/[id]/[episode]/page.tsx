@@ -1,11 +1,24 @@
 "use client";
 
-import { useState, useMemo, use } from "react";
+import { useState, useMemo, use, useCallback } from "react";
 import { parseAsInteger, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import {
+  MediaPlayer,
+  MediaProvider,
+  Poster,
+  Track,
+  isHLSProvider,
+  useMediaState,
+  useMediaRemote,
+  type MediaProviderAdapter,
+} from "@vidstack/react";
+import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
+import "@vidstack/react/player/styles/default/theme.css";
+import "@vidstack/react/player/styles/default/layouts/video.css";
 import { orpc } from "@/lib/query/orpc";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -22,6 +35,33 @@ function isAnimeServer(value: string): value is AnimeServer {
   return animeServers.includes(value as AnimeServer);
 }
 
+interface SkipButtonProps {
+  intro: { start: number; end: number } | null;
+  outro: { start: number; end: number } | null;
+}
+
+function SkipButton({ intro, outro }: SkipButtonProps) {
+  const currentTime = useMediaState("currentTime");
+  const remote = useMediaRemote();
+
+  const isInIntro = intro && intro.end > 0 && currentTime >= intro.start && currentTime < intro.end;
+  const isInOutro = outro && outro.end > 0 && currentTime >= outro.start && currentTime < outro.end;
+
+  if (!isInIntro && !isInOutro) return null;
+
+  const skipTo = isInIntro ? intro!.end : outro!.end;
+  const label = isInIntro ? "Skip Intro" : "Skip Outro";
+
+  return (
+    <button
+      onClick={() => remote.seek(skipTo)}
+      className="absolute bottom-20 right-4 z-50 px-4 py-2 bg-white/90 hover:bg-white text-black text-sm font-medium rounded-md shadow-lg transition-all hover:scale-105"
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function WatchPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { id, episode } = resolvedParams;
@@ -33,6 +73,16 @@ export default function WatchPage({ params }: PageProps) {
     "range",
     parseAsInteger.withDefault(0)
   );
+
+  const onProviderChange = useCallback((provider: MediaProviderAdapter | null) => {
+    if (isHLSProvider(provider)) {
+      provider.config = {
+        xhrSetup(xhr) {
+          xhr.withCredentials = false;
+        },
+      };
+    }
+  }, []);
 
   const { data: animeData, isLoading: infoLoading } = useQuery(
     orpc.anime.getAboutInfo.queryOptions({ input: { id } })
@@ -151,6 +201,11 @@ export default function WatchPage({ params }: PageProps) {
   const dubServers = serversData?.dub ?? [];
   const streamingSources = sourcesData?.sources ?? [];
   const subtitles = sourcesData?.subtitles ?? [];
+  const intro = sourcesData?.intro ?? null;
+  const outro = (sourcesData as { outro?: { start: number; end: number } })?.outro ?? null;
+
+  // Debug: log intro/outro timestamps
+  console.log("[DEBUG] Intro/Outro:", { intro, outro });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -193,7 +248,7 @@ export default function WatchPage({ params }: PageProps) {
           <main className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col w-full">
             {/* Video Player */}
-            <div className="relative rounded-lg md:rounded-2xl overflow-hidden bg-background/50 backdrop-blur-sm border border-border">
+            <div className="relative rounded-lg md:rounded-2xl overflow-hidden">
               <div className="aspect-video relative">
                 {sourcesLoading ? (
                   <div className="absolute inset-0 flex items-center justify-center bg-background/80">
@@ -203,27 +258,40 @@ export default function WatchPage({ params }: PageProps) {
                     </div>
                   </div>
                 ) : streamingSources.length > 0 ? (
-                  <video
+                  <MediaPlayer
                     key={`${episodeId}-${selectedServer}-${selectedCategory}`}
-                    className="w-full h-full"
-                    controls
-                    autoPlay
+                    src={{
+                      src: `/api/proxy?url=${encodeURIComponent(streamingSources[0]?.url)}`,
+                      type: "application/x-mpegurl",
+                    }}
+                    viewType="video"
+                    streamType="on-demand"
                     playsInline
+                    autoPlay
+                    crossOrigin="anonymous"
+                    onProviderChange={onProviderChange}
+                    className="w-full h-full"
                   >
-                    {streamingSources.map((source, index) => (
-                      <source key={index} src={source.url} type="application/x-mpegURL" />
-                    ))}
+                    <MediaProvider>
+                      <Poster
+                        className="vds-poster object-cover object-center"
+                        src={`/api/proxy?url=${encodeURIComponent(info.poster)}`}
+                        alt={`${info.name} Episode ${currentEpisode}`}
+                      />
+                    </MediaProvider>
                     {subtitles.map((subtitle, index) => (
-                      <track
-                        key={index}
-                        kind="subtitles"
+                      <Track
+                        key={`${subtitle.lang}-${index}`}
                         src={subtitle.url}
-                        srcLang={subtitle.lang.toLowerCase().slice(0, 2)}
+                        kind="subtitles"
                         label={subtitle.lang}
+                        language={subtitle.lang.toLowerCase().slice(0, 2)}
                         default={index === 0}
                       />
                     ))}
-                  </video>
+                    <SkipButton intro={intro} outro={outro} />
+                    <DefaultVideoLayout icons={defaultLayoutIcons} />
+                  </MediaPlayer>
                 ) : (
                   <>
                     <Image

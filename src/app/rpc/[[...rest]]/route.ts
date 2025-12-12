@@ -2,12 +2,7 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { onError } from "@orpc/server";
 import { CORSPlugin } from "@orpc/server/plugins";
 import { appRouter } from "@/lib/orpc/router";
-
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "https://anirohi.xyz",
-];
+import { ALLOWED_ORIGINS, isAllowedOrigin } from "@/lib/config/cors";
 
 const handler = new RPCHandler(appRouter, {
   plugins: [
@@ -32,7 +27,7 @@ async function handleRequest(request: Request) {
   const origin = request.headers.get("origin");
 
   // Block cross-origin requests from unknown origins
-  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+  if (!isAllowedOrigin(origin)) {
     return new Response("Forbidden", { status: 403 });
   }
 
