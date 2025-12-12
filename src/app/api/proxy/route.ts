@@ -1,10 +1,9 @@
 import { type NextRequest } from "next/server";
-import { ALLOWED_ORIGINS, isAllowedOrigin } from "@/lib/config/cors";
+import { getAllowedOrigin, isAllowedOrigin } from "@/lib/config/cors";
 
 function getCorsHeaders(origin: string | null): HeadersInit {
-  const allowedOrigin = origin && isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
-    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Origin": getAllowedOrigin(origin),
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Range",
   };
