@@ -47,7 +47,7 @@ export function Footer() {
               <ul className="space-y-3">
                 <li>
                   <Link
-                    href="/home"
+                    href="/browse"
                     className="text-muted-foreground/60 transition-colors hover:text-cyan"
                   >
                     Browse
@@ -55,7 +55,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/home"
+                    href="/schedule"
                     className="text-muted-foreground/60 transition-colors hover:text-cyan"
                   >
                     Schedule

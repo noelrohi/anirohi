@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { CommandMenu } from "@/components/blocks/command-menu";
-import { GitHubIcon, SearchIcon, MenuIcon } from "@/components/ui/icons";
+import { GitHubIcon, SearchIcon, MenuIcon, XIcon } from "@/components/ui/icons";
 import { Kbd } from "@/components/ui/kbd";
 
 export function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <>
       <CommandMenu />
@@ -81,12 +84,49 @@ export function Navbar() {
                 <GitHubIcon className="w-5 h-5 text-muted-foreground" />
               </a>
 
-              <button className="md:hidden p-2 rounded-lg hover:bg-foreground/5 transition-colors">
-                <MenuIcon className="w-5 h-5 text-muted-foreground" />
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-foreground/5 transition-colors"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMenuOpen ? (
+                  <XIcon className="w-5 h-5 text-muted-foreground" />
+                ) : (
+                  <MenuIcon className="w-5 h-5 text-muted-foreground" />
+                )}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile menu panel */}
+        {isMenuOpen && (
+          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md">
+            <div className="px-4 py-4 space-y-1">
+              <Link
+                href="/home"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                href="/browse"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              >
+                Browse
+              </Link>
+              <Link
+                href="/schedule"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              >
+                Schedule
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
     </>
   );
