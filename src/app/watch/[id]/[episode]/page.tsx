@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, use, useCallback } from "react";
-import { parseAsInteger, useQueryState } from "nuqs";
+import { useMemo, use, useCallback } from "react";
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,6 +20,7 @@ import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/l
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 import { orpc } from "@/lib/query/orpc";
+import { getProxyUrl } from "@/lib/proxy";
 import { Spinner } from "@/components/ui/spinner";
 
 interface PageProps {
@@ -67,8 +68,14 @@ export default function WatchPage({ params }: PageProps) {
   const { id, episode } = resolvedParams;
   const currentEpisode = parseInt(episode);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>("sub");
-  const [userSelectedServer, setUserSelectedServer] = useState<AnimeServer | null>(null);
+  const [selectedCategory, setSelectedCategory] = useQueryState(
+    "category",
+    parseAsStringLiteral(["sub", "dub"] as const).withDefault("sub")
+  );
+  const [selectedServer, setSelectedServer] = useQueryState(
+    "server",
+    parseAsStringLiteral(animeServers).withDefault("hd-1")
+  );
   const [selectedRange, setSelectedRange] = useQueryState(
     "range",
     parseAsInteger.withDefault(0)
@@ -106,23 +113,6 @@ export default function WatchPage({ params }: PageProps) {
     }),
     enabled: !!episodeId,
   });
-
-  const selectedServer = useMemo((): AnimeServer => {
-    if (userSelectedServer) return userSelectedServer;
-
-    const subServers = serversData?.sub ?? [];
-    const dubServers = serversData?.dub ?? [];
-
-    if (selectedCategory === "sub" && subServers.length > 0) {
-      const serverName = subServers[0].serverName;
-      if (isAnimeServer(serverName)) return serverName;
-    } else if (selectedCategory === "dub" && dubServers.length > 0) {
-      const serverName = dubServers[0].serverName;
-      if (isAnimeServer(serverName)) return serverName;
-    }
-
-    return "hd-1";
-  }, [userSelectedServer, serversData, selectedCategory]);
 
   const { data: sourcesData, isLoading: sourcesLoading } = useQuery({
     ...orpc.anime.getEpisodeSources.queryOptions({
@@ -200,12 +190,10 @@ export default function WatchPage({ params }: PageProps) {
   const subServers = serversData?.sub ?? [];
   const dubServers = serversData?.dub ?? [];
   const streamingSources = sourcesData?.sources ?? [];
-  const subtitles = sourcesData?.subtitles ?? [];
+  const tracks = (sourcesData as { tracks?: { url: string; lang: string }[] })?.tracks ?? [];
+  const subtitles = tracks.filter((t) => t.lang.toLowerCase() !== "thumbnails");
   const intro = sourcesData?.intro ?? null;
   const outro = (sourcesData as { outro?: { start: number; end: number } })?.outro ?? null;
-
-  // Debug: log intro/outro timestamps
-  console.log("[DEBUG] Intro/Outro:", { intro, outro });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -261,7 +249,7 @@ export default function WatchPage({ params }: PageProps) {
                   <MediaPlayer
                     key={`${episodeId}-${selectedServer}-${selectedCategory}`}
                     src={{
-                      src: `/api/proxy?url=${encodeURIComponent(streamingSources[0]?.url)}`,
+                      src: getProxyUrl(streamingSources[0]?.url),
                       type: "application/x-mpegurl",
                     }}
                     viewType="video"
@@ -275,14 +263,14 @@ export default function WatchPage({ params }: PageProps) {
                     <MediaProvider>
                       <Poster
                         className="vds-poster object-cover object-center"
-                        src={`/api/proxy?url=${encodeURIComponent(info.poster)}`}
+                        src={getProxyUrl(info.poster)}
                         alt={`${info.name} Episode ${currentEpisode}`}
                       />
                     </MediaProvider>
                     {subtitles.map((subtitle, index) => (
                       <Track
                         key={`${subtitle.lang}-${index}`}
-                        src={subtitle.url}
+                        src={getProxyUrl(subtitle.url)}
                         kind="subtitles"
                         label={subtitle.lang}
                         language={subtitle.lang.toLowerCase().slice(0, 2)}
@@ -420,7 +408,7 @@ export default function WatchPage({ params }: PageProps) {
                       return (
                         <button
                           key={serverName}
-                          onClick={() => setUserSelectedServer(serverName)}
+                          onClick={() => setSelectedServer(serverName)}
                           className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                             selectedServer === serverName
                               ? "bg-foreground text-background"

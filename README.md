@@ -58,6 +58,19 @@ cd anirohi
 # Install dependencies
 bun install
 
+# Set up environment variables
+cp .env.example .env.local
+```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_PROXY_URL` | Yes | URL of the [m3u8proxy](https://github.com/noelrohi/m3u8proxy) Cloudflare Worker |
+
+### Running
+
+```bash
 # Start development server
 bun dev
 ```
