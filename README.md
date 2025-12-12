@@ -1,120 +1,104 @@
-<a href="https://ani.rohi.dev">
-  <img alt="Anirohi – an open-source streaming site built with Nextjs 14 app router" src="https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/landing.png">
-  <h1 align="center">Anirohi</h1>
-</a>
+<p align="center">
+  <img src="src/app/favicon.ico" alt="Anirohi Logo" width="80" height="80" />
+</p>
+
+<h1 align="center">Anirohi</h1>
 
 <p align="center">
-  An open-source anime streaming site built with Nextjs 14 app router.
+  <strong>Stream anime. No interruptions.</strong>
 </p>
 
 <p align="center">
-  <a href="#introduction"><strong>Introduction</strong></a> ·
-  <a href="#run-locally"><strong>Run Locally</strong></a> ·
-  <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#implementation"><strong>Implementation</strong></a> ·
+  <a href="https://github.com/noelrohi/anirohi/stargazers">
+    <img src="https://img.shields.io/github/stars/noelrohi/anirohi?style=flat&color=06b6d4" alt="GitHub Stars" />
+  </a>
+  <a href="https://github.com/noelrohi/anirohi/network/members">
+    <img src="https://img.shields.io/github/forks/noelrohi/anirohi?style=flat&color=06b6d4" alt="GitHub Forks" />
+  </a>
+  <a href="https://github.com/noelrohi/anirohi/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/noelrohi/anirohi?style=flat&color=06b6d4" alt="License" />
+  </a>
 </p>
-<br/>
 
-## Introduction
+<p align="center">
+  <img src="src/app/opengraph-image.png" alt="Anirohi Screenshot" width="100%" />
+</p>
 
-Anirohi is an open-source anime streaming site with tracking, watching, and dashboard. Built with [Nextjs](https://nextjs.org/), [Consumet](https://docs.consumet.org), [Anilist](https://anilist.gitbook.io/), and [NeonDB](https://neon.tech/).
+## Features
 
-Here are some of the features that Anirohi provides:
-
-- [Anilist Integration](#anilist-integration)
-- [OG Image](#og-image)
-- [Comments](#comments)
-
-### Anilist Integration
-
-Check your stats
-
-![Anilist Dashboard](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/anilist-dashboard.png)
-
-While watching authenticated, you can update your Anilist anime progress.
-
-![Anilist Update Button](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/mark-anilist.png)
-
-### OG Image
-
-Share the link and see the detailed OG Image about the series or episode. Powered by [Vercel Satori](https://og-playground.vercel.app/).
-
-![OG From Discord](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/socialshare-preview.png)
-
-### Comments
-
-Share your thoughts in episode
-
-![Comment Section](https://raw.githubusercontent.com/gneiru/anirohi/master/public/images/comment-section.png)
-
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/gneiru/anirohi
-```
-
-Go to the project directory
-
-```bash
-  cd anirohi
-```
-
-Install dependencies
-
-```bash
-  bun install
-```
-
-Start the server
-
-```bash
-  bun dev
-```
+- **Clean UI** — Minimalist design focused on content
+- **Fast Search** — Quick anime discovery with command menu (⌘K)
+- **Trending** — Stay updated with currently popular anime
+- **Schedule** — Track upcoming episode releases
+- **PWA Support** — Install as a native app on any device
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org/) – framework
-- [Typescript](https://www.typescriptlang.org/) – language
-- [Tailwind](https://tailwindcss.com/) – CSS
-- [Upstash](https://upstash.com/) – ratelimit
-- [Neon](https://neon.tech/) – database
-- [Drizzle](https://orm.drizzle.team/) - ORM
-- [NextAuth.js](https://next-auth.js.org/) – auth
-- [Vercel](https://vercel.com/) – hosting & KV
+- [Next.js 15](https://nextjs.org/) — React framework with App Router
+- [React 19](https://react.dev/) — UI library with React Compiler
+- [Tailwind CSS v4](https://tailwindcss.com/) — Utility-first styling
+- [shadcn/ui](https://ui.shadcn.com/) — Accessible component primitives
+- [oRPC](https://orpc.dev/) — End-to-end typesafe APIs
+- [TanStack Query](https://tanstack.com/query) — Async state management
+- [Aniwatch API](https://github.com/ghoshRitesh12/aniwatch-api) — Anime data provider
 
-## Implementation
+## Getting Started
 
-Anirohi is built as a standard Next.js application with [Consumet](https://docs.consumet.org). <br>
-[Satori](https://og-playground.vercel.app/) is used for generating open-graph images based on Anime series and episode. <br>
-[Anilist](https://anilist.gitbook.io/) is used as the auth provider as well as for mutating user progress. <br>
-[React-player](https://www.npmjs.com/package/react-player) is used to play video sources to watch anime on. <br>
-[PostgreSQL](https://www.postgresql.org/) is used as the database for storing user data, history, and comments . You can refer to the Drizzle schema [here](/src/db/schema). <br>
+### Prerequisites
 
-## Contributing
+- [Bun](https://bun.sh/) (recommended) or Node.js 18+
 
-We love our contributors! Here's how you can contribute:
+### Installation
 
-- [Open an issue](https://github.com/gneiru/anirohi/issues) if you believe you've encountered a bug.
-- Make a [pull request](https://github.com/gneiru/anirohi/pull) to add new features/make quality-of-life improvements/fix bugs.
+```bash
+# Clone the repository
+git clone https://github.com/noelrohi/anirohi.git
+cd anirohi
 
-<a href="https://github.com/gneiru/anirohi/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=gneiru/anirohi" />
-</a>
+# Install dependencies
+bun install
 
-## Repo Activity
+# Start development server
+bun dev
+```
 
-![Anirohi repo activity – generated by Axiom](https://repobeats.axiom.co/api/embed/da795c147fb49c098e7ab96086fadcbd2cf7e777.svg "Repobeats analytics image")
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
+### Commands
+
+```bash
+bun dev       # Start development server
+bun build     # Build for production
+bun start     # Start production server
+bun lint      # Run ESLint
+```
 
 ## Star History
 
-<a href="https://star-history.com/#gneiru/anirohi&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=gneiru/anirohi&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=gneiru/anirohi&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=gneiru/anirohi&type=Date" />
-  </picture>
+<a href="https://star-history.com/#noelrohi/anirohi&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date" />
+ </picture>
 </a>
 
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/noelrohi">noelrohi</a>
+</p>

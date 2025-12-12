@@ -1,91 +1,76 @@
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
+import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { QueryProvider } from "@/lib/query/provider";
 import "./globals.css";
 
-import type { Metadata, Viewport } from "next";
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
 
-import PostHogPageview, { PHProvider } from "@/components/posthog-provider";
-import { TailwindIndicator } from "@/components/tailwind-indicator";
-import { Toaster } from "@/components/ui/toaster";
-import { siteConfig } from "@/config/site";
-import { geistVariable } from "@/lib/fonts";
-import { ThemeProvider } from "next-themes";
-import { Suspense } from "react";
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-    { media: "(prefers-color-scheme: light)", color: "white" },
-  ],
-  colorScheme: "dark light",
+  themeColor: "#06b6d4",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+  title: "Anirohi - Stream Anime Free",
+  description:
+    "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
+  keywords: ["anime", "streaming", "watch anime", "anime online", "free anime"],
+  applicationName: "Anirohi",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Anirohi",
   },
-  description: siteConfig.description,
-  keywords: [
-    "Next.js",
-    "React",
-    "Shadcn",
-    "Radix UI",
-    "Tailwind CSS",
-    "Server Components",
-    "Server Actions",
-    siteConfig.name,
-    "Anime",
-    "Watch Anime",
-    "Anime Streaming Site",
-  ],
-  authors: [
-    {
-      name: "gneiru",
-      url: "https://github.com/gneiru",
-    },
-  ],
-  creator: "gneiru",
   openGraph: {
+    title: "Anirohi - Stream Anime Free",
+    description:
+      "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
     type: "website",
-    locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    creator: "@gneiru",
+    title: "Anirohi - Stream Anime Free",
+    description:
+      "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
   },
-  icons: {
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/manifest.json",
 };
 
-interface RootLayoutProps {
+export default function RootLayout({
+  children,
+}: Readonly<{
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+}>) {
   return (
-    <>
-      <html lang="en" className={geistVariable} suppressHydrationWarning>
-        <head />
-        <body className="min-h-screen bg-background bg-dot-black/[0.1] font-sans antialiased dark:bg-dot-white/[0.1]">
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <PHProvider>{children}</PHProvider>
-            <TailwindIndicator />
-          </ThemeProvider>
-          <Toaster />
-          <Suspense>
-            <PostHogPageview />
-          </Suspense>
-        </body>
-      </html>
-    </>
+    <html lang="en" className="dark">
+      <body
+        className={`${plusJakarta.variable} ${instrumentSerif.variable} font-sans antialiased`}
+      >
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
+        <NuqsAdapter>
+          <QueryProvider>{children}</QueryProvider>
+        </NuqsAdapter>
+      </body>
+    </html>
   );
 }
