@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import { QueryProvider } from "@/lib/query/provider";
 import "./globals.css";
@@ -32,6 +33,13 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} ${instrumentSerif.variable} font-sans antialiased`}
       >
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
