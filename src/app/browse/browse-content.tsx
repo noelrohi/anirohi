@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Spinner } from "@/components/ui/spinner";
 import { orpc } from "@/lib/query/orpc";
 
@@ -28,26 +28,36 @@ const categoryIds = categories.map((c) => c.id);
 type CategoryId = (typeof categories)[number]["id"];
 
 export function BrowseContent() {
-  const [{ category, page }, setQueryStates] = useQueryStates({
-    category: parseAsStringLiteral(categoryIds).withDefault("most-popular"),
-    page: parseAsInteger.withDefault(1),
-  });
-
-  const { data, isLoading } = useQuery(
-    orpc.anime.getCategoryAnime.queryOptions({
-      input: { category: category as CategoryId, page },
-    })
+  const [category, setCategory] = useQueryState(
+    "category",
+    parseAsStringLiteral(categoryIds).withDefault("most-popular")
   );
 
-  const animes = (data?.animes ?? []).filter(
-    (
-      item
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
-  );
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQuery(
+      orpc.anime.getCategoryAnime.infiniteOptions({
+        input: (pageParam: number) => ({
+          category: category as CategoryId,
+          page: pageParam,
+        }),
+        getNextPageParam: (lastPage) =>
+          lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined,
+        initialPageParam: 1,
+      })
+    );
+
+  const animes =
+    data?.pages.flatMap((page) =>
+      (page.animes ?? []).filter(
+        (
+          item
+        ): item is typeof item & { id: string; name: string; poster: string } =>
+          item.id !== null && item.name !== null && item.poster !== null
+      )
+    ) ?? [];
 
   const handleCategoryChange = (newCategory: CategoryId) => {
-    setQueryStates({ category: newCategory, page: 1 });
+    setCategory(newCategory);
   };
 
   const currentCategory = categories.find((c) => c.id === category);
@@ -82,11 +92,6 @@ export function BrowseContent() {
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
               {currentCategory?.label}
             </h2>
-            {data && (
-              <span className="text-xs text-muted-foreground/60">
-                Page {page} of {data.totalPages}
-              </span>
-            )}
           </div>
 
           {isLoading ? (
@@ -122,56 +127,22 @@ export function BrowseContent() {
                 ))}
               </div>
 
-              {/* Pagination */}
-              {data && data.totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 mt-12">
+              {/* Load More */}
+              {hasNextPage && (
+                <div className="flex justify-center mt-12">
                   <button
-                    onClick={() =>
-                      setQueryStates({ page: Math.max(1, page - 1) })
-                    }
-                    disabled={page === 1}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-foreground/5 hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="px-6 py-2.5 rounded-lg text-sm font-medium bg-foreground/5 hover:bg-foreground/10 disabled:opacity-50 transition-colors"
                   >
-                    ← Prev
-                  </button>
-
-                  <div className="flex items-center gap-1">
-                    {Array.from(
-                      { length: Math.min(5, data.totalPages) },
-                      (_, i) => {
-                        let pageNum: number;
-                        if (data.totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (page <= 3) {
-                          pageNum = i + 1;
-                        } else if (page >= data.totalPages - 2) {
-                          pageNum = data.totalPages - 4 + i;
-                        } else {
-                          pageNum = page - 2 + i;
-                        }
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setQueryStates({ page: pageNum })}
-                            className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                              page === pageNum
-                                ? "bg-foreground text-background"
-                                : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      }
+                    {isFetchingNextPage ? (
+                      <span className="flex items-center gap-2">
+                        <Spinner className="size-4" />
+                        Loading...
+                      </span>
+                    ) : (
+                      "Load More"
                     )}
-                  </div>
-
-                  <button
-                    onClick={() => setQueryStates({ page: page + 1 })}
-                    disabled={!data.hasNextPage}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-foreground/5 hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next →
                   </button>
                 </div>
               )}
