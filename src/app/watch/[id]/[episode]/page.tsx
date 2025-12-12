@@ -127,8 +127,8 @@ export default function WatchPage({ params }: PageProps) {
 
   if (infoLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center">
-        <Spinner className="size-10 text-white/20" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Spinner className="size-10 text-foreground/20" />
       </div>
     );
   }
@@ -149,35 +149,35 @@ export default function WatchPage({ params }: PageProps) {
   const subtitles = sourcesData?.subtitles ?? [];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Ambient background glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.03]"
           style={{
-            background: "radial-gradient(circle, #fff 0%, transparent 70%)",
+            background: "radial-gradient(circle, oklch(0.98 0 0) 0%, transparent 70%)",
             filter: "blur(100px)",
           }}
         />
       </div>
 
       {/* Header Breadcrumb */}
-      <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-gradient-to-b from-black/90 to-transparent">
+      <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-gradient-to-b from-background/90 to-transparent">
         <div className="flex justify-center">
           <nav className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm w-full max-w-[1300px]">
-            <Link href="/" className="font-semibold tracking-tight text-white/90 hover:text-white transition-colors flex-shrink-0">
+            <Link href="/" className="font-semibold tracking-tight text-foreground/90 hover:text-foreground transition-colors flex-shrink-0">
               anirohi
             </Link>
-            <svg className="w-3 h-3 md:w-4 md:h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3 md:w-4 md:h-4 text-foreground/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
             </svg>
-            <Link href={`/anime/${id}`} className="text-white/50 hover:text-white transition-colors truncate max-w-[120px] md:max-w-[300px]">
+            <Link href={`/anime/${id}`} className="text-foreground/50 hover:text-foreground transition-colors truncate max-w-[120px] md:max-w-[300px]">
               {info.name}
             </Link>
-            <svg className="w-3 h-3 md:w-4 md:h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3 md:w-4 md:h-4 text-foreground/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-white/70 flex-shrink-0">EP {currentEpisode}</span>
+            <span className="text-foreground/70 flex-shrink-0">EP {currentEpisode}</span>
           </nav>
         </div>
       </header>
@@ -189,13 +189,13 @@ export default function WatchPage({ params }: PageProps) {
           <main className="flex-1 flex flex-col">
             <div className="flex-1 flex flex-col w-full">
             {/* Video Player */}
-            <div className="relative rounded-lg md:rounded-2xl overflow-hidden bg-black/50 backdrop-blur-sm border border-white/[0.05]">
+            <div className="relative rounded-lg md:rounded-2xl overflow-hidden bg-background/50 backdrop-blur-sm border border-border">
               <div className="aspect-video relative">
                 {sourcesLoading ? (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80">
                     <div className="flex flex-col items-center gap-4">
-                      <Spinner className="size-8 text-white/30" />
-                      <p className="text-sm text-white/40">Loading stream...</p>
+                      <Spinner className="size-8 text-foreground/30" />
+                      <p className="text-sm text-foreground/40">Loading stream...</p>
                     </div>
                   </div>
                 ) : streamingSources.length > 0 ? (
@@ -230,13 +230,13 @@ export default function WatchPage({ params }: PageProps) {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-6 h-6 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="w-16 h-16 rounded-full border border-border flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-6 h-6 text-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                           </svg>
                         </div>
-                        <p className="text-white/60 text-sm mb-1">Video unavailable</p>
-                        <p className="text-white/30 text-xs">Try selecting a different server</p>
+                        <p className="text-foreground/60 text-sm mb-1">Video unavailable</p>
+                        <p className="text-foreground/30 text-xs">Try selecting a different server</p>
                       </div>
                     </div>
                   </>
@@ -248,7 +248,7 @@ export default function WatchPage({ params }: PageProps) {
             <div className="mt-4 md:mt-6 flex items-start justify-between gap-4 md:gap-8">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 md:gap-3 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-white/10 text-xs text-white/70 font-medium tracking-wide">
+                  <span className="px-2 py-0.5 rounded bg-foreground/10 text-xs text-foreground/70 font-medium tracking-wide">
                     EP {currentEpisode}
                   </span>
                   {currentEpisodeData?.isFiller && (
@@ -257,11 +257,11 @@ export default function WatchPage({ params }: PageProps) {
                     </span>
                   )}
                 </div>
-                <h1 className="text-lg md:text-2xl font-semibold tracking-tight text-white/90 mb-1 line-clamp-2">
+                <h1 className="text-lg md:text-2xl font-semibold tracking-tight text-foreground/90 mb-1 line-clamp-2">
                   {info.name}
                 </h1>
                 {currentEpisodeData?.title && (
-                  <p className="text-white/40 text-xs md:text-sm line-clamp-1">
+                  <p className="text-foreground/40 text-xs md:text-sm line-clamp-1">
                     {currentEpisodeData.title}
                   </p>
                 )}
@@ -272,15 +272,15 @@ export default function WatchPage({ params }: PageProps) {
                 {prevEpisode ? (
                   <Link
                     href={`/watch/${id}/${prevEpisode}`}
-                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                     </svg>
                   </Link>
                 ) : (
-                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/[0.02] flex items-center justify-center">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/[0.02] flex items-center justify-center">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                     </svg>
                   </div>
@@ -288,15 +288,15 @@ export default function WatchPage({ params }: PageProps) {
                 {nextEpisode ? (
                   <Link
                     href={`/watch/${id}/${nextEpisode}`}
-                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
                   >
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                 ) : (
-                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/[0.02] flex items-center justify-center">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/[0.02] flex items-center justify-center">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -305,19 +305,19 @@ export default function WatchPage({ params }: PageProps) {
             </div>
 
             {/* Server Selection */}
-            <div className="mt-4 md:mt-6 p-3 md:p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+            <div className="mt-4 md:mt-6 p-3 md:p-4 rounded-xl bg-foreground/[0.02] border border-border">
               <div className="flex flex-wrap items-center gap-4 md:gap-6">
                 {/* Audio Toggle */}
                 <div className="flex items-center gap-2 md:gap-3">
-                  <span className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider">Audio</span>
-                  <div className="flex rounded-lg bg-white/[0.03] p-0.5 md:p-1">
+                  <span className="text-[10px] md:text-xs text-foreground/40 uppercase tracking-wider">Audio</span>
+                  <div className="flex rounded-lg bg-foreground/[0.03] p-0.5 md:p-1">
                     <button
                       onClick={() => setSelectedCategory("sub")}
                       disabled={subServers.length === 0}
                       className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                         selectedCategory === "sub"
-                          ? "bg-white/10 text-white shadow-sm"
-                          : "text-white/50 hover:text-white/70 disabled:opacity-30 disabled:cursor-not-allowed"
+                          ? "bg-foreground/10 text-foreground shadow-sm"
+                          : "text-foreground/50 hover:text-foreground/80 disabled:opacity-30 disabled:cursor-not-allowed"
                       }`}
                     >
                       SUB
@@ -327,8 +327,8 @@ export default function WatchPage({ params }: PageProps) {
                       disabled={dubServers.length === 0}
                       className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                         selectedCategory === "dub"
-                          ? "bg-white/10 text-white shadow-sm"
-                          : "text-white/50 hover:text-white/70 disabled:opacity-30 disabled:cursor-not-allowed"
+                          ? "bg-foreground/10 text-foreground shadow-sm"
+                          : "text-foreground/50 hover:text-foreground/80 disabled:opacity-30 disabled:cursor-not-allowed"
                       }`}
                     >
                       DUB
@@ -336,11 +336,11 @@ export default function WatchPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <div className="hidden md:block w-px h-6 bg-white/10" />
+                <div className="hidden md:block w-px h-6 bg-foreground/10" />
 
                 {/* Servers */}
                 <div className="flex items-center gap-2 md:gap-3">
-                  <span className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider">Server</span>
+                  <span className="text-[10px] md:text-xs text-foreground/40 uppercase tracking-wider">Server</span>
                   <div className="flex flex-wrap gap-1.5 md:gap-2">
                     {(selectedCategory === "sub" ? subServers : dubServers).map((server) => {
                       const serverName = server.serverName;
@@ -351,8 +351,8 @@ export default function WatchPage({ params }: PageProps) {
                           onClick={() => setUserSelectedServer(serverName)}
                           className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                             selectedServer === serverName
-                              ? "bg-white text-black"
-                              : "bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white/80"
+                              ? "bg-foreground text-background"
+                              : "bg-foreground/[0.05] text-foreground/60 hover:bg-foreground/10 hover:text-foreground/80"
                           }`}
                         >
                           {serverName}
@@ -367,11 +367,11 @@ export default function WatchPage({ params }: PageProps) {
           </main>
 
           {/* Sidebar */}
-          <aside className="w-full xl:w-[380px] flex-shrink-0 mt-6 xl:mt-0 pt-6 xl:pt-0 border-t xl:border-t-0 border-white/[0.05] flex flex-col xl:overflow-y-auto custom-scrollbar">
+          <aside className="w-full xl:w-[380px] flex-shrink-0 mt-6 xl:mt-0 pt-6 xl:pt-0 border-t xl:border-t-0 border-border flex flex-col xl:overflow-y-auto custom-scrollbar">
           {/* Anime Info Card - Hidden on mobile since info is shown above video */}
-          <div className="hidden xl:block p-5 border-b border-white/[0.05]">
+          <div className="hidden xl:block p-5 border-b border-border">
             <div className="flex gap-4">
-              <div className="relative w-20 aspect-[3/4] rounded-lg overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+              <div className="relative w-20 aspect-[3/4] rounded-lg overflow-hidden flex-shrink-0 ring-1 ring-border">
                 <Image
                   src={info.poster}
                   alt={info.name}
@@ -380,12 +380,12 @@ export default function WatchPage({ params }: PageProps) {
                 />
               </div>
               <div className="flex-1 min-w-0 pt-1">
-                <h2 className="font-semibold text-white/90 line-clamp-2 leading-snug">
+                <h2 className="font-semibold text-foreground/90 line-clamp-2 leading-snug">
                   {info.name}
                 </h2>
-                <div className="flex items-center gap-2 mt-2 text-xs text-white/40">
+                <div className="flex items-center gap-2 mt-2 text-xs text-foreground/40">
                   <span>{anime.moreInfo?.type}</span>
-                  <span className="w-1 h-1 rounded-full bg-white/20" />
+                  <span className="w-1 h-1 rounded-full bg-foreground/20" />
                   <span>{totalEpisodes} episodes</span>
                 </div>
               </div>
@@ -393,13 +393,13 @@ export default function WatchPage({ params }: PageProps) {
           </div>
 
           {/* Episodes Grid */}
-          <div className="border-b border-white/[0.05]">
-            <div className="px-4 py-3 border-b border-white/[0.05]">
+          <div className="border-b border-border">
+            <div className="px-4 py-3 border-b border-border">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs text-white/40 uppercase tracking-wider font-medium">
+                <h3 className="text-xs text-foreground/40 uppercase tracking-wider font-medium">
                   Episodes
                 </h3>
-                <span className="text-xs text-white/30">{totalEpisodes} total</span>
+                <span className="text-xs text-foreground/30">{totalEpisodes} total</span>
               </div>
 
               {/* Range Selector */}
@@ -411,10 +411,10 @@ export default function WatchPage({ params }: PageProps) {
                       onClick={() => setSelectedRange(index)}
                       className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
                         effectiveRange === index
-                          ? "bg-white text-black"
+                          ? "bg-foreground text-background"
                           : index === activeRangeIndex
-                          ? "bg-white/10 text-white/70 ring-1 ring-white/20"
-                          : "bg-white/[0.03] text-white/40 hover:bg-white/[0.06] hover:text-white/60"
+                          ? "bg-foreground/10 text-foreground/70 ring-1 ring-foreground/20"
+                          : "bg-foreground/[0.03] text-foreground/40 hover:bg-foreground/[0.06] hover:text-foreground/60"
                       }`}
                     >
                       {range.label}
@@ -426,7 +426,7 @@ export default function WatchPage({ params }: PageProps) {
 
             {episodesLoading ? (
               <div className="py-8 flex items-center justify-center">
-                <Spinner className="size-6 text-white/20" />
+                <Spinner className="size-6 text-foreground/20" />
               </div>
             ) : (
               <div className="p-3 md:p-4">
@@ -440,10 +440,10 @@ export default function WatchPage({ params }: PageProps) {
                         title={ep.title || `Episode ${ep.number}`}
                         className={`aspect-square rounded flex items-center justify-center text-xs font-medium transition-all ${
                           isActive
-                            ? "bg-white text-black ring-2 ring-white ring-offset-1 ring-offset-[#0a0a0c]"
+                            ? "bg-foreground text-background ring-2 ring-foreground ring-offset-1 ring-offset-background"
                             : ep.isFiller
                             ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
-                            : "bg-white/[0.04] text-white/50 hover:bg-white/[0.08] hover:text-white/70"
+                            : "bg-foreground/[0.04] text-foreground/50 hover:bg-foreground/[0.08] hover:text-foreground/70"
                         }`}
                       >
                         {ep.number}
@@ -453,14 +453,14 @@ export default function WatchPage({ params }: PageProps) {
                 </div>
 
                 {/* Legend */}
-                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/[0.05]">
+                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-white" />
-                    <span className="text-[10px] text-white/40">Current</span>
+                    <div className="w-3 h-3 rounded bg-foreground" />
+                    <span className="text-[10px] text-foreground/40">Current</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded bg-amber-500/30" />
-                    <span className="text-[10px] text-white/40">Filler</span>
+                    <span className="text-[10px] text-foreground/40">Filler</span>
                   </div>
                 </div>
               </div>
@@ -470,8 +470,8 @@ export default function WatchPage({ params }: PageProps) {
           {/* Up Next */}
           {relatedAnime.length > 0 && (
             <div className="xl:flex-1">
-              <div className="px-4 py-3 border-b border-white/[0.05]">
-                <h3 className="text-xs text-white/40 uppercase tracking-wider font-medium">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-xs text-foreground/40 uppercase tracking-wider font-medium">
                   Up Next
                 </h3>
               </div>
@@ -482,9 +482,9 @@ export default function WatchPage({ params }: PageProps) {
                     <Link
                       key={related.id}
                       href={`/anime/${related.id}`}
-                      className="flex-shrink-0 xl:flex-shrink w-32 xl:w-auto xl:flex gap-3 p-2 rounded-lg hover:bg-white/[0.04] transition-colors group"
+                      className="flex-shrink-0 xl:flex-shrink w-32 xl:w-auto xl:flex gap-3 p-2 rounded-lg hover:bg-foreground/[0.04] transition-colors group"
                     >
-                      <div className="relative w-full xl:w-12 aspect-[3/4] rounded-md overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+                      <div className="relative w-full xl:w-12 aspect-[3/4] rounded-md overflow-hidden flex-shrink-0 ring-1 ring-border">
                         <Image
                           src={related.poster}
                           alt={related.name}
@@ -493,10 +493,10 @@ export default function WatchPage({ params }: PageProps) {
                         />
                       </div>
                       <div className="xl:flex-1 min-w-0 mt-2 xl:mt-0 xl:py-0.5">
-                        <h4 className="text-xs xl:text-sm text-white/70 group-hover:text-white/90 transition-colors line-clamp-2 leading-snug">
+                        <h4 className="text-xs xl:text-sm text-foreground/70 group-hover:text-foreground/90 transition-colors line-clamp-2 leading-snug">
                           {related.name}
                         </h4>
-                        <p className="text-[10px] xl:text-xs text-white/30 mt-1">
+                        <p className="text-[10px] xl:text-xs text-foreground/30 mt-1">
                           {related.episodes?.sub || related.episodes?.dub || "?"} ep
                         </p>
                       </div>
@@ -519,11 +519,11 @@ export default function WatchPage({ params }: PageProps) {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: oklch(0.98 0 0 / 10%);
           border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: oklch(0.98 0 0 / 20%);
         }
       `}</style>
     </div>

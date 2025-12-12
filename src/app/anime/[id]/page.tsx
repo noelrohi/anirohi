@@ -123,7 +123,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-3 mb-6">
                 <Link
                   href={`/watch/${id}/1`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-background text-sm font-medium hover:bg-white/90 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
                 >
                   <svg
                     className="w-4 h-4"
@@ -138,7 +138,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                   </svg>
                   Watch
                 </Link>
-                <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/10 text-sm font-medium hover:bg-white/20 transition-colors">
+                <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground/10 text-sm font-medium hover:bg-foreground/20 transition-colors">
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -161,7 +161,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                   {moreInfo.genres.map((genre) => (
                     <span
                       key={genre}
-                      className="px-3 py-1 rounded-full bg-white/5 text-xs text-muted-foreground"
+                      className="px-3 py-1 rounded-full bg-foreground/5 text-xs text-muted-foreground"
                     >
                       {genre}
                     </span>
@@ -192,7 +192,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white/[0.02] rounded-xl p-5 border border-white/5">
+              <div className="bg-foreground/[0.02] rounded-xl p-5 border border-border">
                 <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
                   Information
                 </h3>
@@ -254,7 +254,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
       {/* Related */}
       {relatedAnime.length > 0 && (
-        <section className="py-10 px-4 border-t border-white/5">
+        <section className="py-10 px-4 border-t border-border">
           <div className="mx-auto max-w-7xl">
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
               Related Anime
@@ -272,7 +272,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                     href={`/anime/${item.id}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
+                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={item.poster}
                         alt={item.name}
@@ -292,7 +292,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
       {/* Recommendations */}
       {recommendedAnime.length > 0 && (
-        <section className="py-10 px-4 border-t border-white/5">
+        <section className="py-10 px-4 border-t border-border">
           <div className="mx-auto max-w-7xl">
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
               You may also like
@@ -310,7 +310,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                     href={`/anime/${item.id}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
+                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={item.poster}
                         alt={item.name}

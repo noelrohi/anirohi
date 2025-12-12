@@ -37,7 +37,7 @@ function AnimeGrid({
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
       {anime.map((item) => (
         <Link key={item.id} href={`/anime/${item.id}`} className="group block">
-          <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
+          <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
             <Image
               src={item.poster}
               alt={item.name}
@@ -146,7 +146,7 @@ export default function HomePage() {
                   <div className="flex items-center gap-3">
                     <Link
                       href={`/watch/${spotlight.id}/1`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-background text-sm font-medium hover:bg-white/90 transition-colors"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
                     >
                       <svg
                         className="w-4 h-4"
@@ -163,7 +163,7 @@ export default function HomePage() {
                     </Link>
                     <Link
                       href={`/anime/${spotlight.id}`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/10 text-sm font-medium hover:bg-white/20 transition-colors"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground/10 text-sm font-medium hover:bg-foreground/20 transition-colors"
                     >
                       Details
                     </Link>
@@ -181,7 +181,7 @@ export default function HomePage() {
                   key={index}
                   onClick={() => setCurrentSpotlight(index)}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    index === currentSpotlight ? "bg-white w-4" : "bg-white/40"
+                    index === currentSpotlight ? "bg-foreground w-4" : "bg-foreground/40"
                   }`}
                 />
               ))}
@@ -227,7 +227,7 @@ export default function HomePage() {
       </section>
 
       {/* Top Airing */}
-      <section className="py-10 px-4 border-t border-white/5">
+      <section className="py-10 px-4 border-t border-border">
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">

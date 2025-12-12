@@ -100,7 +100,7 @@ export default function LandingPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search anime..."
-                  className="relative w-full px-5 py-4 pl-12 rounded-xl bg-white/[0.03] border border-white/10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all duration-300"
+                  className="relative w-full px-5 py-4 pl-12 rounded-xl bg-foreground/[0.03] border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground/20 focus:bg-foreground/[0.05] transition-all duration-300"
                 />
                 <svg
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50"
@@ -119,7 +119,7 @@ export default function LandingPage() {
 
               {/* Search Results Dropdown */}
               {isSearching && (
-                <div className="absolute top-full left-0 right-0 mt-2 p-2 rounded-xl bg-card/95 backdrop-blur-xl border border-white/10 max-h-80 overflow-y-auto z-50 shadow-2xl">
+                <div className="absolute top-full left-0 right-0 mt-2 p-2 rounded-xl bg-card/95 backdrop-blur-xl border border-border max-h-80 overflow-y-auto z-50 shadow-2xl">
                   {searchLoading ? (
                     <div className="flex items-center justify-center py-8">
                       <Spinner className="size-5 text-muted-foreground" />
@@ -130,9 +130,9 @@ export default function LandingPage() {
                         <Link
                           key={anime.id}
                           href={`/anime/${anime.id}`}
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-foreground/5 transition-colors"
                         >
-                          <div className="relative w-10 h-14 rounded overflow-hidden flex-shrink-0 bg-white/5">
+                          <div className="relative w-10 h-14 rounded overflow-hidden flex-shrink-0 bg-foreground/5">
                             <Image
                               src={anime.poster}
                               alt={anime.name}
@@ -210,14 +210,14 @@ export default function LandingPage() {
                     className="group block animate-fade-in"
                     style={{ animationDelay: `${500 + index * 50}ms` }}
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
+                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={anime.poster}
                         alt={anime.name}
                         fill
                         className="object-cover transition-all duration-500 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                     <h3 className="mt-2 text-xs text-muted-foreground/70 line-clamp-1 group-hover:text-foreground transition-colors">
                       {anime.name}

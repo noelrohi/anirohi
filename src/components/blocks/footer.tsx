@@ -14,9 +14,9 @@ export function Footer() {
       {/* Decorative top line */}
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="flex items-center gap-4">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
           <div className="h-1.5 w-1.5 rotate-45 bg-cyan/60" />
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-foreground/10 to-transparent" />
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row">
+        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <p className="text-[11px] text-muted-foreground/30">
             © 2025 AniRohi
           </p>

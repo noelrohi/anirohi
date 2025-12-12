@@ -7,7 +7,7 @@ export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/5">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between">
           <div className="flex items-center gap-8">
@@ -40,7 +40,7 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 rounded-lg hover:bg-white/5 transition-colors"
+              className="p-2 rounded-lg hover:bg-foreground/5 transition-colors"
               aria-label="Search"
             >
               <svg
@@ -58,7 +58,7 @@ export function Navbar() {
               </svg>
             </button>
 
-            <button className="md:hidden p-2 rounded-lg hover:bg-white/5 transition-colors">
+            <button className="md:hidden p-2 rounded-lg hover:bg-foreground/5 transition-colors">
               <svg
                 className="w-5 h-5 text-muted-foreground"
                 fill="none"
@@ -78,12 +78,12 @@ export function Navbar() {
       </div>
 
       {isSearchOpen && (
-        <div className="absolute top-full left-0 right-0 p-4 bg-background/95 backdrop-blur-md border-b border-white/5">
+        <div className="absolute top-full left-0 right-0 p-4 bg-background/95 backdrop-blur-md border-b border-border">
           <div className="mx-auto max-w-xl">
             <input
               type="text"
               placeholder="Search anime..."
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-white/20 transition-colors"
+              className="w-full px-4 py-2.5 rounded-lg bg-foreground/5 border border-border text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground/20 transition-colors"
               autoFocus
             />
           </div>
