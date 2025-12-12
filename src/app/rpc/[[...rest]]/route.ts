@@ -6,7 +6,6 @@ import { appRouter } from "@/lib/orpc/router";
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-  "https://anirohi.vercel.app",
   "https://anirohi.xyz",
 ];
 
