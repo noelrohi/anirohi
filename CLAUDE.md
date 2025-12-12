@@ -5,10 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-bun dev          # Start development server (localhost:3000)
-bun build        # Production build
-bun start        # Start production server
-bun lint         # Run ESLint
+bun run dev          # Start development server (localhost:3000)
+bun run build        # Production build
+bun run start        # Start production server
+bun run lint         # Run ESLint
 ```
 
 ## Architecture
