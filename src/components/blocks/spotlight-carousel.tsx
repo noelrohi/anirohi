@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import Fade from "embla-carousel-fade";
 
 import { Spinner } from "@/components/ui/spinner";
 
@@ -28,17 +27,14 @@ export function SpotlightCarousel({
 }: SpotlightCarouselProps) {
   const [current, setCurrent] = useState(0);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true },
-    [
-      Fade(),
-      Autoplay({
-        delay: 6000,
-        stopOnInteraction: false,
-        stopOnMouseEnter: true,
-      }),
-    ]
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay({
+      delay: 6000,
+      playOnInit: true,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+    }),
+  ]);
 
   useEffect(() => {
     if (!emblaApi) return;
