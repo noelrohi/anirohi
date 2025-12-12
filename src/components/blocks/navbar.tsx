@@ -25,13 +25,13 @@ export function Navbar() {
                   Home
                 </Link>
                 <Link
-                  href="/home"
+                  href="/browse"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Browse
                 </Link>
                 <Link
-                  href="/home"
+                  href="/schedule"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Schedule

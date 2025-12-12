@@ -81,6 +81,37 @@ const episodeSourcesSchema = z.object({
   category: z.enum(["sub", "dub", "raw"]).optional().default("sub"),
 });
 
+const animeCategories = [
+  "most-favorite",
+  "most-popular",
+  "subbed-anime",
+  "dubbed-anime",
+  "recently-updated",
+  "recently-added",
+  "top-upcoming",
+  "top-airing",
+  "movie",
+  "special",
+  "ova",
+  "ona",
+  "tv",
+  "completed",
+] as const;
+
+const categorySchema = z.object({
+  category: z.enum(animeCategories),
+  page: z.number().optional().default(1),
+});
+
+const scheduleSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+const genreSchema = z.object({
+  genre: z.string().min(1),
+  page: z.number().optional().default(1),
+});
+
 export const getHomePage = os.handler(async () => {
   const data = await scraper.getHomePage();
   return data;
@@ -136,3 +167,25 @@ export const getEpisodeSources = os.input(episodeSourcesSchema).handler(
     return data;
   },
 );
+
+export const getCategoryAnime = os
+  .input(categorySchema)
+  .handler(async ({ input }): Promise<HiAnime.ScrapedAnimeCategory> => {
+    const data = await scraper.getCategoryAnime(input.category, input.page);
+    return data;
+  });
+
+export const getEstimatedSchedule = os
+  .input(scheduleSchema)
+  .handler(async ({ input }): Promise<HiAnime.ScrapedEstimatedSchedule> => {
+    const tzOffset = new Date().getTimezoneOffset();
+    const data = await scraper.getEstimatedSchedule(input.date, tzOffset);
+    return data;
+  });
+
+export const getGenreAnime = os
+  .input(genreSchema)
+  .handler(async ({ input }): Promise<HiAnime.ScrapedGenreAnime> => {
+    const data = await scraper.getGenreAnime(input.genre, input.page);
+    return data;
+  });

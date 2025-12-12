@@ -6,6 +6,9 @@ import {
   getEpisodes,
   getEpisodeServers,
   getEpisodeSources,
+  getCategoryAnime,
+  getEstimatedSchedule,
+  getGenreAnime,
 } from "./procedures/anime";
 
 export const appRouter = {
@@ -17,6 +20,9 @@ export const appRouter = {
     getEpisodes,
     getEpisodeServers,
     getEpisodeSources,
+    getCategoryAnime,
+    getEstimatedSchedule,
+    getGenreAnime,
   },
 };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { QueryProvider } from "@/lib/query/provider";
 import "./globals.css";
 
@@ -40,7 +41,9 @@ export default function RootLayout({
             strategy="beforeInteractive"
           />
         )}
-        <QueryProvider>{children}</QueryProvider>
+        <NuqsAdapter>
+          <QueryProvider>{children}</QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );
