@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="src/app/favicon.ico" alt="AniRohi Logo" width="80" height="80" />
+</p>
+
+<h1 align="center">AniRohi</h1>
+
+<p align="center">
+  <strong>Stream anime. No interruptions.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/noelrohi/anirohi/stargazers">
+    <img src="https://img.shields.io/github/stars/noelrohi/anirohi?style=flat&color=06b6d4" alt="GitHub Stars" />
+  </a>
+  <a href="https://github.com/noelrohi/anirohi/network/members">
+    <img src="https://img.shields.io/github/forks/noelrohi/anirohi?style=flat&color=06b6d4" alt="GitHub Forks" />
+  </a>
+  <a href="https://github.com/noelrohi/anirohi/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/noelrohi/anirohi?style=flat&color=06b6d4" alt="License" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="src/app/opengraph-image.png" alt="AniRohi Screenshot" width="100%" />
+</p>
+
+## Features
+
+- **Clean UI** — Minimalist design focused on content
+- **Fast Search** — Quick anime discovery with command menu (⌘K)
+- **Trending** — Stay updated with currently popular anime
+- **Schedule** — Track upcoming episode releases
+- **PWA Support** — Install as a native app on any device
+
+## Tech Stack
+
+- [Next.js 15](https://nextjs.org/) — React framework with App Router
+- [React 19](https://react.dev/) — UI library with React Compiler
+- [Tailwind CSS v4](https://tailwindcss.com/) — Utility-first styling
+- [shadcn/ui](https://ui.shadcn.com/) — Accessible component primitives
+- [oRPC](https://orpc.dev/) — End-to-end typesafe APIs
+- [TanStack Query](https://tanstack.com/query) — Async state management
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Bun](https://bun.sh/) (recommended) or Node.js 18+
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+# Clone the repository
+git clone https://github.com/noelrohi/anirohi.git
+cd anirohi
+
+# Install dependencies
+bun install
+
+# Start development server
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+bun dev       # Start development server
+bun build     # Build for production
+bun start     # Start production server
+bun lint      # Run ESLint
+```
 
-## Learn More
+## Star History
 
-To learn more about Next.js, take a look at the following resources:
+<a href="https://star-history.com/#noelrohi/anirohi&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=noelrohi/anirohi&type=Date" />
+ </picture>
+</a>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are welcome! Feel free to open an issue or submit a pull request.
 
-## Deploy on Vercel
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/noelrohi">noelrohi</a>
+</p>

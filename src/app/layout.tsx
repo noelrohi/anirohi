@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -18,10 +18,36 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#06b6d4",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "AniRohi - Stream Anime Free",
-  description: "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
+  description:
+    "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
   keywords: ["anime", "streaming", "watch anime", "anime online", "free anime"],
+  applicationName: "AniRohi",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "AniRohi",
+  },
+  openGraph: {
+    title: "AniRohi - Stream Anime Free",
+    description:
+      "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AniRohi - Stream Anime Free",
+    description:
+      "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
+  },
 };
 
 export default function RootLayout({
