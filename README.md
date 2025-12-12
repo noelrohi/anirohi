@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="src/app/favicon.ico" alt="AniRohi Logo" width="80" height="80" />
+  <img src="src/app/favicon.ico" alt="Anirohi Logo" width="80" height="80" />
 </p>
 
-<h1 align="center">AniRohi</h1>
+<h1 align="center">Anirohi</h1>
 
 <p align="center">
   <strong>Stream anime. No interruptions.</strong>
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="src/app/opengraph-image.png" alt="AniRohi Screenshot" width="100%" />
+  <img src="src/app/opengraph-image.png" alt="Anirohi Screenshot" width="100%" />
 </p>
 
 ## Features
@@ -40,6 +40,7 @@
 - [shadcn/ui](https://ui.shadcn.com/) — Accessible component primitives
 - [oRPC](https://orpc.dev/) — End-to-end typesafe APIs
 - [TanStack Query](https://tanstack.com/query) — Async state management
+- [Aniwatch API](https://github.com/ghoshRitesh12/aniwatch-api) — Anime data provider
 
 ## Getting Started
 
