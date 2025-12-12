@@ -1,4 +1,14 @@
 import { type NextRequest } from "next/server";
+import { ALLOWED_ORIGINS, isAllowedOrigin } from "@/lib/config/cors";
+
+function getCorsHeaders(origin: string | null): HeadersInit {
+  const allowedOrigin = origin && isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Range",
+  };
+}
 
 const m3u8ContentTypes = [
   "application/vnd.",
@@ -11,12 +21,32 @@ const m3u8ContentTypes = [
   "video/x-mpegurl",
 ];
 
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("Origin");
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(origin),
+  });
+}
+
 export async function GET(request: NextRequest) {
+  const origin = request.headers.get("Origin");
+
+  if (!isAllowedOrigin(origin)) {
+    return Response.json(
+      { success: false, message: "Origin not allowed" },
+      { status: 403, headers: getCorsHeaders(origin) }
+    );
+  }
+
   const url = request.nextUrl.searchParams.get("url");
   const headersParam = request.nextUrl.searchParams.get("headers");
 
   if (!url) {
-    return Response.json({ success: false, message: "no url provided" }, { status: 400 });
+    return Response.json(
+      { success: false, message: "no url provided" },
+      { status: 400, headers: getCorsHeaders(origin) }
+    );
   }
 
   let customHeaders: Record<string, string> = {};
@@ -101,11 +131,8 @@ export async function GET(request: NextRequest) {
       body = await response.arrayBuffer();
     }
 
-    const responseHeaders = new Headers();
+    const responseHeaders = new Headers(getCorsHeaders(origin));
     responseHeaders.set("Content-Type", contentType || "application/octet-stream");
-    responseHeaders.set("Access-Control-Allow-Origin", "*");
-    responseHeaders.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    responseHeaders.set("Access-Control-Allow-Headers", "*");
 
     // Forward content-range for seeking
     const contentRange = response.headers.get("Content-Range");
@@ -119,7 +146,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Proxy error:", error);
-    return Response.json({ success: false, message: "Proxy request failed" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Proxy request failed" },
+      { status: 500, headers: getCorsHeaders(origin) }
+    );
   }
 }
 
