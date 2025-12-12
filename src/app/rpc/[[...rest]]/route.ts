@@ -6,8 +6,8 @@ import { appRouter } from "@/lib/orpc/router";
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-  // Add your production URL here, e.g.:
   "https://anirohi.vercel.app",
+  "https://anirohi.xyz",
 ];
 
 const handler = new RPCHandler(appRouter, {
@@ -30,6 +30,13 @@ const handler = new RPCHandler(appRouter, {
 });
 
 async function handleRequest(request: Request) {
+  const origin = request.headers.get("origin");
+
+  // Block cross-origin requests from unknown origins
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
   const { response } = await handler.handle(request, {
     prefix: "/rpc",
     context: {},
