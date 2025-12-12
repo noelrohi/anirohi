@@ -1,6 +1,8 @@
 import { type NextRequest } from "next/server";
 import { getAllowedOrigin, isAllowedOrigin } from "@/lib/config/cors";
 
+export const runtime = "edge";
+
 function getCorsHeaders(origin: string | null): HeadersInit {
   return {
     "Access-Control-Allow-Origin": getAllowedOrigin(origin),
@@ -10,8 +12,6 @@ function getCorsHeaders(origin: string | null): HeadersInit {
 }
 
 const m3u8ContentTypes = [
-  "application/vnd.",
-  "video/mp2t",
   "application/x-mpegurl",
   "application/mpegurl",
   "application/vnd.apple.mpegurl",
@@ -75,8 +75,16 @@ export async function GET(request: NextRequest) {
       url.endsWith(".m3u8") ||
       m3u8ContentTypes.some((type) => contentType.includes(type));
 
-    let body: string | ArrayBuffer;
+    const responseHeaders = new Headers(getCorsHeaders(origin));
+    responseHeaders.set("Content-Type", contentType || "application/octet-stream");
 
+    // Forward content-range for seeking
+    const contentRange = response.headers.get("Content-Range");
+    if (contentRange) {
+      responseHeaders.set("Content-Range", contentRange);
+    }
+
+    // For m3u8 manifests, we need to rewrite URLs
     if (isM3u8) {
       const text = await response.text();
       const baseUrl = new URL(url);
@@ -125,21 +133,14 @@ export async function GET(request: NextRequest) {
         rewritten.push(`/api/proxy?${params.toString()}`);
       }
 
-      body = rewritten.join("\n");
-    } else {
-      body = await response.arrayBuffer();
+      return new Response(rewritten.join("\n"), {
+        status: response.status,
+        headers: responseHeaders,
+      });
     }
 
-    const responseHeaders = new Headers(getCorsHeaders(origin));
-    responseHeaders.set("Content-Type", contentType || "application/octet-stream");
-
-    // Forward content-range for seeking
-    const contentRange = response.headers.get("Content-Range");
-    if (contentRange) {
-      responseHeaders.set("Content-Range", contentRange);
-    }
-
-    return new Response(body, {
+    // For video segments, stream directly without buffering
+    return new Response(response.body, {
       status: response.status,
       headers: responseHeaders,
     });
