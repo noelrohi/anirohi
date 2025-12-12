@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AniRohi - Stream Anime Free",
-    short_name: "AniRohi",
+    name: "Anirohi - Stream Anime Free",
+    short_name: "Anirohi",
     description:
       "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
     start_url: "/",

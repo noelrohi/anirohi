@@ -137,7 +137,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <p className="text-[11px] text-muted-foreground/30">
-            © 2025 AniRohi
+            © 2025 Anirohi
           </p>
           <p className="text-[11px] text-muted-foreground/20">
             Made with love for anime fans

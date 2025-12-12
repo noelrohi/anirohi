@@ -26,25 +26,25 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "AniRohi - Stream Anime Free",
+  title: "Anirohi - Stream Anime Free",
   description:
     "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
   keywords: ["anime", "streaming", "watch anime", "anime online", "free anime"],
-  applicationName: "AniRohi",
+  applicationName: "Anirohi",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "AniRohi",
+    title: "Anirohi",
   },
   openGraph: {
-    title: "AniRohi - Stream Anime Free",
+    title: "Anirohi - Stream Anime Free",
     description:
       "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AniRohi - Stream Anime Free",
+    title: "Anirohi - Stream Anime Free",
     description:
       "Watch your favorite anime series and movies in HD quality. Stream the latest episodes and discover new shows.",
   },
