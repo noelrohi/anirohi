@@ -111,22 +111,22 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://discord.gg"
+                    href="https://github.com/noelrohi"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground/60 transition-colors hover:text-cyan"
                   >
-                    Discord
+                    GitHub
                   </a>
                 </li>
                 <li>
                   <a
-                    href="https://twitter.com"
+                    href="https://x.com/noelrohi"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground/60 transition-colors hover:text-cyan"
                   >
-                    Twitter
+                    X (Formerly Twitter)
                   </a>
                 </li>
               </ul>
