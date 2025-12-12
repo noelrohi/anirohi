@@ -24,17 +24,12 @@ export default function AnimeDetailPage({ params }: PageProps) {
     error,
   } = useQuery(orpc.anime.getAboutInfo.queryOptions({ input: { id } }));
 
-  const { data: episodesData, isLoading: episodesLoading } = useQuery({
-    ...orpc.anime.getEpisodes.queryOptions({ input: { id } }),
-    enabled: !!animeData,
-  });
 
   if (error) {
     notFound();
   }
 
   const anime = animeData?.anime;
-  const episodes = episodesData?.episodes ?? [];
   const relatedAnime = animeData?.relatedAnimes ?? [];
   const recommendedAnime = animeData?.recommendedAnimes ?? [];
 
@@ -183,7 +178,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
         <div className="mx-auto max-w-7xl">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-10">
+            <div className="lg:col-span-2">
               {/* Synopsis */}
               <div>
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
@@ -192,35 +187,6 @@ export default function AnimeDetailPage({ params }: PageProps) {
                 <p className="text-muted-foreground leading-relaxed">
                   {info.description || "No description available."}
                 </p>
-              </div>
-
-              {/* Episodes */}
-              <div>
-                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
-                  Episodes
-                </h2>
-                {episodesLoading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Spinner className="size-6 text-muted-foreground" />
-                  </div>
-                ) : episodes.length > 0 ? (
-                  <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
-                    {episodes.map((episode) => (
-                      <Link
-                        key={episode.episodeId}
-                        href={`/watch/${id}/${episode.number}`}
-                        className="aspect-square rounded-lg bg-white/5 flex items-center justify-center text-sm text-muted-foreground hover:bg-white/10 hover:text-foreground transition-colors"
-                        title={episode.title || `Episode ${episode.number}`}
-                      >
-                        {episode.number}
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground/60 text-sm">
-                    No episodes available yet.
-                  </p>
-                )}
               </div>
             </div>
 

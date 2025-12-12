@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Navbar } from "@/components/blocks/navbar";
-import { Footer } from "@/components/blocks/footer";
 import { orpc } from "@/lib/query/orpc";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -14,7 +12,6 @@ interface PageProps {
   params: Promise<{ id: string; episode: string }>;
 }
 
-type EpisodeRange = "all" | "1-12" | "13-24" | "25-36" | "37-48" | "49+";
 type Category = "sub" | "dub";
 
 const animeServers = ["hd-1", "hd-2", "megacloud", "streamsb", "streamtape"] as const;
@@ -29,16 +26,14 @@ export default function WatchPage({ params }: PageProps) {
   const { id, episode } = resolvedParams;
   const currentEpisode = parseInt(episode);
 
-  const [selectedRange, setSelectedRange] = useState<EpisodeRange>("all");
   const [selectedCategory, setSelectedCategory] = useState<Category>("sub");
   const [userSelectedServer, setUserSelectedServer] = useState<AnimeServer | null>(null);
+  const [selectedRange, setSelectedRange] = useState<number>(0);
 
-  // Fetch anime info
   const { data: animeData, isLoading: infoLoading } = useQuery(
     orpc.anime.getAboutInfo.queryOptions({ input: { id } })
   );
 
-  // Fetch episodes list
   const { data: episodesData, isLoading: episodesLoading } = useQuery({
     ...orpc.anime.getEpisodes.queryOptions({ input: { id } }),
     enabled: !!animeData,
@@ -51,7 +46,6 @@ export default function WatchPage({ params }: PageProps) {
   const currentEpisodeData = allEpisodes.find((ep) => ep.number === currentEpisode);
   const episodeId = currentEpisodeData?.episodeId;
 
-  // Fetch episode servers
   const { data: serversData } = useQuery({
     ...orpc.anime.getEpisodeServers.queryOptions({
       input: { episodeId: episodeId ?? "" },
@@ -59,7 +53,6 @@ export default function WatchPage({ params }: PageProps) {
     enabled: !!episodeId,
   });
 
-  // Derive effective server from available servers or user selection
   const selectedServer = useMemo((): AnimeServer => {
     if (userSelectedServer) return userSelectedServer;
 
@@ -77,7 +70,6 @@ export default function WatchPage({ params }: PageProps) {
     return "hd-1";
   }, [userSelectedServer, serversData, selectedCategory]);
 
-  // Fetch episode sources (streaming URLs)
   const { data: sourcesData, isLoading: sourcesLoading } = useQuery({
     ...orpc.anime.getEpisodeSources.queryOptions({
       input: {
@@ -96,44 +88,47 @@ export default function WatchPage({ params }: PageProps) {
   );
 
   const totalEpisodes = allEpisodes.length;
-
-  const episodeRanges: { value: EpisodeRange; label: string }[] = useMemo(() => {
-    const ranges: { value: EpisodeRange; label: string }[] = [
-      { value: "all", label: "All" },
-    ];
-    if (totalEpisodes > 0) ranges.push({ value: "1-12", label: "1-12" });
-    if (totalEpisodes > 12) ranges.push({ value: "13-24", label: "13-24" });
-    if (totalEpisodes > 24) ranges.push({ value: "25-36", label: "25-36" });
-    if (totalEpisodes > 36) ranges.push({ value: "37-48", label: "37-48" });
-    if (totalEpisodes > 48) ranges.push({ value: "49+", label: "49+" });
-    return ranges;
-  }, [totalEpisodes]);
-
-  const filteredEpisodes = useMemo(() => {
-    if (selectedRange === "all") return allEpisodes;
-    const [start, end] = selectedRange === "49+"
-      ? [49, Infinity]
-      : selectedRange.split("-").map(Number);
-    return allEpisodes.filter((ep) => ep.number >= start && ep.number <= (end || Infinity));
-  }, [allEpisodes, selectedRange]);
-
   const prevEpisode = currentEpisode > 1 ? currentEpisode - 1 : null;
   const nextEpisode = currentEpisode < totalEpisodes ? currentEpisode + 1 : null;
 
+  // Generate episode ranges (80 per chunk)
+  const episodeRanges = useMemo(() => {
+    if (totalEpisodes <= 80) return [{ start: 1, end: totalEpisodes, label: "All" }];
+
+    const chunkSize = 80;
+    const ranges: { start: number; end: number; label: string }[] = [];
+
+    for (let i = 0; i < totalEpisodes; i += chunkSize) {
+      const start = i + 1;
+      const end = Math.min(i + chunkSize, totalEpisodes);
+      ranges.push({ start, end, label: `${start}-${end}` });
+    }
+
+    return ranges;
+  }, [totalEpisodes]);
+
+  // Auto-select range containing current episode
+  const activeRangeIndex = useMemo(() => {
+    return episodeRanges.findIndex(
+      (range) => currentEpisode >= range.start && currentEpisode <= range.end
+    );
+  }, [episodeRanges, currentEpisode]);
+
+  // Use user-selected range or auto-detected range
+  const effectiveRange = selectedRange >= 0 && selectedRange < episodeRanges.length
+    ? selectedRange
+    : Math.max(0, activeRangeIndex);
+
+  const filteredEpisodes = useMemo(() => {
+    const range = episodeRanges[effectiveRange];
+    if (!range) return allEpisodes;
+    return allEpisodes.filter((ep) => ep.number >= range.start && ep.number <= range.end);
+  }, [allEpisodes, episodeRanges, effectiveRange]);
+
   if (infoLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="pt-14">
-          <section className="bg-black">
-            <div className="mx-auto max-w-6xl">
-              <div className="aspect-video flex items-center justify-center bg-neutral-900">
-                <Spinner className="size-8 text-white/40" />
-              </div>
-            </div>
-          </section>
-        </main>
-        <Footer />
+      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center">
+        <Spinner className="size-10 text-white/20" />
       </div>
     );
   }
@@ -147,111 +142,206 @@ export default function WatchPage({ params }: PageProps) {
   if (!info.poster || !info.name) {
     notFound();
   }
+
   const subServers = serversData?.sub ?? [];
   const dubServers = serversData?.dub ?? [];
   const streamingSources = sourcesData?.sources ?? [];
   const subtitles = sourcesData?.subtitles ?? [];
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <div className="min-h-screen bg-[#0a0a0c] text-white">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full opacity-[0.03]"
+          style={{
+            background: "radial-gradient(circle, #fff 0%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+      </div>
 
-      <main className="pt-14">
-        {/* Video Player */}
-        <section className="bg-black">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative aspect-video bg-neutral-900">
-              {sourcesLoading ? (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-                </div>
-              ) : streamingSources.length > 0 ? (
-                <video
-                  key={`${episodeId}-${selectedServer}-${selectedCategory}`}
-                  className="w-full h-full"
-                  controls
-                  autoPlay
-                  playsInline
-                >
-                  {streamingSources.map((source, index) => (
-                    <source key={index} src={source.url} type="application/x-mpegURL" />
-                  ))}
-                  {subtitles.map((subtitle, index) => (
-                    <track
-                      key={index}
-                      kind="subtitles"
-                      src={subtitle.url}
-                      srcLang={subtitle.lang.toLowerCase().slice(0, 2)}
-                      label={subtitle.lang}
-                      default={index === 0}
-                    />
-                  ))}
-                </video>
-              ) : (
-                <>
-                  <Image
-                    src={info.poster}
-                    alt={`${info.name} Episode ${currentEpisode}`}
-                    fill
-                    className="object-cover opacity-40"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-muted-foreground mb-2">Video unavailable</p>
-                      <p className="text-xs text-muted-foreground/60">Try selecting a different server</p>
+      {/* Header Breadcrumb */}
+      <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-gradient-to-b from-black/90 to-transparent">
+        <div className="flex justify-center">
+          <nav className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm w-full max-w-[1300px]">
+            <Link href="/" className="font-semibold tracking-tight text-white/90 hover:text-white transition-colors flex-shrink-0">
+              anirohi
+            </Link>
+            <svg className="w-3 h-3 md:w-4 md:h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href={`/anime/${id}`} className="text-white/50 hover:text-white transition-colors truncate max-w-[120px] md:max-w-[300px]">
+              {info.name}
+            </Link>
+            <svg className="w-3 h-3 md:w-4 md:h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-white/70 flex-shrink-0">EP {currentEpisode}</span>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Layout */}
+      <div className="min-h-screen pt-14 md:pt-16 pb-6 md:pb-8 px-4 md:px-6 flex justify-center">
+        <div className="flex flex-col xl:flex-row gap-0 xl:gap-6 w-full max-w-[1300px]">
+          {/* Video Area */}
+          <main className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col w-full">
+            {/* Video Player */}
+            <div className="relative rounded-lg md:rounded-2xl overflow-hidden bg-black/50 backdrop-blur-sm border border-white/[0.05]">
+              <div className="aspect-video relative">
+                {sourcesLoading ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+                    <div className="flex flex-col items-center gap-4">
+                      <Spinner className="size-8 text-white/30" />
+                      <p className="text-sm text-white/40">Loading stream...</p>
                     </div>
                   </div>
-                </>
-              )}
+                ) : streamingSources.length > 0 ? (
+                  <video
+                    key={`${episodeId}-${selectedServer}-${selectedCategory}`}
+                    className="w-full h-full"
+                    controls
+                    autoPlay
+                    playsInline
+                  >
+                    {streamingSources.map((source, index) => (
+                      <source key={index} src={source.url} type="application/x-mpegURL" />
+                    ))}
+                    {subtitles.map((subtitle, index) => (
+                      <track
+                        key={index}
+                        kind="subtitles"
+                        src={subtitle.url}
+                        srcLang={subtitle.lang.toLowerCase().slice(0, 2)}
+                        label={subtitle.lang}
+                        default={index === 0}
+                      />
+                    ))}
+                  </video>
+                ) : (
+                  <>
+                    <Image
+                      src={info.poster}
+                      alt={`${info.name} Episode ${currentEpisode}`}
+                      fill
+                      className="object-cover opacity-30 blur-sm"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-6 h-6 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
+                        </div>
+                        <p className="text-white/60 text-sm mb-1">Video unavailable</p>
+                        <p className="text-white/30 text-xs">Try selecting a different server</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
 
-              {/* Info overlay */}
-              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/70 via-black/30 to-transparent pointer-events-none" />
-              <div className="absolute top-0 left-0 p-4 pointer-events-none">
-                <p className="text-xs text-white/60 mb-1">
-                  Episode {currentEpisode} {currentEpisodeData?.title && `• ${currentEpisodeData.title}`}
-                </p>
-                <h1 className="font-heading text-xl text-white">
+            {/* Episode Info & Controls */}
+            <div className="mt-4 md:mt-6 flex items-start justify-between gap-4 md:gap-8">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 md:gap-3 mb-2">
+                  <span className="px-2 py-0.5 rounded bg-white/10 text-xs text-white/70 font-medium tracking-wide">
+                    EP {currentEpisode}
+                  </span>
+                  {currentEpisodeData?.isFiller && (
+                    <span className="px-2 py-0.5 rounded bg-amber-500/20 text-xs text-amber-400 font-medium tracking-wide">
+                      FILLER
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-lg md:text-2xl font-semibold tracking-tight text-white/90 mb-1 line-clamp-2">
                   {info.name}
                 </h1>
+                {currentEpisodeData?.title && (
+                  <p className="text-white/40 text-xs md:text-sm line-clamp-1">
+                    {currentEpisodeData.title}
+                  </p>
+                )}
+              </div>
+
+              {/* Navigation */}
+              <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+                {prevEpisode ? (
+                  <Link
+                    href={`/watch/${id}/${prevEpisode}`}
+                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                  >
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/[0.02] flex items-center justify-center">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </div>
+                )}
+                {nextEpisode ? (
+                  <Link
+                    href={`/watch/${id}/${nextEpisode}`}
+                    className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                  >
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/[0.02] flex items-center justify-center">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Server Selection */}
-            <div className="p-3 bg-neutral-900/80 border-b border-white/5">
-              <div className="flex flex-wrap items-center gap-4">
-                {/* Category Toggle */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Audio:</span>
-                  <div className="flex gap-1">
+            <div className="mt-4 md:mt-6 p-3 md:p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="flex flex-wrap items-center gap-4 md:gap-6">
+                {/* Audio Toggle */}
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider">Audio</span>
+                  <div className="flex rounded-lg bg-white/[0.03] p-0.5 md:p-1">
                     <button
                       onClick={() => setSelectedCategory("sub")}
                       disabled={subServers.length === 0}
-                      className={`px-3 py-1 rounded text-xs transition-colors ${
+                      className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                         selectedCategory === "sub"
-                          ? "bg-white/20 text-foreground"
-                          : "text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                          ? "bg-white/10 text-white shadow-sm"
+                          : "text-white/50 hover:text-white/70 disabled:opacity-30 disabled:cursor-not-allowed"
                       }`}
                     >
-                      SUB ({subServers.length})
+                      SUB
                     </button>
                     <button
                       onClick={() => setSelectedCategory("dub")}
                       disabled={dubServers.length === 0}
-                      className={`px-3 py-1 rounded text-xs transition-colors ${
+                      className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                         selectedCategory === "dub"
-                          ? "bg-white/20 text-foreground"
-                          : "text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                          ? "bg-white/10 text-white shadow-sm"
+                          : "text-white/50 hover:text-white/70 disabled:opacity-30 disabled:cursor-not-allowed"
                       }`}
                     >
-                      DUB ({dubServers.length})
+                      DUB
                     </button>
                   </div>
                 </div>
 
-                {/* Server Selection */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Server:</span>
-                  <div className="flex gap-1 flex-wrap">
+                <div className="hidden md:block w-px h-6 bg-white/10" />
+
+                {/* Servers */}
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider">Server</span>
+                  <div className="flex flex-wrap gap-1.5 md:gap-2">
                     {(selectedCategory === "sub" ? subServers : dubServers).map((server) => {
                       const serverName = server.serverName;
                       if (!isAnimeServer(serverName)) return null;
@@ -259,10 +349,10 @@ export default function WatchPage({ params }: PageProps) {
                         <button
                           key={serverName}
                           onClick={() => setUserSelectedServer(serverName)}
-                          className={`px-3 py-1 rounded text-xs transition-colors ${
+                          className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                             selectedServer === serverName
-                              ? "bg-white/20 text-foreground"
-                              : "text-muted-foreground hover:text-foreground"
+                              ? "bg-white text-black"
+                              : "bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white/80"
                           }`}
                         >
                           {serverName}
@@ -273,177 +363,169 @@ export default function WatchPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
+            </div>
+          </main>
 
-            {/* Controls */}
-            <div className="flex items-center justify-between p-3 bg-neutral-900/50">
-              <div className="flex items-center gap-2">
-                {prevEpisode ? (
-                  <Link
-                    href={`/watch/${id}/${prevEpisode}`}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Prev
-                  </Link>
-                ) : (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-muted-foreground/40">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Prev
-                  </span>
-                )}
-
-                {nextEpisode ? (
-                  <Link
-                    href={`/watch/${id}/${nextEpisode}`}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-white/10 hover:bg-white/20 transition-colors"
-                  >
-                    Next
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ) : (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-muted-foreground/40">
-                    Next
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                )}
+          {/* Sidebar */}
+          <aside className="w-full xl:w-[380px] flex-shrink-0 mt-6 xl:mt-0 pt-6 xl:pt-0 border-t xl:border-t-0 border-white/[0.05] flex flex-col xl:overflow-y-auto custom-scrollbar">
+          {/* Anime Info Card - Hidden on mobile since info is shown above video */}
+          <div className="hidden xl:block p-5 border-b border-white/[0.05]">
+            <div className="flex gap-4">
+              <div className="relative w-20 aspect-[3/4] rounded-lg overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+                <Image
+                  src={info.poster}
+                  alt={info.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-
-              <Link
-                href={`/anime/${id}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Details
-              </Link>
+              <div className="flex-1 min-w-0 pt-1">
+                <h2 className="font-semibold text-white/90 line-clamp-2 leading-snug">
+                  {info.name}
+                </h2>
+                <div className="flex items-center gap-2 mt-2 text-xs text-white/40">
+                  <span>{anime.moreInfo?.type}</span>
+                  <span className="w-1 h-1 rounded-full bg-white/20" />
+                  <span>{totalEpisodes} episodes</span>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
 
-        {/* Episodes */}
-        <section className="py-8 px-4">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Episode Grid */}
-              <div className="lg:col-span-2">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Episodes
-                  </h2>
-                  <div className="flex items-center gap-1">
-                    {episodeRanges.map((range) => (
-                      <button
-                        key={range.value}
-                        onClick={() => setSelectedRange(range.value)}
-                        className={`px-3 py-1 rounded text-xs transition-colors ${
-                          selectedRange === range.value
-                            ? "bg-white/10 text-foreground"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {range.label}
-                      </button>
-                    ))}
-                  </div>
+          {/* Episodes Grid */}
+          <div className="border-b border-white/[0.05]">
+            <div className="px-4 py-3 border-b border-white/[0.05]">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs text-white/40 uppercase tracking-wider font-medium">
+                  Episodes
+                </h3>
+                <span className="text-xs text-white/30">{totalEpisodes} total</span>
+              </div>
+
+              {/* Range Selector */}
+              {episodeRanges.length > 1 && (
+                <div className="flex flex-wrap gap-1">
+                  {episodeRanges.map((range, index) => (
+                    <button
+                      key={range.label}
+                      onClick={() => setSelectedRange(index)}
+                      className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
+                        effectiveRange === index
+                          ? "bg-white text-black"
+                          : index === activeRangeIndex
+                          ? "bg-white/10 text-white/70 ring-1 ring-white/20"
+                          : "bg-white/[0.03] text-white/40 hover:bg-white/[0.06] hover:text-white/60"
+                      }`}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
                 </div>
+              )}
+            </div>
 
-                {episodesLoading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Spinner className="size-6 text-muted-foreground" />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
-                    {filteredEpisodes.map((ep) => (
+            {episodesLoading ? (
+              <div className="py-8 flex items-center justify-center">
+                <Spinner className="size-6 text-white/20" />
+              </div>
+            ) : (
+              <div className="p-3 md:p-4">
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 xl:grid-cols-8 gap-1.5">
+                  {filteredEpisodes.map((ep) => {
+                    const isActive = ep.number === currentEpisode;
+                    return (
                       <Link
                         key={ep.episodeId}
                         href={`/watch/${id}/${ep.number}`}
-                        className={`aspect-square rounded-lg flex items-center justify-center text-sm transition-colors ${
-                          ep.number === currentEpisode
-                            ? "bg-white text-background font-medium"
-                            : ep.isFiller
-                            ? "bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30"
-                            : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground"
-                        }`}
                         title={ep.title || `Episode ${ep.number}`}
+                        className={`aspect-square rounded flex items-center justify-center text-xs font-medium transition-all ${
+                          isActive
+                            ? "bg-white text-black ring-2 ring-white ring-offset-1 ring-offset-[#0a0a0c]"
+                            : ep.isFiller
+                            ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+                            : "bg-white/[0.04] text-white/50 hover:bg-white/[0.08] hover:text-white/70"
+                        }`}
                       >
                         {ep.number}
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Sidebar */}
-              <div className="lg:col-span-1 space-y-6">
-                {/* Current Anime */}
-                <div className="bg-white/[0.02] rounded-xl p-4 border border-white/5">
-                  <div className="flex gap-3">
-                    <div className="relative w-16 aspect-[3/4] rounded overflow-hidden flex-shrink-0">
-                      <Image
-                        src={info.poster}
-                        alt={info.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-foreground line-clamp-2">
-                        {info.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {anime.moreInfo?.type} · {totalEpisodes} ep
-                      </p>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
 
-                {/* Related */}
-                {relatedAnime.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
-                      Up Next
-                    </h3>
-                    <div className="space-y-3">
-                      {relatedAnime.slice(0, 4).map((related) => (
-                        <Link
-                          key={related.id}
-                          href={`/anime/${related.id}`}
-                          className="flex gap-3 group"
-                        >
-                          <div className="relative w-14 aspect-[3/4] rounded overflow-hidden flex-shrink-0">
-                            <Image
-                              src={related.poster}
-                              alt={related.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2">
-                              {related.name}
-                            </h4>
-                            <p className="text-xs text-muted-foreground/60 mt-1">
-                              {related.episodes?.sub || related.episodes?.dub || "?"} ep
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                {/* Legend */}
+                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/[0.05]">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-white" />
+                    <span className="text-[10px] text-white/40">Current</span>
                   </div>
-                )}
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-amber-500/30" />
+                    <span className="text-[10px] text-white/40">Filler</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Up Next */}
+          {relatedAnime.length > 0 && (
+            <div className="xl:flex-1">
+              <div className="px-4 py-3 border-b border-white/[0.05]">
+                <h3 className="text-xs text-white/40 uppercase tracking-wider font-medium">
+                  Up Next
+                </h3>
+              </div>
+              {/* Mobile: horizontal scroll, Desktop: vertical list */}
+              <div className="p-3 md:p-4 xl:p-2">
+                <div className="flex xl:flex-col gap-3 overflow-x-auto xl:overflow-x-visible pb-2 xl:pb-0 -mx-3 px-3 xl:mx-0 xl:px-0">
+                  {relatedAnime.slice(0, 6).map((related) => (
+                    <Link
+                      key={related.id}
+                      href={`/anime/${related.id}`}
+                      className="flex-shrink-0 xl:flex-shrink w-32 xl:w-auto xl:flex gap-3 p-2 rounded-lg hover:bg-white/[0.04] transition-colors group"
+                    >
+                      <div className="relative w-full xl:w-12 aspect-[3/4] rounded-md overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+                        <Image
+                          src={related.poster}
+                          alt={related.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="xl:flex-1 min-w-0 mt-2 xl:mt-0 xl:py-0.5">
+                        <h4 className="text-xs xl:text-sm text-white/70 group-hover:text-white/90 transition-colors line-clamp-2 leading-snug">
+                          {related.name}
+                        </h4>
+                        <p className="text-[10px] xl:text-xs text-white/30 mt-1">
+                          {related.episodes?.sub || related.episodes?.dub || "?"} ep
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
+          )}
+        </aside>
+        </div>
+      </div>
 
-      <Footer />
+      {/* Custom scrollbar styles */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      `}</style>
     </div>
   );
 }
