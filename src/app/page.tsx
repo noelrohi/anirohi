@@ -3,31 +3,40 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { searchAnime, trendingAnime } from "@/lib/mock-data";
-import type { Anime } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/query/orpc";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Anime[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    if (query.length > 1) {
-      setIsSearching(true);
-      setSearchResults(searchAnime(query));
-    } else {
-      setIsSearching(false);
-      setSearchResults([]);
-    }
-  };
+  const { data: homeData, isLoading: homeLoading } = useQuery(
+    orpc.anime.getHomePage.queryOptions({})
+  );
+
+  const { data: searchData, isLoading: searchLoading } = useQuery({
+    ...orpc.anime.search.queryOptions({
+      input: { query: searchQuery, page: 1 },
+    }),
+    enabled: searchQuery.length >= 2,
+  });
+
+  const trendingAnime = (homeData?.trendingAnimes ?? []).filter(
+    (item): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null
+  );
+  const searchResults = (searchData?.animes ?? []).filter(
+    (item): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null
+  );
+  const isSearching = searchQuery.length >= 2;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Clean & Minimal */}
       <section className="relative min-h-screen flex flex-col">
         {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-cyan/[0.02] via-transparent to-pink/[0.02]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan/[0.02] via-transparent to-pink/[0.02] pointer-events-none" />
 
         {/* Main Content */}
         <div className="flex-1 flex items-center justify-center px-4">
@@ -47,7 +56,7 @@ export default function LandingPage() {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search anime..."
                   className="w-full px-5 py-4 pl-12 rounded-xl bg-white/[0.03] border border-white/10 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-white/20 transition-colors"
                 />
@@ -69,7 +78,11 @@ export default function LandingPage() {
               {/* Search Results Dropdown */}
               {isSearching && (
                 <div className="absolute top-full left-0 right-0 mt-2 p-2 rounded-xl bg-card border border-white/10 max-h-80 overflow-y-auto z-50">
-                  {searchResults.length > 0 ? (
+                  {searchLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Spinner className="size-5 text-muted-foreground" />
+                    </div>
+                  ) : searchResults.length > 0 ? (
                     <div className="space-y-1">
                       {searchResults.map((anime) => (
                         <Link
@@ -79,18 +92,18 @@ export default function LandingPage() {
                         >
                           <div className="relative w-10 h-14 rounded overflow-hidden flex-shrink-0">
                             <Image
-                              src={anime.coverImage}
-                              alt={anime.title}
+                              src={anime.poster}
+                              alt={anime.name}
                               fill
                               className="object-cover"
                             />
                           </div>
                           <div className="flex-1 min-w-0 text-left">
                             <h3 className="text-sm font-medium text-foreground line-clamp-1">
-                              {anime.title}
+                              {anime.name}
                             </h3>
                             <p className="text-xs text-muted-foreground">
-                              {anime.type} · {anime.year}
+                              {anime.type} · {anime.duration}
                             </p>
                           </div>
                         </Link>
@@ -130,27 +143,33 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-              {trendingAnime.slice(0, 6).map((anime) => (
-                <Link
-                  key={anime.id}
-                  href={`/anime/${anime.id}`}
-                  className="group block"
-                >
-                  <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
-                    <Image
-                      src={anime.coverImage}
-                      alt={anime.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="mt-2 text-xs text-muted-foreground line-clamp-1 group-hover:text-foreground transition-colors">
-                    {anime.title}
-                  </h3>
-                </Link>
-              ))}
-            </div>
+            {homeLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Spinner className="size-6 text-muted-foreground" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {trendingAnime.slice(0, 6).map((anime) => (
+                  <Link
+                    key={anime.id}
+                    href={`/anime/${anime.id}`}
+                    className="group block"
+                  >
+                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/5">
+                      <Image
+                        src={anime.poster}
+                        alt={anime.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="mt-2 text-xs text-muted-foreground line-clamp-1 group-hover:text-foreground transition-colors">
+                      {anime.name}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

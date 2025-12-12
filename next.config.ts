@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  serverExternalPackages: ["aniwatch", "pino", "thread-stream"],
 };
 
 export default nextConfig;
