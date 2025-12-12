@@ -39,6 +39,12 @@ export function Navbar() {
                 >
                   Schedule
                 </Link>
+                <Link
+                  href="/saved"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Saved
+                </Link>
               </div>
             </div>
 
@@ -123,6 +129,13 @@ export function Navbar() {
                 className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
               >
                 Schedule
+              </Link>
+              <Link
+                href="/saved"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              >
+                Saved
               </Link>
             </div>
           </div>

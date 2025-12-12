@@ -9,6 +9,8 @@ import { Navbar } from "@/components/blocks/navbar";
 import { Footer } from "@/components/blocks/footer";
 import { orpc } from "@/lib/query/orpc";
 import { Spinner } from "@/components/ui/spinner";
+import { useSavedSeries } from "@/hooks/use-saved-series";
+import { toast } from "sonner";
 
 
 interface PageProps {
@@ -24,6 +26,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
     error,
   } = useQuery(orpc.anime.getAboutInfo.queryOptions({ input: { id } }));
 
+  const { isSaved, toggleSave } = useSavedSeries();
 
   if (error) {
     notFound();
@@ -138,10 +141,20 @@ export default function AnimeDetailPage({ params }: PageProps) {
                   </svg>
                   Watch
                 </Link>
-                <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground/10 text-sm font-medium hover:bg-foreground/20 transition-colors">
+                <button
+                  onClick={() => {
+                    const wasSaved = toggleSave({
+                      id,
+                      name: info.name!,
+                      poster: info.poster!,
+                    });
+                    toast(wasSaved ? "Added to saved" : "Removed from saved");
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground/10 text-sm font-medium hover:bg-foreground/20 transition-colors"
+                >
                   <svg
                     className="w-4 h-4"
-                    fill="none"
+                    fill={isSaved(id) ? "currentColor" : "none"}
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -152,7 +165,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                       d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
                     />
                   </svg>
-                  Save
+                  {isSaved(id) ? "Saved" : "Save"}
                 </button>
               </div>
 
