@@ -1,14 +1,14 @@
-import { RPCHandler } from "@orpc/server/fetch";
-import { onError } from "@orpc/server";
-import { CORSPlugin } from "@orpc/server/plugins";
+import { isAllowedOrigin } from "@/lib/config/cors";
 import { appRouter } from "@/lib/orpc/router";
-import { ALLOWED_ORIGINS, isAllowedOrigin } from "@/lib/config/cors";
+import { onError } from "@orpc/server";
+import { RPCHandler } from "@orpc/server/fetch";
+import { CORSPlugin } from "@orpc/server/plugins";
 
 const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin({
       origin: (origin) => {
-        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        if (isAllowedOrigin(origin ?? null)) {
           return origin;
         }
         return undefined;
