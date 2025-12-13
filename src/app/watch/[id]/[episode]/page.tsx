@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, use, useCallback } from "react";
+import { useMemo, use, useCallback, useRef, useEffect } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import {
   useMediaState,
   useMediaRemote,
   type MediaProviderAdapter,
+  type MediaPlayerInstance,
 } from "@vidstack/react";
 import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 import "@vidstack/react/player/styles/default/theme.css";
@@ -22,6 +23,8 @@ import "@vidstack/react/player/styles/default/layouts/video.css";
 import { orpc } from "@/lib/query/orpc";
 import { getProxyUrl } from "@/lib/proxy";
 import { Spinner } from "@/components/ui/spinner";
+import { useWatchProgress } from "@/hooks/use-watch-progress";
+import { usePlayerPreferences } from "@/hooks/use-player-preferences";
 
 interface PageProps {
   params: Promise<{ id: string; episode: string }>;
@@ -63,10 +66,58 @@ function SkipButton({ intro, outro }: SkipButtonProps) {
   );
 }
 
+interface ProgressTrackerProps {
+  animeId: string;
+  episodeNumber: number;
+  saveProgress: (animeId: string, episodeNumber: number, currentTime: number, duration: number) => void;
+  updatePreferences: (updates: { playbackRate?: number; volume?: number; muted?: boolean; captionLanguage?: string | null }) => void;
+}
+
+function ProgressTracker({ animeId, episodeNumber, saveProgress, updatePreferences }: ProgressTrackerProps) {
+  const currentTime = useMediaState("currentTime");
+  const duration = useMediaState("duration");
+  const playbackRate = useMediaState("playbackRate");
+  const volume = useMediaState("volume");
+  const muted = useMediaState("muted");
+  const textTrack = useMediaState("textTrack");
+  const lastSaveRef = useRef(0);
+  const lastPrefsRef = useRef({ playbackRate: 1, volume: 1, muted: false, captionLanguage: null as string | null });
+
+  // Save progress every 5 seconds of playback
+  useEffect(() => {
+    if (currentTime - lastSaveRef.current >= 5 || lastSaveRef.current - currentTime >= 5) {
+      lastSaveRef.current = currentTime;
+      saveProgress(animeId, episodeNumber, currentTime, duration);
+    }
+  }, [currentTime, duration, animeId, episodeNumber, saveProgress]);
+
+  // Save preferences when they change
+  useEffect(() => {
+    const prefs = lastPrefsRef.current;
+    const currentCaptionLang = textTrack?.label ?? null;
+    if (
+      playbackRate !== prefs.playbackRate ||
+      volume !== prefs.volume ||
+      muted !== prefs.muted ||
+      currentCaptionLang !== prefs.captionLanguage
+    ) {
+      lastPrefsRef.current = { playbackRate, volume, muted, captionLanguage: currentCaptionLang };
+      updatePreferences({ playbackRate, volume, muted, captionLanguage: currentCaptionLang });
+    }
+  }, [playbackRate, volume, muted, textTrack, updatePreferences]);
+
+  return null;
+}
+
 export default function WatchPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { id, episode } = resolvedParams;
   const currentEpisode = parseInt(episode);
+  const playerRef = useRef<MediaPlayerInstance>(null);
+  const hasRestoredRef = useRef(false);
+
+  const { getProgress, saveProgress } = useWatchProgress();
+  const { preferences, updatePreferences } = usePlayerPreferences();
 
   const [selectedCategory, setSelectedCategory] = useQueryState(
     "category",
@@ -90,6 +141,37 @@ export default function WatchPage({ params }: PageProps) {
       };
     }
   }, []);
+
+  // Restore saved progress and preferences when player is ready
+  const onCanPlay = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+
+    // Restore playback rate
+    if (preferences.playbackRate !== 1) {
+      player.playbackRate = preferences.playbackRate;
+    }
+
+    // Restore volume
+    player.volume = preferences.volume;
+    player.muted = preferences.muted;
+
+    // Restore watch progress
+    const progress = getProgress(id, currentEpisode);
+    if (progress && progress.currentTime > 5) {
+      // Only restore if we haven't finished (more than 60s remaining)
+      const remaining = progress.duration - progress.currentTime;
+      if (remaining > 60) {
+        player.currentTime = progress.currentTime;
+      }
+    }
+  }, [id, currentEpisode, preferences, getProgress]);
+
+  // Reset restored flag when episode changes
+  useEffect(() => {
+    hasRestoredRef.current = false;
+  }, [id, currentEpisode, selectedServer, selectedCategory]);
 
   const { data: animeData, isLoading: infoLoading } = useQuery(
     orpc.anime.getAboutInfo.queryOptions({ input: { id } })
@@ -247,6 +329,7 @@ export default function WatchPage({ params }: PageProps) {
                   </div>
                 ) : streamingSources.length > 0 ? (
                   <MediaPlayer
+                    ref={playerRef}
                     key={`${episodeId}-${selectedServer}-${selectedCategory}`}
                     src={{
                       src: getProxyUrl(streamingSources[0]?.url),
@@ -255,9 +338,10 @@ export default function WatchPage({ params }: PageProps) {
                     viewType="video"
                     streamType="on-demand"
                     playsInline
-                    autoPlay
+                    autoPlay={preferences.autoplay}
                     crossOrigin="anonymous"
                     onProviderChange={onProviderChange}
+                    onCanPlay={onCanPlay}
                     className="w-full h-full"
                   >
                     <MediaProvider>
@@ -267,17 +351,31 @@ export default function WatchPage({ params }: PageProps) {
                         alt={`${info.name} Episode ${currentEpisode}`}
                       />
                     </MediaProvider>
-                    {subtitles.map((subtitle, index) => (
-                      <Track
-                        key={`${subtitle.lang}-${index}`}
-                        src={getProxyUrl(subtitle.url)}
-                        kind="subtitles"
-                        label={subtitle.lang}
-                        language={subtitle.lang.toLowerCase().slice(0, 2)}
-                        default={index === 0}
-                      />
-                    ))}
+                    {subtitles.map((subtitle, index) => {
+                      const isPreferredLang = preferences.captionLanguage
+                        ? subtitle.lang.toLowerCase().includes(preferences.captionLanguage.toLowerCase())
+                        : false;
+                      const isDefault = preferences.captionLanguage
+                        ? isPreferredLang
+                        : index === 0;
+                      return (
+                        <Track
+                          key={`${subtitle.lang}-${index}`}
+                          src={getProxyUrl(subtitle.url)}
+                          kind="subtitles"
+                          label={subtitle.lang}
+                          language={subtitle.lang.toLowerCase().slice(0, 2)}
+                          default={isDefault}
+                        />
+                      );
+                    })}
                     <SkipButton intro={intro} outro={outro} />
+                    <ProgressTracker
+                      animeId={id}
+                      episodeNumber={currentEpisode}
+                      saveProgress={saveProgress}
+                      updatePreferences={updatePreferences}
+                    />
                     <DefaultVideoLayout icons={defaultLayoutIcons} />
                   </MediaPlayer>
                 ) : (
