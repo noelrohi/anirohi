@@ -66,55 +66,13 @@ function SkipButton({ intro, outro }: SkipButtonProps) {
   );
 }
 
-interface ProgressTrackerProps {
-  animeId: string;
-  episodeNumber: number;
-  saveProgress: (animeId: string, episodeNumber: number, currentTime: number, duration: number) => void;
-  updatePreferences: (updates: { playbackRate?: number; volume?: number; muted?: boolean; captionLanguage?: string | null }) => void;
-}
-
-function ProgressTracker({ animeId, episodeNumber, saveProgress, updatePreferences }: ProgressTrackerProps) {
-  const currentTime = useMediaState("currentTime");
-  const duration = useMediaState("duration");
-  const playbackRate = useMediaState("playbackRate");
-  const volume = useMediaState("volume");
-  const muted = useMediaState("muted");
-  const textTrack = useMediaState("textTrack");
-  const lastSaveRef = useRef(0);
-  const lastPrefsRef = useRef({ playbackRate: 1, volume: 1, muted: false, captionLanguage: null as string | null });
-
-  // Save progress every 5 seconds of playback
-  useEffect(() => {
-    if (currentTime - lastSaveRef.current >= 5 || lastSaveRef.current - currentTime >= 5) {
-      lastSaveRef.current = currentTime;
-      saveProgress(animeId, episodeNumber, currentTime, duration);
-    }
-  }, [currentTime, duration, animeId, episodeNumber, saveProgress]);
-
-  // Save preferences when they change
-  useEffect(() => {
-    const prefs = lastPrefsRef.current;
-    const currentCaptionLang = textTrack?.label ?? null;
-    if (
-      playbackRate !== prefs.playbackRate ||
-      volume !== prefs.volume ||
-      muted !== prefs.muted ||
-      currentCaptionLang !== prefs.captionLanguage
-    ) {
-      lastPrefsRef.current = { playbackRate, volume, muted, captionLanguage: currentCaptionLang };
-      updatePreferences({ playbackRate, volume, muted, captionLanguage: currentCaptionLang });
-    }
-  }, [playbackRate, volume, muted, textTrack, updatePreferences]);
-
-  return null;
-}
-
 export default function WatchPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { id, episode } = resolvedParams;
   const currentEpisode = parseInt(episode);
   const playerRef = useRef<MediaPlayerInstance>(null);
   const hasRestoredRef = useRef(false);
+  const lastSaveTimeRef = useRef(0);
 
   const { getProgress, saveProgress } = useWatchProgress();
   const { preferences, updatePreferences } = usePlayerPreferences();
@@ -168,9 +126,46 @@ export default function WatchPage({ params }: PageProps) {
     }
   }, [id, currentEpisode, preferences, getProgress]);
 
+  // Save progress on time update (throttled to every 5 seconds)
+  const onTimeUpdate = useCallback(() => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const currentTime = player.currentTime;
+    const duration = player.duration;
+
+    if (Math.abs(currentTime - lastSaveTimeRef.current) >= 5) {
+      lastSaveTimeRef.current = currentTime;
+      saveProgress(id, currentEpisode, currentTime, duration);
+    }
+  }, [id, currentEpisode, saveProgress]);
+
+  // Save volume preference on change
+  const onVolumeChange = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || !hasRestoredRef.current) return;
+    updatePreferences({ volume: player.volume, muted: player.muted });
+  }, [updatePreferences]);
+
+  // Save playback rate preference on change
+  const onRateChange = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || !hasRestoredRef.current) return;
+    updatePreferences({ playbackRate: player.playbackRate });
+  }, [updatePreferences]);
+
+  // Save caption language preference on change
+  const onTextTrackChange = useCallback(() => {
+    const player = playerRef.current;
+    if (!player || !hasRestoredRef.current) return;
+    const activeTrack = player.textTracks.selected;
+    updatePreferences({ captionLanguage: activeTrack?.label ?? null });
+  }, [updatePreferences]);
+
   // Reset restored flag when episode changes
   useEffect(() => {
     hasRestoredRef.current = false;
+    lastSaveTimeRef.current = 0;
   }, [id, currentEpisode, selectedServer, selectedCategory]);
 
   const { data: animeData, isLoading: infoLoading } = useQuery(
@@ -342,6 +337,10 @@ export default function WatchPage({ params }: PageProps) {
                     crossOrigin="anonymous"
                     onProviderChange={onProviderChange}
                     onCanPlay={onCanPlay}
+                    onTimeUpdate={onTimeUpdate}
+                    onVolumeChange={onVolumeChange}
+                    onRateChange={onRateChange}
+                    onTextTrackChange={onTextTrackChange}
                     className="w-full h-full"
                   >
                     <MediaProvider>
@@ -370,12 +369,6 @@ export default function WatchPage({ params }: PageProps) {
                       );
                     })}
                     <SkipButton intro={intro} outro={outro} />
-                    <ProgressTracker
-                      animeId={id}
-                      episodeNumber={currentEpisode}
-                      saveProgress={saveProgress}
-                      updatePreferences={updatePreferences}
-                    />
                     <DefaultVideoLayout icons={defaultLayoutIcons} />
                   </MediaPlayer>
                 ) : (
