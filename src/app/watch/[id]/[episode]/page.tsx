@@ -422,7 +422,7 @@ export default function WatchPage({ params }: PageProps) {
               <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                 {prevEpisode ? (
                   <Link
-                    href={`/watch/${id}/${prevEpisode}?range=${selectedRange}`}
+                    href={`/watch/${id}/${prevEpisode}?category=${selectedCategory}&server=${selectedServer}&range=${selectedRange}`}
                     className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                   >
                     <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -438,7 +438,7 @@ export default function WatchPage({ params }: PageProps) {
                 )}
                 {nextEpisode ? (
                   <Link
-                    href={`/watch/${id}/${nextEpisode}?range=${selectedRange}`}
+                    href={`/watch/${id}/${nextEpisode}?category=${selectedCategory}&server=${selectedServer}&range=${selectedRange}`}
                     className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors"
                   >
                     <svg className="w-4 h-4 md:w-5 md:h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -587,7 +587,7 @@ export default function WatchPage({ params }: PageProps) {
                     return (
                       <Link
                         key={ep.episodeId}
-                        href={`/watch/${id}/${ep.number}?range=${selectedRange}`}
+                        href={`/watch/${id}/${ep.number}?category=${selectedCategory}&server=${selectedServer}&range=${selectedRange}`}
                         title={ep.title || `Episode ${ep.number}`}
                         className={`aspect-square rounded flex items-center justify-center text-[11px] md:text-xs font-medium transition-all ${
                           isActive
