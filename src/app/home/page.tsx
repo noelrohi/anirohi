@@ -4,7 +4,10 @@ import { Footer } from "@/components/blocks/footer";
 import { Navbar } from "@/components/blocks/navbar";
 import { SpotlightCarousel } from "@/components/blocks/spotlight-carousel";
 import { Spinner } from "@/components/ui/spinner";
-import { useWatchProgress, type WatchProgress } from "@/hooks/use-watch-progress";
+import {
+  useWatchProgress,
+  type WatchProgress,
+} from "@/hooks/use-watch-progress";
 
 import { orpc } from "@/lib/query/orpc";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +32,7 @@ function ContinueWatchingGrid({ items }: { items: WatchProgress[] }) {
   // Filter to only items with poster and name
   const validItems = items.filter(
     (item): item is WatchProgress & { poster: string; name: string } =>
-      !!item.poster && !!item.name
+      !!item.poster && !!item.name,
   );
 
   if (validItems.length === 0) return null;
@@ -44,7 +47,7 @@ function ContinueWatchingGrid({ items }: { items: WatchProgress[] }) {
             href={`/watch/${item.animeId}/${item.episodeNumber}`}
             className="group block"
           >
-            <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+            <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
               <Image
                 src={item.poster}
                 alt={item.name}
@@ -95,7 +98,7 @@ function AnimeGrid({
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
       {anime.map((item) => (
         <Link key={item.id} href={`/anime/${item.id}`} className="group block">
-          <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+          <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
             <Image
               src={item.poster}
               alt={item.name}
@@ -124,20 +127,28 @@ export default function HomePage() {
   );
 
   const spotlightAnime = (homeData?.spotlightAnimes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
   const trendingAnime = (homeData?.trendingAnimes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
   const latestEpisodes = (homeData?.latestEpisodeAnimes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
   const topAiring = (homeData?.topAiringAnimes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
 
   return (

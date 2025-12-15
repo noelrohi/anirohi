@@ -24,7 +24,8 @@ export default function SavedPage() {
             Saved Series
           </h1>
           <p className="text-muted-foreground mb-8">
-            {sortedSeries.length} {sortedSeries.length === 1 ? "series" : "series"} saved
+            {sortedSeries.length}{" "}
+            {sortedSeries.length === 1 ? "series" : "series"} saved
           </p>
 
           {sortedSeries.length === 0 ? (
@@ -67,56 +68,58 @@ export default function SavedPage() {
                   : `/anime/${series.id}`;
 
                 return (
-                <div key={series.id} className="group relative">
-                  <Link href={href} className="block">
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
-                      <Image
-                        src={series.poster}
-                        alt={series.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      {progress && (
-                        <>
-                          <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-background/80 backdrop-blur-sm text-xs font-medium">
-                            EP {progress.episodeNumber}
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 h-1 bg-foreground/20">
-                            <div
-                              className="h-full bg-primary transition-all"
-                              style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <h3 className="mt-2 text-sm text-muted-foreground line-clamp-2 group-hover:text-foreground transition-colors">
-                      {series.name}
-                    </h3>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      removeSaved(series.id);
-                      toast("Removed from saved");
-                    }}
-                    className="absolute top-2 right-2 p-1.5 rounded-md bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 hover:bg-background transition-all"
-                    aria-label="Remove from saved"
-                  >
-                    <svg
-                      className="w-4 h-4 text-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  <div key={series.id} className="group relative">
+                    <Link href={href} className="block">
+                      <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
+                        <Image
+                          src={series.poster}
+                          alt={series.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        {progress && (
+                          <>
+                            <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-background/80 backdrop-blur-sm text-xs font-medium">
+                              EP {progress.episodeNumber}
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-foreground/20">
+                              <div
+                                className="h-full bg-primary transition-all"
+                                style={{
+                                  width: `${Math.min(progressPercent, 100)}%`,
+                                }}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <h3 className="mt-2 text-sm text-muted-foreground line-clamp-2 group-hover:text-foreground transition-colors">
+                        {series.name}
+                      </h3>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        removeSaved(series.id);
+                        toast("Removed from saved");
+                      }}
+                      className="absolute top-2 right-2 p-1.5 rounded-md bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 hover:bg-background transition-all"
+                      aria-label="Remove from saved"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                      <svg
+                        className="w-4 h-4 text-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 );
               })}
             </div>

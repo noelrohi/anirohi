@@ -7,16 +7,16 @@ export function Footer() {
       <div
         className="absolute inset-0 opacity-40"
         style={{
-          background: `radial-gradient(ellipse 80% 50% at 50% 100%, oklch(0.75 0.18 195 / 12%) 0%, transparent 60%)`
+          background: `radial-gradient(ellipse 80% 50% at 50% 100%, oklch(0.75 0.18 195 / 12%) 0%, transparent 60%)`,
         }}
       />
 
       {/* Decorative top line */}
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="flex items-center gap-4">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+          <div className="h-px flex-1 bg-linear-to-r from-transparent via-foreground/10 to-transparent" />
           <div className="h-1.5 w-1.5 rotate-45 bg-cyan/60" />
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-foreground/10 to-transparent" />
+          <div className="h-px flex-1 bg-linear-to-l from-transparent via-foreground/10 to-transparent" />
         </div>
       </div>
 
@@ -24,10 +24,7 @@ export function Footer() {
         <div className="flex flex-col justify-between gap-12 md:flex-row md:items-start">
           {/* Brand column */}
           <div className="space-y-6">
-            <Link
-              href="/"
-              className="group inline-block"
-            >
+            <Link href="/" className="group inline-block">
               <span className="font-heading text-3xl tracking-tight text-foreground/90 transition-colors group-hover:text-foreground">
                 ani<span className="text-cyan glow-text">rohi</span>
               </span>

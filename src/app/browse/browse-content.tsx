@@ -30,7 +30,7 @@ type CategoryId = (typeof categories)[number]["id"];
 export function BrowseContent() {
   const [category, setCategory] = useQueryState(
     "category",
-    parseAsStringLiteral(categoryIds).withDefault("most-popular")
+    parseAsStringLiteral(categoryIds).withDefault("most-popular"),
   );
 
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
@@ -43,17 +43,17 @@ export function BrowseContent() {
         getNextPageParam: (lastPage) =>
           lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined,
         initialPageParam: 1,
-      })
+      }),
     );
 
   const animes =
     data?.pages.flatMap((page) =>
       (page.animes ?? []).filter(
         (
-          item
+          item,
         ): item is typeof item & { id: string; name: string; poster: string } =>
-          item.id !== null && item.name !== null && item.poster !== null
-      )
+          item.id !== null && item.name !== null && item.poster !== null,
+      ),
     ) ?? [];
 
   const handleCategoryChange = (newCategory: CategoryId) => {
@@ -107,14 +107,14 @@ export function BrowseContent() {
                     href={`/anime/${anime.id}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+                    <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={anime.poster}
                         alt={anime.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-linear-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h3 className="mt-2 text-sm text-muted-foreground line-clamp-1 group-hover:text-foreground transition-colors">
                       {anime.name}

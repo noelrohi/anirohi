@@ -139,6 +139,45 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Handle VTT files - rewrite relative URLs in thumbnail sprites
+    const isVtt = url.endsWith(".vtt") || contentType.includes("text/vtt");
+    if (isVtt) {
+      const text = await response.text();
+      const baseUrl = new URL(url);
+      const lines = text.split("\n");
+      const rewritten: string[] = [];
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+
+        // Skip empty lines, WEBVTT header, and timestamp lines
+        if (!trimmed || trimmed === "WEBVTT" || trimmed.match(/^\d+$/) || trimmed.includes("-->")) {
+          rewritten.push(line);
+          continue;
+        }
+
+        // Check if line contains an image reference (for thumbnail VTT)
+        // Format: sprite-0.jpg#xywh=0,0,178,134 or https://example.com/sprite.jpg#xywh=...
+        if (trimmed.match(/\.(jpg|jpeg|png|webp)/i)) {
+          // Extract the URL part (before #) and fragment (after #)
+          const [urlPart, fragment] = trimmed.split("#");
+          const absoluteUrl = resolveUrl(urlPart, baseUrl);
+          const params = new URLSearchParams({ url: absoluteUrl });
+          if (headersParam) params.set("headers", headersParam);
+          const proxyUrl = `/api/proxy?${params.toString()}`;
+          rewritten.push(fragment ? `${proxyUrl}#${fragment}` : proxyUrl);
+          continue;
+        }
+
+        rewritten.push(line);
+      }
+
+      return new Response(rewritten.join("\n"), {
+        status: response.status,
+        headers: responseHeaders,
+      });
+    }
+
     // For video segments, stream directly without buffering
     return new Response(response.body, {
       status: response.status,

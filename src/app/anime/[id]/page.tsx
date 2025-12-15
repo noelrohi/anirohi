@@ -13,7 +13,6 @@ import { useSavedSeries } from "@/hooks/use-saved-series";
 import { useWatchProgress } from "@/hooks/use-watch-progress";
 import { toast } from "sonner";
 
-
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -142,7 +141,9 @@ export default function AnimeDetailPage({ params }: PageProps) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {lastWatched ? `Continue EP ${lastWatched.episodeNumber}` : "Watch"}
+                  {lastWatched
+                    ? `Continue EP ${lastWatched.episodeNumber}`
+                    : "Watch"}
                 </Link>
                 <button
                   onClick={() => {
@@ -278,8 +279,16 @@ export default function AnimeDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
               {relatedAnime
                 .filter(
-                  (item): item is typeof item & { id: string; poster: string; name: string } =>
-                    item.id !== null && item.poster !== null && item.name !== null
+                  (
+                    item,
+                  ): item is typeof item & {
+                    id: string;
+                    poster: string;
+                    name: string;
+                  } =>
+                    item.id !== null &&
+                    item.poster !== null &&
+                    item.name !== null,
                 )
                 .slice(0, 6)
                 .map((item) => (
@@ -288,7 +297,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                     href={`/anime/${item.id}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+                    <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={item.poster}
                         alt={item.name}
@@ -316,8 +325,16 @@ export default function AnimeDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
               {recommendedAnime
                 .filter(
-                  (item): item is typeof item & { id: string; poster: string; name: string } =>
-                    item.id !== null && item.poster !== null && item.name !== null
+                  (
+                    item,
+                  ): item is typeof item & {
+                    id: string;
+                    poster: string;
+                    name: string;
+                  } =>
+                    item.id !== null &&
+                    item.poster !== null &&
+                    item.name !== null,
                 )
                 .slice(0, 6)
                 .map((item) => (
@@ -326,7 +343,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                     href={`/anime/${item.id}`}
                     className="group block"
                   >
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+                    <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={item.poster}
                         alt={item.name}

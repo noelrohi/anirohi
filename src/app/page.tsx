@@ -11,7 +11,7 @@ export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: homeData, isLoading: homeLoading } = useQuery(
-    orpc.anime.getHomePage.queryOptions({})
+    orpc.anime.getHomePage.queryOptions({}),
   );
 
   const { data: searchData, isLoading: searchLoading } = useQuery({
@@ -22,12 +22,16 @@ export default function LandingPage() {
   });
 
   const trendingAnime = (homeData?.trendingAnimes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
   const searchResults = (searchData?.animes ?? []).filter(
-    (item): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null
+    (
+      item,
+    ): item is typeof item & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
   );
   const isSearching = searchQuery.length >= 2;
 
@@ -39,22 +43,22 @@ export default function LandingPage() {
         <div className="absolute inset-0 pointer-events-none">
           {/* Primary center glow */}
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] opacity-30"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-150 opacity-30"
             style={{
               background: `radial-gradient(ellipse at center, oklch(0.75 0.18 195 / 25%) 0%, transparent 70%)`,
             }}
           />
           {/* Secondary pink accent - offset */}
           <div
-            className="absolute top-1/3 left-1/3 w-[600px] h-[400px] opacity-20"
+            className="absolute top-1/3 left-1/3 w-150 h-100 opacity-20"
             style={{
               background: `radial-gradient(ellipse at center, oklch(0.7 0.2 340 / 20%) 0%, transparent 60%)`,
             }}
           />
           {/* Top fade */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-background to-transparent" />
           {/* Bottom fade into trending section */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-linear-to-t from-background to-transparent" />
         </div>
 
         {/* Noise texture overlay */}
@@ -72,13 +76,18 @@ export default function LandingPage() {
             <div className="relative inline-block mb-4">
               <h1 className="font-heading text-6xl sm:text-7xl md:text-8xl tracking-tight animate-scale-in">
                 <span className="text-foreground">ani</span>
-                <span className="text-cyan" style={{ textShadow: '0 0 40px oklch(0.8 0.15 195 / 50%)' }}>rohi</span>
+                <span
+                  className="text-cyan"
+                  style={{ textShadow: "0 0 40px oklch(0.8 0.15 195 / 50%)" }}
+                >
+                  rohi
+                </span>
               </h1>
             </div>
 
             <p
               className="text-muted-foreground text-lg mb-10 animate-fade-in-up"
-              style={{ animationDelay: '150ms' }}
+              style={{ animationDelay: "150ms" }}
             >
               Stream anime. No interruptions.
             </p>
@@ -86,7 +95,7 @@ export default function LandingPage() {
             {/* Search Bar */}
             <div
               className="relative animate-fade-in-up"
-              style={{ animationDelay: '300ms' }}
+              style={{ animationDelay: "300ms" }}
             >
               <div className="relative group">
                 <div
@@ -100,7 +109,7 @@ export default function LandingPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search anime..."
-                  className="relative w-full px-5 py-4 pl-12 rounded-xl bg-foreground/[0.03] border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground/20 focus:bg-foreground/[0.05] transition-all duration-300"
+                  className="relative w-full px-5 py-4 pl-12 rounded-xl bg-foreground/3 border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-foreground/20 focus:bg-foreground/5 transition-all duration-300"
                 />
                 <svg
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50"
@@ -123,7 +132,10 @@ export default function LandingPage() {
                   {searchLoading ? (
                     <div className="space-y-1">
                       {Array.from({ length: 4 }).map((_, index) => (
-                        <div key={index} className="flex items-center gap-3 p-2">
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-2"
+                        >
                           <Skeleton className="w-10 h-14 rounded flex-shrink-0" />
                           <div className="flex-1 space-y-2">
                             <Skeleton className="h-4 w-3/4 rounded" />
@@ -140,7 +152,7 @@ export default function LandingPage() {
                           href={`/anime/${anime.id}`}
                           className="flex items-center gap-3 p-2 rounded-lg hover:bg-foreground/5 transition-colors"
                         >
-                          <div className="relative w-10 h-14 rounded overflow-hidden flex-shrink-0 bg-foreground/5">
+                          <div className="relative w-10 h-14 rounded overflow-hidden shrink-0 bg-foreground/5">
                             <Image
                               src={anime.poster}
                               alt={anime.name}
@@ -172,7 +184,7 @@ export default function LandingPage() {
             <Link
               href="/home"
               className="group inline-flex items-center gap-2 mt-6 px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors animate-fade-in-up"
-              style={{ animationDelay: '450ms' }}
+              style={{ animationDelay: "450ms" }}
             >
               Browse all anime
               <svg
@@ -181,7 +193,12 @@ export default function LandingPage() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </Link>
           </div>
@@ -190,7 +207,7 @@ export default function LandingPage() {
         {/* Trending Preview */}
         <div
           className="relative px-4 pb-12 animate-fade-in-up"
-          style={{ animationDelay: '600ms' }}
+          style={{ animationDelay: "600ms" }}
         >
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -209,7 +226,7 @@ export default function LandingPage() {
               {homeLoading
                 ? Array.from({ length: 6 }).map((_, index) => (
                     <div key={index}>
-                      <Skeleton className="aspect-[3/4] rounded-lg" />
+                      <Skeleton className="aspect-3/4 rounded-lg" />
                       <Skeleton className="mt-2 h-3 w-3/4 rounded" />
                     </div>
                   ))
@@ -220,14 +237,14 @@ export default function LandingPage() {
                       className="group block animate-fade-in-up"
                       style={{ animationDelay: `${750 + index * 75}ms` }}
                     >
-                      <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
+                      <div className="relative aspect-3/4 rounded-lg overflow-hidden bg-foreground/5">
                         <Image
                           src={anime.poster}
                           alt={anime.name}
                           fill
                           className="object-cover transition-all duration-500 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-linear-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       <h3 className="mt-2 text-xs text-muted-foreground/70 line-clamp-1 group-hover:text-foreground transition-colors">
                         {anime.name}
