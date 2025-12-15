@@ -5,7 +5,7 @@ import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   MediaPlayer,
   MediaProvider,
@@ -172,10 +172,9 @@ export default function WatchPage({ params }: PageProps) {
     orpc.anime.getAboutInfo.queryOptions({ input: { id } })
   );
 
-  const { data: episodesData, isLoading: episodesLoading } = useQuery({
-    ...orpc.anime.getEpisodes.queryOptions({ input: { id } }),
-    enabled: !!animeData,
-  });
+  const { data: episodesData, isLoading: episodesLoading } = useQuery(
+    orpc.anime.getEpisodes.queryOptions({ input: { id } })
+  );
 
   const allEpisodes = useMemo(
     () => episodesData?.episodes ?? [],
@@ -211,6 +210,36 @@ export default function WatchPage({ params }: PageProps) {
   const totalEpisodes = allEpisodes.length;
   const prevEpisode = currentEpisode > 1 ? currentEpisode - 1 : null;
   const nextEpisode = currentEpisode < totalEpisodes ? currentEpisode + 1 : null;
+
+  // Prefetch adjacent episodes for instant navigation
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!episodeId || !allEpisodes.length) return;
+
+    const prefetchEpisode = (episodeNum: number) => {
+      const ep = allEpisodes.find((e) => e.number === episodeNum);
+      if (!ep?.episodeId) return;
+
+      queryClient.prefetchQuery(
+        orpc.anime.getEpisodeServers.queryOptions({
+          input: { episodeId: ep.episodeId },
+        })
+      );
+      queryClient.prefetchQuery(
+        orpc.anime.getEpisodeSources.queryOptions({
+          input: {
+            episodeId: ep.episodeId,
+            server: selectedServer,
+            category: selectedCategory,
+          },
+        })
+      );
+    };
+
+    if (prevEpisode) prefetchEpisode(prevEpisode);
+    if (nextEpisode) prefetchEpisode(nextEpisode);
+  }, [episodeId, allEpisodes, prevEpisode, nextEpisode, selectedServer, selectedCategory, queryClient]);
 
   // Generate episode ranges (80 per chunk)
   const episodeRanges = useMemo(() => {
