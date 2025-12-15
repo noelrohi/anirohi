@@ -10,6 +10,7 @@ import { Footer } from "@/components/blocks/footer";
 import { orpc } from "@/lib/query/orpc";
 import { Spinner } from "@/components/ui/spinner";
 import { useSavedSeries } from "@/hooks/use-saved-series";
+import { useWatchProgress } from "@/hooks/use-watch-progress";
 import { toast } from "sonner";
 
 
@@ -27,6 +28,8 @@ export default function AnimeDetailPage({ params }: PageProps) {
   } = useQuery(orpc.anime.getAboutInfo.queryOptions({ input: { id } }));
 
   const { isSaved, toggleSave } = useSavedSeries();
+  const { getLastWatchedEpisode } = useWatchProgress();
+  const lastWatched = getLastWatchedEpisode(id);
 
   if (error) {
     notFound();
@@ -125,7 +128,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
               <div className="flex items-center gap-3 mb-6">
                 <Link
-                  href={`/watch/${id}/1`}
+                  href={`/watch/${id}/${lastWatched?.episodeNumber ?? 1}`}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
                 >
                   <svg
@@ -139,7 +142,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Watch
+                  {lastWatched ? `Continue EP ${lastWatched.episodeNumber}` : "Watch"}
                 </Link>
                 <button
                   onClick={() => {

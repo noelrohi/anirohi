@@ -73,6 +73,7 @@ export default function WatchPage({ params }: PageProps) {
   const playerRef = useRef<MediaPlayerInstance>(null);
   const hasRestoredRef = useRef(false);
   const lastSaveTimeRef = useRef(0);
+  const animeInfoRef = useRef<{ poster?: string; name?: string }>({});
 
   const { getProgress, saveProgress } = useWatchProgress();
   const { preferences, updatePreferences } = usePlayerPreferences();
@@ -136,7 +137,7 @@ export default function WatchPage({ params }: PageProps) {
 
     if (Math.abs(currentTime - lastSaveTimeRef.current) >= 5) {
       lastSaveTimeRef.current = currentTime;
-      saveProgress(id, currentEpisode, currentTime, duration);
+      saveProgress(id, currentEpisode, currentTime, duration, animeInfoRef.current);
     }
   }, [id, currentEpisode, saveProgress]);
 
@@ -202,6 +203,17 @@ export default function WatchPage({ params }: PageProps) {
   });
 
   const anime = animeData?.anime;
+
+  // Keep anime info ref in sync for progress saving
+  useEffect(() => {
+    if (anime?.info) {
+      animeInfoRef.current = {
+        poster: anime.info.poster ?? undefined,
+        name: anime.info.name ?? undefined,
+      };
+    }
+  }, [anime?.info]);
+
   const relatedAnime = (animeData?.recommendedAnimes ?? []).filter(
     (item): item is typeof item & { id: string; poster: string; name: string } =>
       item.id !== null && item.poster !== null && item.name !== null

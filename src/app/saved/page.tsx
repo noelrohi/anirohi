@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Navbar } from "@/components/blocks/navbar";
 import { Footer } from "@/components/blocks/footer";
 import { useSavedSeries } from "@/hooks/use-saved-series";
+import { useWatchProgress } from "@/hooks/use-watch-progress";
 import { toast } from "sonner";
 
 export default function SavedPage() {
   const { savedSeries, removeSaved } = useSavedSeries();
+  const { getLastWatchedEpisode } = useWatchProgress();
 
   const sortedSeries = [...savedSeries].sort((a, b) => b.savedAt - a.savedAt);
 
@@ -55,9 +57,18 @@ export default function SavedPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {sortedSeries.map((series) => (
+              {sortedSeries.map((series) => {
+                const progress = getLastWatchedEpisode(series.id);
+                const progressPercent = progress
+                  ? (progress.currentTime / progress.duration) * 100
+                  : 0;
+                const href = progress
+                  ? `/watch/${series.id}/${progress.episodeNumber}`
+                  : `/anime/${series.id}`;
+
+                return (
                 <div key={series.id} className="group relative">
-                  <Link href={`/anime/${series.id}`} className="block">
+                  <Link href={href} className="block">
                     <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-foreground/5">
                       <Image
                         src={series.poster}
@@ -65,6 +76,19 @@ export default function SavedPage() {
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
+                      {progress && (
+                        <>
+                          <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-background/80 backdrop-blur-sm text-xs font-medium">
+                            EP {progress.episodeNumber}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 h-1 bg-foreground/20">
+                            <div
+                              className="h-full bg-primary transition-all"
+                              style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                     <h3 className="mt-2 text-sm text-muted-foreground line-clamp-2 group-hover:text-foreground transition-colors">
                       {series.name}
@@ -93,7 +117,8 @@ export default function SavedPage() {
                     </svg>
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

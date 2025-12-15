@@ -10,6 +10,8 @@ export interface WatchProgress {
   currentTime: number;
   duration: number;
   updatedAt: number;
+  poster?: string;
+  name?: string;
 }
 
 function getStoredProgress(): Record<string, WatchProgress> {
@@ -92,7 +94,13 @@ export function useWatchProgress() {
   );
 
   const saveProgress = useCallback(
-    (animeId: string, episodeNumber: number, currentTime: number, duration: number) => {
+    (
+      animeId: string,
+      episodeNumber: number,
+      currentTime: number,
+      duration: number,
+      metadata?: { poster?: string; name?: string }
+    ) => {
       // Only save if we have valid time values and have watched at least 5 seconds
       if (currentTime < 5 || duration <= 0) return;
 
@@ -118,6 +126,8 @@ export function useWatchProgress() {
         currentTime,
         duration,
         updatedAt: Date.now(),
+        ...(metadata?.poster && { poster: metadata.poster }),
+        ...(metadata?.name && { name: metadata.name }),
       };
       setStoredProgress(current);
       emitChange();
@@ -152,6 +162,16 @@ export function useWatchProgress() {
     [allProgress]
   );
 
+  const getAllRecentlyWatched = useCallback(
+    (limit?: number): WatchProgress[] => {
+      const sorted = Object.values(allProgress).sort(
+        (a, b) => b.updatedAt - a.updatedAt
+      );
+      return limit ? sorted.slice(0, limit) : sorted;
+    },
+    [allProgress]
+  );
+
   return {
     allProgress,
     getProgress,
@@ -159,5 +179,6 @@ export function useWatchProgress() {
     clearProgress,
     getAnimeProgress,
     getLastWatchedEpisode,
+    getAllRecentlyWatched,
   };
 }
