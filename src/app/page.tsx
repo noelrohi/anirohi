@@ -94,7 +94,7 @@ export default function LandingPage() {
 
             {/* Search Bar */}
             <div
-              className="relative animate-fade-in-up"
+              className="relative z-50 animate-fade-in-up"
               style={{ animationDelay: "300ms" }}
             >
               <div className="relative group">
@@ -180,12 +180,13 @@ export default function LandingPage() {
               )}
             </div>
 
-            {/* Browse button */}
-            <Link
-              href="/home"
-              className="group inline-flex items-center gap-2 mt-6 px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors animate-fade-in-up"
-              style={{ animationDelay: "450ms" }}
-            >
+            {/* Browse button - hidden when searching */}
+            {!isSearching && (
+              <Link
+                href="/home"
+                className="group inline-flex items-center gap-2 mt-6 px-6 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors animate-fade-in-up"
+                style={{ animationDelay: "450ms" }}
+              >
               Browse all anime
               <svg
                 className="w-4 h-4 transition-transform group-hover:translate-x-1"
@@ -201,6 +202,7 @@ export default function LandingPage() {
                 />
               </svg>
             </Link>
+            )}
           </div>
         </div>
 
