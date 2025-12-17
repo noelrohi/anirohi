@@ -1,44 +1,30 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Documentation
+- `docs/platform.md` - UI screens, components, user flows, features
+- `docs/architecture.md` - App startup, storage, data lifecycle, technical flows
 
 ## Commands
-
 ```bash
-bun run dev          # Start development server (localhost:3000)
-bun run build        # Production build
-bun run start        # Start production server
-bun run lint         # Run ESLint
+bun run dev      # Start dev server (localhost:3000)
+bun run build    # Production build
+bun run lint     # Run ESLint
 ```
+No test framework configured.
+
+## Code Style
+- **File naming**: kebab-case (e.g., `use-watch-progress.ts`, `browse-content.tsx`)
+- **Imports**: Use `@/*` alias for `src/*`. Group: external deps, then `@/` imports, then relative
+- **Types**: Strict mode enabled. Use `type` imports where possible. Prefer interfaces for objects
+- **Formatting**: No semicolons in UI components, semicolons in other files. 2-space indent
+- **Components**: Function declarations, not arrow functions. Export at bottom of file
+- **Styling**: Use `cn()` from `@/lib/utils` for class merging. Tailwind CSS v4 with oklch colors
 
 ## Architecture
-
-This is a Next.js 16 application using the App Router with React 19 and Tailwind CSS v4.
-
-### Key Technologies
-- **React Compiler** enabled via `next.config.ts` (`reactCompiler: true`)
-- **Tailwind CSS v4** with PostCSS plugin (`@tailwindcss/postcss`)
-- **shadcn/ui** components (new-york style) with Radix UI primitives
-- **next-themes** for dark mode support
-
-### Directory Structure
-- `src/app/` - Next.js App Router pages and layouts
-- `src/components/blocks/` - Reusable page blocks/sections (hero, features, etc.)
-- `src/components/ui/` - shadcn/ui components (button, carousel, tabs, etc.)
-- `src/lib/utils.ts` - `cn()` utility for merging Tailwind classes
-
-### Conventions
-- **File naming**: Use kebab-case for all file names (e.g., `user-profile.tsx`, `auth-form.tsx`)
-- **Page structure**: Pages should be clean and compose blocks from `src/components/blocks/`
-- **Page size limit**: Pages should not exceed 500 lines of code
-
-### Path Aliases
-- `@/*` maps to `./src/*`
-
-### Styling
-- CSS variables defined in `src/app/globals.css` using oklch colors
-- Dark mode via `.dark` class with `@custom-variant dark`
-- Design tokens: `--background`, `--foreground`, `--primary`, `--muted`, etc.
-
-### Adding UI Components
-Use shadcn CLI: `bunx shadcn@latest add <component>`
+- Next.js 16 App Router with React 19 and React Compiler
+- `src/components/ui/` - shadcn/ui primitives (add via `bunx shadcn@latest add <component>`)
+- `src/components/blocks/` - Page sections and reusable blocks
+- `src/hooks/` - Custom hooks for watch progress, saved series, player preferences
+- `src/lib/orpc/` - oRPC router and procedures (API layer)
+- `src/lib/query/` - TanStack Query setup
+- Pages should compose blocks and stay under 500 lines
