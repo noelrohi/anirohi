@@ -5,7 +5,11 @@ import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import {
   MediaPlayer,
   MediaProvider,
@@ -197,9 +201,11 @@ export default function WatchPage({ params }: PageProps) {
     orpc.anime.getAboutInfo.queryOptions({ input: { id } }),
   );
 
-  const { data: episodesData, isLoading: episodesLoading } = useQuery(
-    orpc.anime.getEpisodes.queryOptions({ input: { id } }),
-  );
+  const { data: episodesData, isLoading: episodesLoading } = useQuery({
+    ...orpc.anime.getEpisodes.queryOptions({ input: { id } }),
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
+  });
 
   const allEpisodes = useMemo(
     () => episodesData?.episodes ?? [],
@@ -215,6 +221,8 @@ export default function WatchPage({ params }: PageProps) {
       input: { episodeId: episodeId ?? "" },
     }),
     enabled: !!episodeId,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   const { data: sourcesData, isLoading: sourcesLoading } = useQuery({
@@ -226,6 +234,8 @@ export default function WatchPage({ params }: PageProps) {
       },
     }),
     enabled: !!episodeId && !!selectedServer,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   const anime = animeData?.anime;
