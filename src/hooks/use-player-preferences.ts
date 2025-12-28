@@ -10,6 +10,7 @@ export interface PlayerPreferences {
   muted: boolean;
   captionLanguage: string | null;
   autoplay: boolean;
+  autoNextEpisode: boolean;
 }
 
 const DEFAULT_PREFERENCES: PlayerPreferences = {
@@ -18,6 +19,7 @@ const DEFAULT_PREFERENCES: PlayerPreferences = {
   muted: false,
   captionLanguage: null,
   autoplay: true,
+  autoNextEpisode: true,
 };
 
 function getStoredPreferences(): PlayerPreferences {
@@ -115,6 +117,10 @@ export function usePlayerPreferences() {
     updatePreferences({ autoplay });
   }, [updatePreferences]);
 
+  const setAutoNextEpisode = useCallback((autoNextEpisode: boolean) => {
+    updatePreferences({ autoNextEpisode });
+  }, [updatePreferences]);
+
   const resetPreferences = useCallback(() => {
     setStoredPreferences(DEFAULT_PREFERENCES);
     emitChange();
@@ -127,6 +133,7 @@ export function usePlayerPreferences() {
     setVolume,
     setCaptionLanguage,
     setAutoplay,
+    setAutoNextEpisode,
     resetPreferences,
   };
 }
