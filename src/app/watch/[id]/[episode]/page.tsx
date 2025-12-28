@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, use, useCallback, useRef, useEffect } from "react";
+import { useMemo, use, useCallback, useRef, useEffect, useState } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import {
   useQuery,
   useQueryClient,
@@ -30,6 +30,7 @@ import "@vidstack/react/player/styles/default/layouts/video.css";
 import { orpc } from "@/lib/query/orpc";
 import { getProxyUrl } from "@/lib/proxy";
 import { Spinner } from "@/components/ui/spinner";
+import { NextEpisodeCountdown } from "@/components/blocks/next-episode-countdown";
 import { useWatchProgress } from "@/hooks/use-watch-progress";
 import { usePlayerPreferences } from "@/hooks/use-player-preferences";
 
@@ -89,10 +90,13 @@ export default function WatchPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { id, episode } = resolvedParams;
   const currentEpisode = parseInt(episode);
+  const router = useRouter();
   const playerRef = useRef<MediaPlayerInstance>(null);
   const hasRestoredRef = useRef(false);
   const lastSaveTimeRef = useRef(0);
   const animeInfoRef = useRef<{ poster?: string; name?: string }>({});
+  const hasTriggeredAutoNextRef = useRef(false);
+  const [countdownForEpisode, setCountdownForEpisode] = useState<number | null>(null);
 
   const { getProgress, saveProgress } = useWatchProgress();
   const { preferences, updatePreferences } = usePlayerPreferences();
@@ -195,7 +199,11 @@ export default function WatchPage({ params }: PageProps) {
   useEffect(() => {
     hasRestoredRef.current = false;
     lastSaveTimeRef.current = 0;
+    hasTriggeredAutoNextRef.current = false;
   }, [id, currentEpisode, selectedServer, selectedCategory]);
+
+  // Derive whether to show countdown (only show for current episode)
+  const showCountdown = countdownForEpisode === currentEpisode;
 
   const { data: animeData, isLoading: infoLoading } = useQuery(
     orpc.anime.getAboutInfo.queryOptions({ input: { id } }),
@@ -299,6 +307,45 @@ export default function WatchPage({ params }: PageProps) {
     selectedCategory,
     queryClient,
   ]);
+
+  // Trigger auto-next countdown (used by both onEnded and onTimeUpdate)
+  const triggerAutoNext = useCallback(() => {
+    if (hasTriggeredAutoNextRef.current) return;
+    if (nextEpisode && preferences.autoNextEpisode) {
+      hasTriggeredAutoNextRef.current = true;
+      setCountdownForEpisode(currentEpisode);
+    }
+  }, [nextEpisode, preferences.autoNextEpisode, currentEpisode]);
+
+  // Handle video ended - trigger auto-next countdown
+  const onEnded = useCallback(() => {
+    triggerAutoNext();
+  }, [triggerAutoNext]);
+
+  // Handle seek to near end (e.g., skip outro) - trigger auto-next
+  const onSeeked = useCallback(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const { currentTime, duration } = player;
+    // If seeked to within 3 seconds of end, trigger auto-next
+    if (duration > 0 && duration - currentTime <= 3) {
+      triggerAutoNext();
+    }
+  }, [triggerAutoNext]);
+
+  // Navigate to next episode
+  const navigateToNext = useCallback(() => {
+    if (!nextEpisode) return;
+    setCountdownForEpisode(null);
+    router.push(
+      `/watch/${id}/${nextEpisode}?category=${selectedCategory}&server=${selectedServer}&range=${selectedRange}`,
+    );
+  }, [id, nextEpisode, selectedCategory, selectedServer, selectedRange, router]);
+
+  // Cancel auto-next countdown
+  const cancelCountdown = useCallback(() => {
+    setCountdownForEpisode(null);
+  }, []);
 
   // Generate episode ranges (80 per chunk)
   const episodeRanges = useMemo(() => {
@@ -471,6 +518,8 @@ export default function WatchPage({ params }: PageProps) {
                       onVolumeChange={onVolumeChange}
                       onRateChange={onRateChange}
                       onTextTrackChange={onTextTrackChange}
+                      onEnded={onEnded}
+                      onSeeked={onSeeked}
                       className="w-full h-full"
                     >
                       <MediaProvider>
@@ -546,6 +595,13 @@ export default function WatchPage({ params }: PageProps) {
                         </div>
                       </div>
                     </>
+                  )}
+                  {showCountdown && nextEpisode && (
+                    <NextEpisodeCountdown
+                      nextEpisode={nextEpisode}
+                      onCancel={cancelCountdown}
+                      onPlayNow={navigateToNext}
+                    />
                   )}
                 </div>
               </div>
