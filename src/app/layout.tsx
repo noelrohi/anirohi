@@ -68,7 +68,9 @@ export default function RootLayout({
           />
         )}
         <NuqsAdapter>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <div className="pt-[env(safe-area-inset-top)]">{children}</div>
+          </QueryProvider>
         </NuqsAdapter>
       </body>
     </html>
