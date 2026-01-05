@@ -51,14 +51,57 @@ function isAnimeServer(value: string): value is AnimeServer {
   return animeServers.includes(value as AnimeServer);
 }
 
+const TIPS = [
+  "Tip: Enable Auto Skip in Settings (⚙️) → Playback to skip intros and outros automatically.",
+  "Tip: Turn on Auto Play Next Episode in Settings (⚙️) → Playback for seamless binge-watching.",
+  "Tip: Use keyboard shortcuts: Space to play/pause, ← → to seek, F for fullscreen.",
+  "Tip: Press M to mute/unmute the video quickly.",
+  "Tip: Double-click the video to toggle fullscreen mode.",
+  "Tip: Your watch progress is saved automatically - pick up where you left off!",
+  "Tip: Switch between Sub and Dub audio using the controls below the player.",
+  "Tip: Try different servers if the current one is slow or buffering.",
+  "Tip: Filler episodes are marked with an amber badge in the episode list.",
+  "Tip: Use the playback speed controls in Settings (⚙️) to watch faster or slower.",
+];
+
+function getTipForEpisode(animeId: string, episode: number): string {
+  // Deterministic "random" tip based on anime ID and episode number
+  const hash = animeId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const index = (hash + episode) % TIPS.length;
+  return TIPS[index];
+}
+
+interface MenuToggleProps {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+function MenuToggle({ label, checked, onChange }: MenuToggleProps) {
+  return (
+    <div className="vds-menu-item" role="menuitemcheckbox" aria-checked={checked}>
+      <div className="vds-menu-item-label">{label}</div>
+      <div
+        className="vds-menu-checkbox"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+      />
+    </div>
+  );
+}
+
 interface SkipButtonProps {
   intro: { start: number; end: number } | null;
   outro: { start: number; end: number } | null;
+  autoSkip?: boolean;
 }
 
-function SkipButton({ intro, outro }: SkipButtonProps) {
+function SkipButton({ intro, outro, autoSkip }: SkipButtonProps) {
   const currentTime = useMediaState("currentTime");
   const remote = useMediaRemote();
+
+  // Hide manual skip button when auto-skip is enabled
+  if (autoSkip) return null;
 
   const isInIntro =
     intro &&
@@ -96,6 +139,12 @@ export default function WatchPage({ params }: PageProps) {
   const lastSaveTimeRef = useRef(0);
   const animeInfoRef = useRef<{ poster?: string; name?: string }>({});
   const hasTriggeredAutoNextRef = useRef(false);
+  const hasAutoSkippedIntroRef = useRef(false);
+  const hasAutoSkippedOutroRef = useRef(false);
+  const sourcesDataRef = useRef<{
+    intro?: { start: number; end: number } | null;
+    outro?: { start: number; end: number } | null;
+  }>({});
   const [countdownForEpisode, setCountdownForEpisode] = useState<number | null>(null);
 
   const { getProgress, saveProgress } = useWatchProgress();
@@ -153,7 +202,7 @@ export default function WatchPage({ params }: PageProps) {
     }
   }, [id, currentEpisode, preferences, getProgress]);
 
-  // Save progress on time update (throttled to every 5 seconds)
+  // Save progress on time update (throttled to every 5 seconds) + auto-skip
   const onTimeUpdate = useCallback(() => {
     const player = playerRef.current;
     if (!player) return;
@@ -161,6 +210,7 @@ export default function WatchPage({ params }: PageProps) {
     const currentTime = player.currentTime;
     const duration = player.duration;
 
+    // Save progress (throttled)
     if (Math.abs(currentTime - lastSaveTimeRef.current) >= 5) {
       lastSaveTimeRef.current = currentTime;
       saveProgress(
@@ -171,7 +221,36 @@ export default function WatchPage({ params }: PageProps) {
         animeInfoRef.current,
       );
     }
-  }, [id, currentEpisode, saveProgress]);
+
+    // Auto-skip intro/outro
+    if (preferences.autoSkip) {
+      const intro = sourcesDataRef.current.intro ?? null;
+      const outro = sourcesDataRef.current.outro ?? null;
+
+      // Check if in intro and should skip
+      const isInIntro =
+        intro &&
+        intro.end > 0 &&
+        currentTime >= intro.start &&
+        currentTime < intro.end;
+      if (isInIntro && !hasAutoSkippedIntroRef.current) {
+        hasAutoSkippedIntroRef.current = true;
+        player.currentTime = intro.end;
+        return;
+      }
+
+      // Check if in outro and should skip
+      const isInOutro =
+        outro &&
+        outro.end > 0 &&
+        currentTime >= outro.start &&
+        currentTime < outro.end;
+      if (isInOutro && !hasAutoSkippedOutroRef.current) {
+        hasAutoSkippedOutroRef.current = true;
+        player.currentTime = outro.end;
+      }
+    }
+  }, [id, currentEpisode, saveProgress, preferences.autoSkip]);
 
   // Save volume preference on change
   const onVolumeChange = useCallback(() => {
@@ -200,6 +279,8 @@ export default function WatchPage({ params }: PageProps) {
     hasRestoredRef.current = false;
     lastSaveTimeRef.current = 0;
     hasTriggeredAutoNextRef.current = false;
+    hasAutoSkippedIntroRef.current = false;
+    hasAutoSkippedOutroRef.current = false;
   }, [id, currentEpisode, selectedServer, selectedCategory]);
 
   // Derive whether to show countdown (only show for current episode)
@@ -257,6 +338,16 @@ export default function WatchPage({ params }: PageProps) {
       };
     }
   }, [anime?.info]);
+
+  // Keep sources data ref in sync for auto-skip
+  useEffect(() => {
+    sourcesDataRef.current = {
+      intro: sourcesData?.intro ?? null,
+      outro:
+        (sourcesData as { outro?: { start: number; end: number } })?.outro ??
+        null,
+    };
+  }, [sourcesData]);
 
   const relatedAnime = (animeData?.recommendedAnimes ?? []).filter(
     (
@@ -551,7 +642,14 @@ export default function WatchPage({ params }: PageProps) {
                           />
                         );
                       })}
-                      <SkipButton intro={intro} outro={outro} />
+                      <SkipButton intro={intro} outro={outro} autoSkip={preferences.autoSkip} />
+                      {showCountdown && nextEpisode && (
+                        <NextEpisodeCountdown
+                          nextEpisode={nextEpisode}
+                          onCancel={cancelCountdown}
+                          onPlayNow={navigateToNext}
+                        />
+                      )}
                       <DefaultVideoLayout
                         icons={defaultLayoutIcons}
                         thumbnails={
@@ -559,6 +657,26 @@ export default function WatchPage({ params }: PageProps) {
                             ? getProxyUrl(thumbnailTrack.url)
                             : undefined
                         }
+                        slots={{
+                          playbackMenuItemsEnd: (
+                            <>
+                              <MenuToggle
+                                label="Auto Skip Intro/Outro"
+                                checked={preferences.autoSkip}
+                                onChange={(checked) =>
+                                  updatePreferences({ autoSkip: checked })
+                                }
+                              />
+                              <MenuToggle
+                                label="Auto Play Next Episode"
+                                checked={preferences.autoNextEpisode}
+                                onChange={(checked) =>
+                                  updatePreferences({ autoNextEpisode: checked })
+                                }
+                              />
+                            </>
+                          ),
+                        }}
                       />
                     </MediaPlayer>
                   ) : (
@@ -596,13 +714,6 @@ export default function WatchPage({ params }: PageProps) {
                       </div>
                     </>
                   )}
-                  {showCountdown && nextEpisode && (
-                    <NextEpisodeCountdown
-                      nextEpisode={nextEpisode}
-                      onCancel={cancelCountdown}
-                      onPlayNow={navigateToNext}
-                    />
-                  )}
                 </div>
               </div>
 
@@ -618,6 +729,9 @@ export default function WatchPage({ params }: PageProps) {
                         FILLER
                       </span>
                     )}
+                    <span className="text-foreground/30 text-[10px] md:text-xs italic hidden sm:inline">
+                      {getTipForEpisode(id, currentEpisode)}
+                    </span>
                   </div>
                   <h1 className="text-lg md:text-2xl font-semibold tracking-tight text-foreground/90 mb-1 line-clamp-2">
                     {info.name}

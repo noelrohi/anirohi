@@ -11,6 +11,7 @@ export interface PlayerPreferences {
   captionLanguage: string | null;
   autoplay: boolean;
   autoNextEpisode: boolean;
+  autoSkip: boolean;
 }
 
 const DEFAULT_PREFERENCES: PlayerPreferences = {
@@ -20,6 +21,7 @@ const DEFAULT_PREFERENCES: PlayerPreferences = {
   captionLanguage: null,
   autoplay: true,
   autoNextEpisode: true,
+  autoSkip: false,
 };
 
 function getStoredPreferences(): PlayerPreferences {
@@ -121,6 +123,10 @@ export function usePlayerPreferences() {
     updatePreferences({ autoNextEpisode });
   }, [updatePreferences]);
 
+  const setAutoSkip = useCallback((autoSkip: boolean) => {
+    updatePreferences({ autoSkip });
+  }, [updatePreferences]);
+
   const resetPreferences = useCallback(() => {
     setStoredPreferences(DEFAULT_PREFERENCES);
     emitChange();
@@ -134,6 +140,7 @@ export function usePlayerPreferences() {
     setCaptionLanguage,
     setAutoplay,
     setAutoNextEpisode,
+    setAutoSkip,
     resetPreferences,
   };
 }
