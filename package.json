@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "sed -i'' -e 's/var DOMAIN = \"hianimez.to\"/var DOMAIN = \"aniwatchtv.to\"/' node_modules/aniwatch/dist/index.js"
   },
   "dependencies": {
     "@orpc/client": "^1.12.2",
