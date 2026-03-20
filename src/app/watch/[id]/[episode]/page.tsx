@@ -48,10 +48,21 @@ const animeServers = [
 type AnimeServer = (typeof animeServers)[number];
 type AnimeCategory = "sub" | "dub";
 
+// Mirror domains return display names (e.g. "megacloud") instead of internal
+// server IDs. Map them so the scraper's switch statement can resolve them.
+const serverNameMap: Record<string, AnimeServer> = {
+  megacloud: "hd-2",
+  vidsrc: "hd-1",
+  "t-cloud": "hd-2",
+};
+
+function normalizeServerName(name: string): string {
+  return serverNameMap[name] ?? name;
+}
+
 const fallbackServerPriority: AnimeServer[] = [
   "hd-2",
   "hd-1",
-  "megacloud",
   "streamsb",
   "streamtape",
 ];
@@ -357,7 +368,7 @@ export default function WatchPage({ params }: PageProps) {
   const availableServersForCategory = useMemo(() => {
     const availableSet = new Set(
       selectedCategoryServers
-        .map((server) => server.serverName)
+        .map((server) => normalizeServerName(server.serverName))
         .filter(isAnimeServer),
     );
     return fallbackServerPriority.filter((server) => availableSet.has(server));
