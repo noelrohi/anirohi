@@ -46,6 +46,17 @@ const animeServers = [
   "streamtape",
 ] as const;
 type AnimeServer = (typeof animeServers)[number];
+type AnimeCategory = "sub" | "dub";
+
+const fallbackServerPriority: AnimeServer[] = [
+  "hd-2",
+  "hd-1",
+  "megacloud",
+  "streamsb",
+  "streamtape",
+];
+
+const CLIENT_STALL_TIMEOUT_MS = 10000;
 
 function isAnimeServer(value: string): value is AnimeServer {
   return animeServers.includes(value as AnimeServer);
@@ -145,7 +156,15 @@ export default function WatchPage({ params }: PageProps) {
     intro?: { start: number; end: number } | null;
     outro?: { start: number; end: number } | null;
   }>({});
+  const attemptedServersRef = useRef<Map<string, Set<AnimeServer>>>(new Map());
+  const lastHandledFailureRef = useRef<string | null>(null);
   const [countdownForEpisode, setCountdownForEpisode] = useState<number | null>(null);
+  const [tryingServer, setTryingServer] = useState<AnimeServer | null>(null);
+  const [lastSwitch, setLastSwitch] = useState<{
+    from: AnimeServer;
+    to: AnimeServer;
+  } | null>(null);
+  const [allServersFailed, setAllServersFailed] = useState(false);
 
   const { getProgress, saveProgress } = useWatchProgress();
   const { preferences, updatePreferences } = usePlayerPreferences();
@@ -156,7 +175,7 @@ export default function WatchPage({ params }: PageProps) {
   );
   const [selectedServer, setSelectedServer] = useQueryState(
     "server",
-    parseAsStringLiteral(animeServers).withDefault("hd-1"),
+    parseAsStringLiteral(animeServers).withDefault("hd-2"),
   );
   const [selectedRange, setSelectedRange] = useQueryState(
     "range",
@@ -314,7 +333,11 @@ export default function WatchPage({ params }: PageProps) {
     placeholderData: keepPreviousData,
   });
 
-  const { data: sourcesData, isLoading: sourcesLoading } = useQuery({
+  const {
+    data: sourcesData,
+    isLoading: sourcesLoading,
+    isError: isSourcesError,
+  } = useQuery({
     ...orpc.anime.getEpisodeSources.queryOptions({
       input: {
         episodeId: episodeId ?? "",
@@ -327,7 +350,21 @@ export default function WatchPage({ params }: PageProps) {
     placeholderData: keepPreviousData,
   });
 
+  const subServers = serversData?.sub ?? [];
+  const dubServers = serversData?.dub ?? [];
+  const selectedCategoryServers =
+    selectedCategory === "sub" ? subServers : dubServers;
+  const availableServersForCategory = useMemo(() => {
+    const availableSet = new Set(
+      selectedCategoryServers
+        .map((server) => server.serverName)
+        .filter(isAnimeServer),
+    );
+    return fallbackServerPriority.filter((server) => availableSet.has(server));
+  }, [selectedCategoryServers]);
+
   const anime = animeData?.anime;
+  const streamingSources = sourcesData?.sources ?? [];
 
   // Keep anime info ref in sync for progress saving
   useEffect(() => {
@@ -348,6 +385,225 @@ export default function WatchPage({ params }: PageProps) {
         null,
     };
   }, [sourcesData]);
+
+  const getAttemptKey = useCallback(
+    (targetEpisodeId: string, category: AnimeCategory) =>
+      `${targetEpisodeId}:${category}`,
+    [],
+  );
+
+  const clearFallbackUiState = useCallback(() => {
+    setTryingServer(null);
+    setLastSwitch(null);
+    setAllServersFailed(false);
+  }, []);
+
+  const resetFallbackCycle = useCallback(() => {
+    if (episodeId) {
+      attemptedServersRef.current.delete(
+        getAttemptKey(episodeId, selectedCategory),
+      );
+    }
+    lastHandledFailureRef.current = null;
+    clearFallbackUiState();
+  }, [episodeId, selectedCategory, getAttemptKey, clearFallbackUiState]);
+
+  const triggerServerFallback = useCallback(
+    (reason: "error" | "stall" | "empty") => {
+      if (!episodeId || availableServersForCategory.length === 0) return;
+
+      const attemptKey = getAttemptKey(episodeId, selectedCategory);
+      const attempted =
+        attemptedServersRef.current.get(attemptKey) ?? new Set<AnimeServer>();
+      attempted.add(selectedServer);
+      attemptedServersRef.current.set(attemptKey, attempted);
+
+      const nextServer = availableServersForCategory.find(
+        (server) => !attempted.has(server),
+      );
+
+      if (!nextServer) {
+        setTryingServer(null);
+        setAllServersFailed(true);
+        return;
+      }
+
+      setAllServersFailed(false);
+      setTryingServer(nextServer);
+      setLastSwitch({ from: selectedServer, to: nextServer });
+      lastHandledFailureRef.current = `${attemptKey}:${selectedServer}:${reason}`;
+      void setSelectedServer(nextServer);
+    },
+    [
+      episodeId,
+      availableServersForCategory,
+      getAttemptKey,
+      selectedCategory,
+      selectedServer,
+      setSelectedServer,
+    ],
+  );
+
+  useEffect(() => {
+    if (!episodeId) return;
+    attemptedServersRef.current.delete(getAttemptKey(episodeId, selectedCategory));
+    lastHandledFailureRef.current = null;
+    const timeoutId = window.setTimeout(() => {
+      clearFallbackUiState();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [episodeId, selectedCategory, getAttemptKey, clearFallbackUiState]);
+
+  useEffect(() => {
+    if (!episodeId || availableServersForCategory.length === 0) return;
+    if (availableServersForCategory.includes(selectedServer)) return;
+
+    const nextServer = availableServersForCategory[0];
+    const timeoutId = window.setTimeout(() => {
+      setTryingServer(nextServer);
+      setAllServersFailed(false);
+      void setSelectedServer(nextServer);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [episodeId, availableServersForCategory, selectedServer, setSelectedServer]);
+
+  useEffect(() => {
+    if (sourcesLoading || streamingSources.length === 0) return;
+    const timeoutId = window.setTimeout(() => {
+      setAllServersFailed(false);
+
+      if (tryingServer && selectedServer === tryingServer) {
+        setTryingServer(null);
+      }
+    }, 0);
+
+    if (episodeId) {
+      attemptedServersRef.current.delete(getAttemptKey(episodeId, selectedCategory));
+    }
+    lastHandledFailureRef.current = null;
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    sourcesLoading,
+    streamingSources.length,
+    tryingServer,
+    selectedServer,
+    episodeId,
+    getAttemptKey,
+    selectedCategory,
+  ]);
+
+  useEffect(() => {
+    if (!episodeId || !isSourcesError) return;
+    const token = `${episodeId}:${selectedCategory}:${selectedServer}:error`;
+    if (lastHandledFailureRef.current === token) return;
+
+    lastHandledFailureRef.current = token;
+    const timeoutId = window.setTimeout(() => {
+      triggerServerFallback("error");
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    episodeId,
+    isSourcesError,
+    selectedCategory,
+    selectedServer,
+    triggerServerFallback,
+  ]);
+
+  useEffect(() => {
+    if (
+      !episodeId ||
+      sourcesLoading ||
+      isSourcesError ||
+      streamingSources.length > 0
+    ) {
+      return;
+    }
+
+    const token = `${episodeId}:${selectedCategory}:${selectedServer}:empty`;
+    if (lastHandledFailureRef.current === token) return;
+
+    lastHandledFailureRef.current = token;
+    const timeoutId = window.setTimeout(() => {
+      triggerServerFallback("empty");
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    episodeId,
+    sourcesLoading,
+    isSourcesError,
+    streamingSources.length,
+    selectedCategory,
+    selectedServer,
+    triggerServerFallback,
+  ]);
+
+  useEffect(() => {
+    if (!episodeId || !sourcesLoading) return;
+    const token = `${episodeId}:${selectedCategory}:${selectedServer}:stall`;
+
+    const timeoutId = window.setTimeout(() => {
+      if (lastHandledFailureRef.current === token) return;
+      lastHandledFailureRef.current = token;
+      triggerServerFallback("stall");
+    }, CLIENT_STALL_TIMEOUT_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    episodeId,
+    sourcesLoading,
+    selectedCategory,
+    selectedServer,
+    triggerServerFallback,
+  ]);
+
+  const handleCategoryChange = useCallback(
+    (category: AnimeCategory) => {
+      if (category === selectedCategory) return;
+      resetFallbackCycle();
+      void setSelectedCategory(category);
+    },
+    [selectedCategory, resetFallbackCycle, setSelectedCategory],
+  );
+
+  const handleServerSelect = useCallback(
+    (server: AnimeServer) => {
+      if (server === selectedServer) return;
+      resetFallbackCycle();
+      void setSelectedServer(server);
+    },
+    [selectedServer, resetFallbackCycle, setSelectedServer],
+  );
+
+  const serverStatusMessage = useMemo(() => {
+    if (allServersFailed) {
+      return "No working server found for this episode right now";
+    }
+    if (tryingServer) {
+      return `Trying ${tryingServer}...`;
+    }
+    if (lastSwitch && selectedServer === lastSwitch.to) {
+      return `Switched to ${lastSwitch.to} after ${lastSwitch.from} failed`;
+    }
+    return null;
+  }, [allServersFailed, tryingServer, lastSwitch, selectedServer]);
 
   const relatedAnime = (animeData?.recommendedAnimes ?? []).filter(
     (
@@ -494,9 +750,6 @@ export default function WatchPage({ params }: PageProps) {
     notFound();
   }
 
-  const subServers = serversData?.sub ?? [];
-  const dubServers = serversData?.dub ?? [];
-  const streamingSources = sourcesData?.sources ?? [];
   const allTracks =
     (sourcesData as { tracks?: { url: string; lang: string }[] })?.tracks ?? [];
   const thumbnailTrack = allTracks.find(
@@ -830,7 +1083,7 @@ export default function WatchPage({ params }: PageProps) {
                     </span>
                     <div className="flex rounded-lg bg-foreground/3 p-0.5 md:p-1">
                       <button
-                        onClick={() => setSelectedCategory("sub")}
+                        onClick={() => handleCategoryChange("sub")}
                         disabled={subServers.length === 0}
                         className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                           selectedCategory === "sub"
@@ -841,7 +1094,7 @@ export default function WatchPage({ params }: PageProps) {
                         SUB
                       </button>
                       <button
-                        onClick={() => setSelectedCategory("dub")}
+                        onClick={() => handleCategoryChange("dub")}
                         disabled={dubServers.length === 0}
                         className={`px-3 md:px-4 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                           selectedCategory === "dub"
@@ -862,16 +1115,11 @@ export default function WatchPage({ params }: PageProps) {
                       Server
                     </span>
                     <div className="flex flex-wrap gap-1.5 md:gap-2">
-                      {(selectedCategory === "sub"
-                        ? subServers
-                        : dubServers
-                      ).map((server) => {
-                        const serverName = server.serverName;
-                        if (!isAnimeServer(serverName)) return null;
+                      {availableServersForCategory.map((serverName) => {
                         return (
                           <button
                             key={serverName}
-                            onClick={() => setSelectedServer(serverName)}
+                            onClick={() => handleServerSelect(serverName)}
                             className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-medium transition-all ${
                               selectedServer === serverName
                                 ? "bg-foreground text-background"
@@ -885,6 +1133,19 @@ export default function WatchPage({ params }: PageProps) {
                     </div>
                   </div>
                 </div>
+                {serverStatusMessage && (
+                  <p
+                    className={`mt-3 text-[11px] md:text-xs ${
+                      allServersFailed
+                        ? "text-red-400/90"
+                        : tryingServer
+                          ? "text-amber-400/90"
+                          : "text-emerald-400/90"
+                    }`}
+                  >
+                    {serverStatusMessage}
+                  </p>
+                )}
               </div>
             </div>
           </main>

@@ -5,6 +5,29 @@ import type { HiAnime } from "aniwatch";
 
 const scraper = getAniwatchScraper();
 
+async function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  label: string,
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new Error(`${label} timed out after ${ms}ms`));
+        }, ms);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
 const animeIdSchema = z.object({
   id: z.string().min(1),
 });
@@ -77,7 +100,7 @@ const animeServers = [
 
 const episodeSourcesSchema = z.object({
   episodeId: z.string().min(1),
-  server: z.enum(animeServers).optional().default("hd-1"),
+  server: z.enum(animeServers).optional().default("hd-2"),
   category: z.enum(["sub", "dub", "raw"]).optional().default("sub"),
 });
 
@@ -146,7 +169,11 @@ export const getEpisodes = os
 export const getEpisodeServers = os
   .input(episodeIdSchema)
   .handler(async ({ input }): Promise<HiAnime.ScrapedEpisodeServers> => {
-    const data = await scraper.getEpisodeServers(input.episodeId);
+    const data = await withTimeout(
+      scraper.getEpisodeServers(input.episodeId),
+      6000,
+      "getEpisodeServers",
+    );
     return data;
   });
 
@@ -159,10 +186,14 @@ export const getEpisodeSources = os.input(episodeSourcesSchema).handler(
       malID: number | null;
     }
   > => {
-    const data = await scraper.getEpisodeSources(
-      input.episodeId,
-      input.server,
-      input.category,
+    const data = await withTimeout(
+      scraper.getEpisodeSources(
+        input.episodeId,
+        input.server,
+        input.category,
+      ),
+      8000,
+      "getEpisodeSources",
     );
     return data;
   },
