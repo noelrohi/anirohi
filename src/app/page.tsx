@@ -7,6 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/query/orpc";
 import { Skeleton } from "@/components/ui/skeleton";
 
+function filterValidAnime<
+  T extends { id: string | null; name: string | null; poster: string | null },
+>(items: T[]): (T & { id: string; name: string; poster: string })[] {
+  return items.filter(
+    (item): item is T & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
+  );
+}
+
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,18 +30,8 @@ export default function LandingPage() {
     enabled: searchQuery.length >= 2,
   });
 
-  const trendingAnime = (homeData?.trendingAnimes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
-  const searchResults = (searchData?.animes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
+  const trendingAnime = filterValidAnime(homeData?.trendingAnimes ?? []);
+  const searchResults = filterValidAnime(searchData?.animes ?? []);
   const isSearching = searchQuery.length >= 2;
 
   return (

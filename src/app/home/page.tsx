@@ -22,6 +22,15 @@ type ValidAnimeItem = {
   episodes?: { sub: number | null; dub: number | null };
 };
 
+function filterValidAnime<
+  T extends { id: string | null; name: string | null; poster: string | null },
+>(items: T[]): (T & { id: string; name: string; poster: string })[] {
+  return items.filter(
+    (item): item is T & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
+  );
+}
+
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -126,30 +135,10 @@ export default function HomePage() {
     orpc.anime.getHomePage.queryOptions({}),
   );
 
-  const spotlightAnime = (homeData?.spotlightAnimes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
-  const trendingAnime = (homeData?.trendingAnimes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
-  const latestEpisodes = (homeData?.latestEpisodeAnimes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
-  const topAiring = (homeData?.topAiringAnimes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
+  const spotlightAnime = filterValidAnime(homeData?.spotlightAnimes ?? []);
+  const trendingAnime = filterValidAnime(homeData?.trendingAnimes ?? []);
+  const latestEpisodes = filterValidAnime(homeData?.latestEpisodeAnimes ?? []);
+  const topAiring = filterValidAnime(homeData?.topAiringAnimes ?? []);
 
   return (
     <div className="min-h-screen bg-background">

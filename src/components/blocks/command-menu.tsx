@@ -16,6 +16,15 @@ import {
 } from "@/components/ui/command";
 import { Spinner } from "@/components/ui/spinner";
 
+function filterValidAnime<
+  T extends { id: string | null; name: string | null; poster: string | null },
+>(items: T[]): (T & { id: string; name: string; poster: string })[] {
+  return items.filter(
+    (item): item is T & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
+  );
+}
+
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -29,12 +38,7 @@ export function CommandMenu() {
     enabled: debouncedQuery.length >= 2,
   });
 
-  const searchResults = (searchData?.animes ?? []).filter(
-    (
-      item,
-    ): item is typeof item & { id: string; name: string; poster: string } =>
-      item.id !== null && item.name !== null && item.poster !== null,
-  );
+  const searchResults = filterValidAnime(searchData?.animes ?? []);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

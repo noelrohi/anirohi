@@ -1,6 +1,6 @@
 const DEFAULT_HEADERS = {
-  Referer: "https://megaplay.buzz/",
-  Origin: "https://megaplay.buzz",
+  Referer: "https://megacloud.blog/",
+  Origin: "https://megacloud.blog",
 };
 
 /**

@@ -1,69 +1,9 @@
 import { os } from "@orpc/server";
 import { z } from "zod";
-import { load as cheerioLoad } from "cheerio";
 import { getAniwatchScraper } from "@/lib/aniwatch/scraper";
 import type { HiAnime } from "aniwatch";
 
 const scraper = getAniwatchScraper();
-
-const MEGAPLAY_BASE = "https://megaplay.buzz";
-const MEGAPLAY_UA =
-  "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0";
-
-async function getMegaplaySources(
-  episodeId: string,
-  category: string,
-): Promise<HiAnime.ScrapedAnimeEpisodesSources> {
-  const epId = episodeId.split("?ep=")[1];
-  if (!epId) throw new Error("Invalid episodeId format");
-
-  const pageResp = await fetch(`${MEGAPLAY_BASE}/stream/s-2/${epId}/${category}`, {
-    headers: {
-      Host: "megaplay.buzz",
-      "User-Agent": MEGAPLAY_UA,
-      Accept:
-        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      Referer: `${MEGAPLAY_BASE}/api`,
-    },
-  });
-  if (!pageResp.ok) throw new Error("Episode is not available on megaplay");
-
-  const html = await pageResp.text();
-  const $ = cheerioLoad(html);
-  const cidMatch = html.match(/cid:\s*'([^']+)'/);
-  const cid = cidMatch?.[1] ?? $("[data-ep-id]").attr("data-ep-id");
-  if (!cid) throw new Error("Unable to extract source id from megaplay");
-
-  const sourcesResp = await fetch(
-    `${MEGAPLAY_BASE}/stream/getSources?id=${cid}`,
-    {
-      headers: {
-        Host: "megaplay.buzz",
-        "User-Agent": MEGAPLAY_UA,
-        "X-Requested-With": "XMLHttpRequest",
-        Referer: `${MEGAPLAY_BASE}/stream/s-2/${epId}/${category}`,
-      },
-    },
-  );
-  if (!sourcesResp.ok) throw new Error("Failed to fetch sources from megaplay");
-
-  const data = await sourcesResp.json();
-
-  return {
-    headers: { Referer: `${MEGAPLAY_BASE}/`, Origin: MEGAPLAY_BASE },
-    sources: [{ url: data.sources?.file ?? "", type: "hls" }],
-    subtitles: (data.tracks ?? [])
-      .filter((t: { kind?: string }) => t.kind === "captions")
-      .map((t: { file?: string; label?: string; kind?: string; default?: boolean }) => ({
-        url: t.file ?? "",
-        lang: t.label ?? t.kind ?? "",
-      })),
-    intro: data.intro ?? { start: 0, end: 0 },
-    outro: data.outro ?? { start: 0, end: 0 },
-    anilistID: null,
-    malID: null,
-  } as HiAnime.ScrapedAnimeEpisodesSources;
-}
 
 async function withTimeout<T>(
   promise: Promise<T>,
@@ -246,25 +186,6 @@ export const getEpisodeSources = os.input(episodeSourcesSchema).handler(
       malID: number | null;
     }
   > => {
-    const usesMegacloud =
-      input.server === "hd-1" || input.server === "hd-2";
-
-    if (usesMegacloud) {
-      try {
-        const data = await withTimeout(
-          getMegaplaySources(input.episodeId, input.category),
-          8000,
-          "getMegaplaySources",
-        );
-        return data as HiAnime.ScrapedAnimeEpisodesSources & {
-          anilistID: number | null;
-          malID: number | null;
-        };
-      } catch {
-        // fall through to original scraper
-      }
-    }
-
     const data = await withTimeout(
       scraper.getEpisodeSources(
         input.episodeId,

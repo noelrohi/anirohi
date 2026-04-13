@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node scripts/patch-aniwatch.mjs"
   },
   "dependencies": {
     "@orpc/client": "^1.12.2",

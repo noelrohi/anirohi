@@ -27,6 +27,15 @@ const categories = [
 const categoryIds = categories.map((c) => c.id);
 type CategoryId = (typeof categories)[number]["id"];
 
+function filterValidAnime<
+  T extends { id: string | null; name: string | null; poster: string | null },
+>(items: T[]): (T & { id: string; name: string; poster: string })[] {
+  return items.filter(
+    (item): item is T & { id: string; name: string; poster: string } =>
+      item.id !== null && item.name !== null && item.poster !== null,
+  );
+}
+
 export function BrowseContent() {
   const [category, setCategory] = useQueryState(
     "category",
@@ -48,12 +57,7 @@ export function BrowseContent() {
 
   const animes =
     data?.pages.flatMap((page) =>
-      (page.animes ?? []).filter(
-        (
-          item,
-        ): item is typeof item & { id: string; name: string; poster: string } =>
-          item.id !== null && item.name !== null && item.poster !== null,
-      ),
+      filterValidAnime(page.animes ?? []),
     ) ?? [];
 
   const handleCategoryChange = (newCategory: CategoryId) => {
