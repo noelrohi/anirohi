@@ -761,14 +761,15 @@ export default function WatchPage({ params }: PageProps) {
     notFound();
   }
 
-  const allTracks =
+  const rawTracks =
     (sourcesData as { tracks?: { url: string; lang: string }[] })?.tracks ?? [];
-  const thumbnailTrack = allTracks.find(
+  const thumbnailTrack = rawTracks.find(
     (t) => t.lang.toLowerCase() === "thumbnails",
   );
-  const subtitles = allTracks.filter(
-    (t) => t.lang.toLowerCase() !== "thumbnails",
-  );
+  const subtitles = [
+    ...(sourcesData?.subtitles ?? []),
+    ...rawTracks.filter((t) => t.lang.toLowerCase() !== "thumbnails"),
+  ];
   const intro = sourcesData?.intro ?? null;
   const outro =
     (sourcesData as { outro?: { start: number; end: number } })?.outro ?? null;
